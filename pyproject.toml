@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pymat"
-version = "0.1.1"
+version = "0.1.2"
 description = "Hierarchical material library for CAD applications with build123d integration"
 readme = "README.md"
 license = "MIT"

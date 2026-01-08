@@ -4,14 +4,17 @@ Pytest configuration and fixtures for pymat tests.
 
 import pytest
 from pymat import registry
+import pymat
 
 
 @pytest.fixture(autouse=True)
 def clear_registry():
-    """Clear registry before each test to avoid cross-test pollution."""
+    """Clear registry and loaded categories before each test to avoid cross-test pollution."""
     registry.clear()
+    pymat._LOADED_CATEGORIES.clear()
     yield
     registry.clear()
+    pymat._LOADED_CATEGORIES.clear()
 
 
 @pytest.fixture

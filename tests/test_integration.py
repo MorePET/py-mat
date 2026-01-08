@@ -189,3 +189,94 @@ class TestMassCalculation:
         expected_mass = 8.0
         assert abs(shape.mass - expected_mass) < 0.1
 
+
+class TestCategoryNamespaces:
+    """Test category namespace imports (plastics, gases, metals, etc.)."""
+    
+    def test_plastics_namespace_access(self):
+        """Test accessing materials via plastics namespace."""
+        from pymat import plastics
+        
+        pmma = plastics.pmma
+        assert pmma.name == "PMMA (Acrylic)"
+        assert pmma.density > 0
+    
+    def test_gases_namespace_access(self):
+        """Test accessing materials via gases namespace."""
+        from pymat import gases
+        
+        air = gases.air
+        assert air is not None
+        assert "air" in air.name.lower() or "Air" in air.name
+    
+    def test_metals_namespace_access(self):
+        """Test accessing materials via metals namespace."""
+        from pymat import metals
+        
+        stainless = metals.stainless
+        assert stainless.name == "Stainless Steel"
+    
+    def test_liquids_namespace_access(self):
+        """Test accessing materials via liquids namespace."""
+        from pymat import liquids
+        
+        water = liquids.water
+        assert water is not None
+    
+    def test_ceramics_namespace_access(self):
+        """Test accessing materials via ceramics namespace."""
+        from pymat import ceramics
+        
+        alumina = ceramics.alumina
+        assert alumina is not None
+    
+    def test_scintillators_namespace_access(self):
+        """Test accessing materials via scintillators namespace."""
+        from pymat import scintillators
+        
+        lyso = scintillators.lyso
+        assert "LYSO" in lyso.name
+    
+    def test_electronics_namespace_access(self):
+        """Test accessing materials via electronics namespace."""
+        from pymat import electronics
+        
+        fr4 = electronics.fr4
+        assert fr4 is not None
+    
+    def test_namespace_error_on_wrong_category(self):
+        """Test error when accessing material from wrong category."""
+        from pymat import plastics
+        
+        with pytest.raises(AttributeError) as exc_info:
+            _ = plastics.stainless  # stainless is in metals, not plastics
+        
+        assert "plastics" in str(exc_info.value)
+        assert "stainless" in str(exc_info.value)
+    
+    def test_namespace_dir(self):
+        """Test IDE autocompletion support via __dir__."""
+        from pymat import plastics
+        
+        available = dir(plastics)
+        assert "pmma" in available
+        assert "peek" in available
+        assert "ptfe" in available
+    
+    def test_namespace_repr(self):
+        """Test namespace string representation."""
+        from pymat import plastics, gases
+        
+        assert "plastics" in repr(plastics)
+        assert "gases" in repr(gases)
+    
+    def test_namespace_hierarchy_access(self):
+        """Test accessing material hierarchy through namespace."""
+        from pymat import metals
+        
+        stainless = metals.stainless
+        s316L = stainless.s316L
+        
+        assert s316L.grade == "316L"
+        assert s316L.name == "Stainless Steel 316L"
+
