@@ -43,7 +43,7 @@ from .loader import load_toml, load_category
 from .enrichers import enrich_from_periodictable, enrich_from_matproj, enrich_all
 from . import factories
 
-__version__ = "0.1.2"
+__version__ = "1.0.0"
 __all__ = [
     "Material",
     "AllProperties",

@@ -28,6 +28,26 @@ class Material:
     
     Properties cascade down the chain - children inherit from parents
     but can override any property at any level.
+    
+    Constructor parameters:
+    - name: Material name (required)
+    - density: Density in g/cm³ (convenience parameter)
+    - color: Visualization color - RGB tuple (r, g, b) or RGBA (r, g, b, alpha)
+    - formula: Chemical formula (e.g., "Al2O3")
+    - composition: Element fractions dict
+    - mechanical: Dict of mechanical properties (density, youngs_modulus, etc.)
+    - thermal: Dict of thermal properties (melting_point, conductivity, etc.)
+    - electrical: Dict of electrical properties (resistivity, dielectric_constant, etc.)
+    - optical: Dict of optical properties (refractive_index, transparency, etc.) - PHYSICS
+    - pbr: Dict of PBR visualization properties (base_color, metallic, roughness) - RENDERING
+    - manufacturing: Dict of manufacturing properties (machinability, weldability, etc.)
+    - compliance: Dict of compliance properties (rohs_compliant, food_safe, etc.)
+    - sourcing: Dict of sourcing properties (cost_per_kg, availability, etc.)
+    
+    Example usage:
+        Material(name="Steel", density=7.8, color=(0.7, 0.7, 0.7))
+        Material(name="Steel", mechanical={"density": 7.8, "youngs_modulus": 200})
+        Material(name="LYSO", optical={"transparency": 92, "refractive_index": 1.82})
     """
     
     # Identity
@@ -35,11 +55,25 @@ class Material:
     formula: Optional[str] = None                # Chemical formula (e.g., "Al2O3")
     composition: Optional[Dict[str, float]] = None  # element -> fraction
     
+    # Convenience parameters (backward compatibility)
+    density: Optional[float] = None              # g/cm³ (convenience for mechanical.density)
+    color: Optional[tuple] = None                # RGB or RGBA for visualization
+    
     # Hierarchy metadata
     grade: Optional[str] = None                  # e.g., "304", "6061"
     temper: Optional[str] = None                 # e.g., "T6", "annealed"
     treatment: Optional[str] = None              # e.g., "passivated", "anodized"
     vendor: Optional[str] = None                 # e.g., "saint_gobain", "hamamatsu"
+    
+    # Property groups as kwargs
+    mechanical: Optional[Dict[str, Any]] = None
+    thermal: Optional[Dict[str, Any]] = None
+    electrical: Optional[Dict[str, Any]] = None
+    optical: Optional[Dict[str, Any]] = None      # Physics properties, NOT visualization
+    pbr: Optional[Dict[str, Any]] = None          # Visualization properties, NOT physics
+    manufacturing: Optional[Dict[str, Any]] = None
+    compliance: Optional[Dict[str, Any]] = None
+    sourcing: Optional[Dict[str, Any]] = None
     
     # Properties (all domains)
     properties: AllProperties = field(default_factory=AllProperties)
@@ -48,6 +82,63 @@ class Material:
     parent: Optional[Material] = field(default=None, repr=False)
     _children: Dict[str, Material] = field(default_factory=dict, repr=False)
     _key: Optional[str] = field(default=None, repr=False)  # for registry
+    
+    def __post_init__(self):
+        """Apply convenience parameters and property groups to properties object."""
+        # Apply convenience params (backward compatibility)
+        if self.density is not None:
+            self.properties.mechanical.density = self.density
+        
+        if self.color is not None:
+            if len(self.color) == 3:
+                # RGB provided, add full opacity
+                self.properties.pbr.base_color = (*self.color, 1.0)
+            elif len(self.color) == 4:
+                # RGBA provided
+                self.properties.pbr.base_color = self.color
+            else:
+                raise ValueError(f"color must be RGB (3 values) or RGBA (4 values), got {len(self.color)}")
+        
+        # Apply property groups
+        if self.mechanical:
+            for key, value in self.mechanical.items():
+                if hasattr(self.properties.mechanical, key):
+                    setattr(self.properties.mechanical, key, value)
+        
+        if self.thermal:
+            for key, value in self.thermal.items():
+                if hasattr(self.properties.thermal, key):
+                    setattr(self.properties.thermal, key, value)
+        
+        if self.electrical:
+            for key, value in self.electrical.items():
+                if hasattr(self.properties.electrical, key):
+                    setattr(self.properties.electrical, key, value)
+        
+        if self.optical:
+            for key, value in self.optical.items():
+                if hasattr(self.properties.optical, key):
+                    setattr(self.properties.optical, key, value)
+        
+        if self.pbr:
+            for key, value in self.pbr.items():
+                if hasattr(self.properties.pbr, key):
+                    setattr(self.properties.pbr, key, value)
+        
+        if self.manufacturing:
+            for key, value in self.manufacturing.items():
+                if hasattr(self.properties.manufacturing, key):
+                    setattr(self.properties.manufacturing, key, value)
+        
+        if self.compliance:
+            for key, value in self.compliance.items():
+                if hasattr(self.properties.compliance, key):
+                    setattr(self.properties.compliance, key, value)
+        
+        if self.sourcing:
+            for key, value in self.sourcing.items():
+                if hasattr(self.properties.sourcing, key):
+                    setattr(self.properties.sourcing, key, value)
     
     # =========================================================================
     # Chaining API

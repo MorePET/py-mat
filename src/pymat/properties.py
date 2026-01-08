@@ -58,20 +58,26 @@ class ElectricalProperties:
 
 @dataclass
 class OpticalProperties:
-    """Light interaction and scintillator-specific properties."""
+    """
+    Physical optical properties (measured values, physics calculations).
+    
+    These are PHYSICS properties, not visualization/rendering properties.
+    For visualization, see PBRProperties.
+    """
+    # Basic optical properties
     refractive_index: Optional[float] = None     # n at 550nm (default)
-    transparency: Optional[float] = None         # % transmission (0-100)
+    transparency: Optional[float] = None         # % transmission (0-100) - MEASURED VALUE
     absorption_coefficient: Optional[float] = None # 1/cm
     absorption_length: Optional[float] = None    # mm (inverse of coefficient)
     
-    # Scintillator properties
+    # Scintillator properties (detector physics)
     light_yield: Optional[float] = None          # photons/MeV
     decay_time: Optional[float] = None           # ns (mean decay time)
     rise_time: Optional[float] = None            # ns
     emission_peak: Optional[float] = None        # nm (peak emission wavelength)
     emission_range: Optional[tuple] = None       # (min_nm, max_nm)
     
-    # Detector/radiation properties
+    # Radiation interaction (detector/shielding physics)
     radiation_length: Optional[float] = None     # cm (X₀ for photons)
     interaction_length: Optional[float] = None   # cm (λ for hadrons)
     moliere_radius: Optional[float] = None       # cm
@@ -80,13 +86,23 @@ class OpticalProperties:
 
 @dataclass
 class PBRProperties:
-    """Physically-based rendering for glTF/3MF export and visualization."""
-    base_color: tuple = (0.8, 0.8, 0.8, 1.0)  # RGBA (0-1)
+    """
+    Physically-based rendering properties for visualization (NOT physics).
+    
+    These control how the material LOOKS in 3D viewers and renders.
+    They may differ from physical optical properties intentionally.
+    
+    For physics/measured optical properties, see OpticalProperties.
+    """
+    # Surface appearance
+    base_color: tuple = (0.8, 0.8, 0.8, 1.0)  # RGBA (0-1) - Alpha is VISUAL opacity
     metallic: float = 0.0                        # 0=dielectric, 1=metal
     roughness: float = 0.5                       # 0=glossy, 1=rough
     emissive: tuple = (0, 0, 0)                  # RGB emitted light
-    ior: float = 1.5                             # index of refraction
-    transmission: float = 0.0                    # 0=opaque, 1=transparent
+    
+    # Transparency (RENDERING property, not physical measurement)
+    ior: float = 1.5                             # index of refraction (for rendering)
+    transmission: float = 0.0                    # 0=opaque, 1=transparent (volumetric)
     clearcoat: float = 0.0                       # secondary glossy layer
     
     # Texture maps (paths or URIs)
