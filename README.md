@@ -181,12 +181,15 @@ from pymat.factories import air
         Create solutions with specific concentration and temperature:
 
 ```python
-from pymat.factories import saline
+from pymat.factories import saline, water
         
         # Physiological saline at body temperature
-        phantom = saline(0.9, temperature_c=37)        
-        # Seawater
+        phantom = saline(0.9, temperature_c=37)
+        # Saline is slightly denser than pure water at same temperature
+        pure_water_37 = water(37)        
+        # Seawater (3.5% NaCl) at 20°C
         seawater = saline(3.5, temperature_c=20)
+        # Higher concentration = higher density
         assert seawater.density > phantom.density
 ```
 

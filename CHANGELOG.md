@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2025-01-08
+
+### Fixed
+- **Corrected alpha calculation from transmission** in `apply_to()`
+  - Alpha is now correctly calculated as `1 - transmission` (not `transmission`)
+  - `transmission=0.0` (opaque) → `alpha=1.0`
+  - `transmission=0.9` (90% transparent) → `alpha=0.1`
+- **Simplified color assignment logic** - removed confusing fallback to `base_color[3]`
+
 ## [2.0.0] - 2025-01-08
 
 ### BREAKING CHANGES
@@ -201,13 +210,14 @@ This project uses [Semantic Versioning](https://semver.org/):
 uv add git+https://github.com/MorePET/py-mat.git@latest
 
 # Install specific version
-uv add git+https://github.com/MorePET/py-mat.git@v2.0.0
+uv add git+https://github.com/MorePET/py-mat.git@v2.0.1
 ```
 
 ### Links
 - **GitHub**: https://github.com/MorePET/py-mat
 - **Issues**: https://github.com/MorePET/py-mat/issues
 
+[2.0.1]: https://github.com/MorePet/py-mat/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/MorePet/py-mat/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/MorePet/py-mat/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/MorePet/py-mat/compare/v0.1.2...v1.0.0

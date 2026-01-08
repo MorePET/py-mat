@@ -351,20 +351,12 @@ class _MaterialInternal:
         # Check for build123d Shape characteristics: has volume and color attributes
         try:
             if hasattr(obj, 'volume') and hasattr(obj, 'color'):
-                # Set color from PBR with transparency from pbr.transmission
+                # Set color from PBR with alpha derived from transmission
+                # Alpha = 1 - transmission (transmission=1 → fully transparent, alpha=0)
                 color = self.properties.pbr.base_color
                 transmission = self.properties.pbr.transmission
-                
-                # Use transmission for alpha channel if it's set (> 0.0)
-                if transmission > 0.0:
-                    # transmission is 0-1 scale, same as alpha
-                    obj.color = (*color[:3], transmission)
-                elif len(color) == 4:
-                    # Fallback: use base_color alpha if transmission not used
-                    obj.color = color
-                else:
-                    # No transparency specified, fully opaque
-                    obj.color = (*color, 1.0)
+                alpha = 1.0 - transmission
+                obj.color = (*color[:3], alpha)
                 
                 # Calculate mass if density is available
                 if self.properties.mechanical.density and self.properties.mechanical.density > 0:
