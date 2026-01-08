@@ -1,4 +1,5 @@
 # Ceramics and glass database
+# Units: All values use explicit *_value and *_unit format for v2.0.0 compatibility
 
 # ============================================================================
 # Alumina (Al2O3)
@@ -9,18 +10,25 @@ name = "Alumina"
 formula = "Al2O3"
 
 [alumina.mechanical]
-density = 3.95
-youngs_modulus = 345
-yield_strength = 240
+density_value = 3.95
+density_unit = "g/cm^3"
+youngs_modulus_value = 345
+youngs_modulus_unit = "GPa"
+yield_strength_value = 240
+yield_strength_unit = "MPa"
 
 [alumina.thermal]
-melting_point = 2072
-thermal_conductivity = 30
-specific_heat = 880
+melting_point_value = 2072
+melting_point_unit = "degC"
+thermal_conductivity_value = 30
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 880
+specific_heat_unit = "J/(kg*K)"
 
 [alumina.electrical]
 dielectric_constant = 9.0
-breakdown_voltage = 12
+breakdown_voltage_value = 12
+breakdown_voltage_unit = "kV/mm"
 
 [alumina.pbr]
 base_color = [0.95, 0.95, 0.93, 1.0]
@@ -36,7 +44,8 @@ name = "99.5% Alumina"
 grade = "995"
 
 [alumina.al995.mechanical]
-density = 3.89
+density_value = 3.89
+density_unit = "g/cm^3"
 
 # 99.9% Alumina
 [alumina.al999]
@@ -44,7 +53,8 @@ name = "99.9% Alumina"
 grade = "999"
 
 [alumina.al999.mechanical]
-density = 3.96
+density_value = 3.96
+density_unit = "g/cm^3"
 
 
 # ============================================================================
@@ -56,13 +66,18 @@ name = "Zirconia"
 formula = "ZrO2"
 
 [zirconia.mechanical]
-density = 6.0
-youngs_modulus = 200
-yield_strength = 1000
+density_value = 6.0
+density_unit = "g/cm^3"
+youngs_modulus_value = 200
+youngs_modulus_unit = "GPa"
+yield_strength_value = 1000
+yield_strength_unit = "MPa"
 
 [zirconia.thermal]
-melting_point = 2715
-thermal_conductivity = 2.0
+melting_point_value = 2715
+melting_point_unit = "degC"
+thermal_conductivity_value = 2.0
+thermal_conductivity_unit = "W/(m*K)"
 
 [zirconia.electrical]
 dielectric_constant = 25
@@ -82,13 +97,18 @@ name = "Silicon Carbide"
 formula = "SiC"
 
 [sic.mechanical]
-density = 3.1
-youngs_modulus = 410
-yield_strength = 350
+density_value = 3.1
+density_unit = "g/cm^3"
+youngs_modulus_value = 410
+youngs_modulus_unit = "GPa"
+yield_strength_value = 350
+yield_strength_unit = "MPa"
 
 [sic.thermal]
-melting_point = 2700
-thermal_conductivity = 90
+melting_point_value = 2700
+melting_point_unit = "degC"
+thermal_conductivity_value = 90
+thermal_conductivity_unit = "W/(m*K)"
 
 [sic.electrical]
 dielectric_constant = 10
@@ -107,17 +127,23 @@ roughness = 0.6
 name = "Macor"
 
 [macor.mechanical]
-density = 2.52
-youngs_modulus = 66
-yield_strength = 60
+density_value = 2.52
+density_unit = "g/cm^3"
+youngs_modulus_value = 66
+youngs_modulus_unit = "GPa"
+yield_strength_value = 60
+yield_strength_unit = "MPa"
 
 [macor.thermal]
-melting_point = 1000
-thermal_conductivity = 1.46
+melting_point_value = 1000
+melting_point_unit = "degC"
+thermal_conductivity_value = 1.46
+thermal_conductivity_unit = "W/(m*K)"
 
 [macor.electrical]
 dielectric_constant = 5.8
-volume_resistivity = 1e11
+volume_resistivity_value = 1e11
+volume_resistivity_unit = "ohm*cm"
 
 [macor.pbr]
 base_color = [0.98, 0.98, 0.96, 1.0]
@@ -136,12 +162,16 @@ machinability = 100
 name = "Shapal"
 
 [shapal.mechanical]
-density = 3.58
-youngs_modulus = 270
+density_value = 3.58
+density_unit = "g/cm^3"
+youngs_modulus_value = 270
+youngs_modulus_unit = "GPa"
 
 [shapal.thermal]
-melting_point = 1600
-thermal_conductivity = 17
+melting_point_value = 1600
+melting_point_unit = "degC"
+thermal_conductivity_value = 17
+thermal_conductivity_unit = "W/(m*K)"
 
 [shapal.pbr]
 base_color = [0.85, 0.82, 0.8, 1.0]
@@ -160,18 +190,25 @@ machinability = 80
 name = "Glass"
 
 [glass.mechanical]
-density = 2.5
-youngs_modulus = 70
-tensile_strength = 50
+density_value = 2.5
+density_unit = "g/cm^3"
+youngs_modulus_value = 70
+youngs_modulus_unit = "GPa"
+tensile_strength_value = 50
+tensile_strength_unit = "MPa"
 
 [glass.thermal]
-melting_point = 1600
-thermal_conductivity = 1.0
-specific_heat = 800
+melting_point_value = 1600
+melting_point_unit = "degC"
+thermal_conductivity_value = 1.0
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 800
+specific_heat_unit = "J/(kg*K)"
 
 [glass.electrical]
 dielectric_constant = 6.0
-breakdown_voltage = 15
+breakdown_voltage_value = 15
+breakdown_voltage_unit = "kV/mm"
 
 [glass.pbr]
 base_color = [0.9, 0.93, 0.95, 0.85]
@@ -186,8 +223,10 @@ name = "Borosilicate Glass"
 grade = "borosilicate"
 
 [glass.borosilicate.thermal]
-melting_point = 1700
-thermal_expansion = 3.25
+melting_point_value = 1700
+melting_point_unit = "degC"
+thermal_expansion_value = 3.25e-6
+thermal_expansion_unit = "1/K"
 
 # Fused Silica (SiO2)
 [glass.fused_silica]
@@ -196,14 +235,16 @@ grade = "fused_silica"
 formula = "SiO2"
 
 [glass.fused_silica.mechanical]
-density = 2.2
+density_value = 2.2
+density_unit = "g/cm^3"
 
 [glass.fused_silica.optical]
 refractive_index = 1.46
 transparency = 99
 
 [glass.fused_silica.thermal]
-thermal_expansion = 0.5
+thermal_expansion_value = 0.5e-6
+thermal_expansion_unit = "1/K"
 
 # BK7 (Schott Glass)
 [glass.BK7]
@@ -226,12 +267,16 @@ name = "Beryllia"
 formula = "BeO"
 
 [beryllia.mechanical]
-density = 3.01
-youngs_modulus = 345
+density_value = 3.01
+density_unit = "g/cm^3"
+youngs_modulus_value = 345
+youngs_modulus_unit = "GPa"
 
 [beryllia.thermal]
-melting_point = 2530
-thermal_conductivity = 270
+melting_point_value = 2530
+melting_point_unit = "degC"
+thermal_conductivity_value = 270
+thermal_conductivity_unit = "W/(m*K)"
 
 [beryllia.electrical]
 dielectric_constant = 7.35
@@ -254,12 +299,16 @@ name = "Yttria"
 formula = "Y2O3"
 
 [yttria.mechanical]
-density = 5.0
-youngs_modulus = 170
+density_value = 5.0
+density_unit = "g/cm^3"
+youngs_modulus_value = 170
+youngs_modulus_unit = "GPa"
 
 [yttria.thermal]
-melting_point = 2410
-thermal_conductivity = 10
+melting_point_value = 2410
+melting_point_unit = "degC"
+thermal_conductivity_value = 10
+thermal_conductivity_unit = "W/(m*K)"
 
 [yttria.electrical]
 dielectric_constant = 10
@@ -268,5 +317,4 @@ dielectric_constant = 10
 base_color = [0.95, 0.93, 0.9, 1.0]
 metallic = 0.0
 roughness = 0.4
-
 

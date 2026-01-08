@@ -1,11 +1,13 @@
 # Scintillator crystals and plastic scintillators database
+# Units: All values use explicit *_value and *_unit format for v2.0.0 compatibility
 
 [lyso]
 name = "LYSO"
 formula = "Lu1.8Y0.2SiO5"
 
 [lyso.mechanical]
-density = 7.1
+density_value = 7.1
+density_unit = "g/cm^3"
 
 [lyso.optical]
 refractive_index = 1.82
@@ -23,7 +25,8 @@ transmission = 0.8
 ior = 1.82
 
 [lyso.thermal]
-melting_point = 2050
+melting_point_value = 2050
+melting_point_unit = "degC"
 
 # LYSO:Ce (Cerium-doped)
 [lyso.Ce]
@@ -68,7 +71,8 @@ name = "BGO"
 formula = "Bi4Ge3O12"
 
 [bgo.mechanical]
-density = 7.13
+density_value = 7.13
+density_unit = "g/cm^3"
 
 [bgo.optical]
 refractive_index = 2.15
@@ -86,7 +90,8 @@ transmission = 0.75
 ior = 2.15
 
 [bgo.thermal]
-melting_point = 1050
+melting_point_value = 1050
+melting_point_unit = "degC"
 
 
 # ============================================================================
@@ -98,7 +103,8 @@ name = "NaI"
 formula = "NaI"
 
 [nai.mechanical]
-density = 3.67
+density_value = 3.67
+density_unit = "g/cm^3"
 
 [nai.optical]
 refractive_index = 1.85
@@ -144,7 +150,8 @@ name = "CsI"
 formula = "CsI"
 
 [csi.mechanical]
-density = 4.51
+density_value = 4.51
+density_unit = "g/cm^3"
 
 [csi.optical]
 refractive_index = 1.95
@@ -191,7 +198,8 @@ name = "LaBr3:Ce"
 formula = "LaBr3:Ce"
 
 [labr3.mechanical]
-density = 5.29
+density_value = 5.29
+density_unit = "g/cm^3"
 
 [labr3.optical]
 refractive_index = 1.9
@@ -218,7 +226,8 @@ name = "PWO"
 formula = "PbWO4"
 
 [pwo.mechanical]
-density = 8.28
+density_value = 8.28
+density_unit = "g/cm^3"
 
 [pwo.optical]
 refractive_index = 2.26
@@ -244,7 +253,8 @@ ior = 2.26
 name = "Plastic Scintillator"
 
 [plastic_scint.mechanical]
-density = 1.032
+density_value = 1.032
+density_unit = "g/cm^3"
 
 [plastic_scint.optical]
 light_yield = 12000
@@ -274,5 +284,4 @@ vendor = "eljen"
 [plastic_scint.EJ200.optical]
 light_yield = 12000
 decay_time = 2.1
-
 

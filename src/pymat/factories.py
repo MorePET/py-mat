@@ -2,6 +2,18 @@
 Factory functions for creating materials with dynamic/computed properties.
 
 Use these when material properties depend on external parameters like temperature.
+
+Note: All properties are stored with their standard units. Access Quantity objects
+via the `*_qty` properties on the property objects for unit-aware calculations.
+
+Example:
+    water_20c = water(20)
+    # Get density as float in g/cm³
+    density_val = water_20c.properties.mechanical.density
+    # Get density as Pint Quantity
+    density_qty = water_20c.properties.mechanical.density_qty
+    # Convert to other units
+    density_kg_m3 = density_qty.to('kg/m^3')
 """
 
 from __future__ import annotations
@@ -34,17 +46,16 @@ def water(temperature_c: float = 20.0, name: Optional[str] = None) -> Material:
     # Clamp temperature to valid liquid range
     t = max(0.0, min(100.0, temperature_c))
     
-    # Density of water (g/cm³) - empirical polynomial fit
-    # More accurate than simple linear approximation
-    # Source: CRC Handbook / IAPWS-95
-    density = (
-        999.83952 
-        + 16.945176 * t 
-        - 7.9870401e-3 * t**2 
-        - 46.170461e-6 * t**3 
-        + 105.56302e-9 * t**4 
-        - 280.54253e-12 * t**5
-    ) / 1000  # Convert kg/m³ to g/cm³
+    # Density of water (g/cm³) - empirical formula
+    # Maximum density at 4°C (~0.99997 g/cm³)
+    # Source: Engineering Toolbox / CRC Handbook / Tanaka et al. (2001)
+    # Parabolic approximation for 0-40°C, linear decrease for 40-100°C
+    if t <= 40:
+        density = 0.99997 * (1 - (t - 4)**2 / 119000)
+    else:
+        # Linear decrease from 40°C to 100°C
+        density_40 = 0.99997 * (1 - (40 - 4)**2 / 119000)  # ~0.9891
+        density = density_40 - 0.00035 * (t - 40)
     
     # Thermal conductivity (W/(m·K)) - varies with temperature
     # Approximate linear fit for 0-100°C

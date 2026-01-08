@@ -1,6 +1,7 @@
 # Gases database
 # Note: Properties at STP (0°C, 1 atm) unless otherwise noted
 # For temperature/pressure-dependent properties, use factory functions
+# Units: All values use explicit *_value and *_unit format for v2.0.0 compatibility
 
 # ============================================================================
 # Air (at 20°C, 1 atm by default)
@@ -11,14 +12,17 @@ name = "Air"
 formula = "N2O2"  # Simplified (78% N2, 21% O2)
 
 [air.mechanical]
-density = 0.001204  # g/cm³ at 20°C, 1 atm
+density_value = 0.001204
+density_unit = "g/cm^3"
 
 [air.thermal]
-thermal_conductivity = 0.0257  # W/(m·K) at 20°C
-specific_heat = 1005  # J/(kg·K) at constant pressure
+thermal_conductivity_value = 0.0257
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 1005
+specific_heat_unit = "J/(kg*K)"
 
 [air.optical]
-refractive_index = 1.000293  # at STP
+refractive_index = 1.000293
 
 [air.pbr]
 base_color = [0.9, 0.95, 1.0, 0.01]
@@ -37,11 +41,14 @@ name = "Nitrogen"
 formula = "N2"
 
 [nitrogen.mechanical]
-density = 0.001165  # g/cm³ at 20°C, 1 atm
+density_value = 0.001165
+density_unit = "g/cm^3"
 
 [nitrogen.thermal]
-thermal_conductivity = 0.0259  # W/(m·K)
-specific_heat = 1040  # J/(kg·K)
+thermal_conductivity_value = 0.0259
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 1040
+specific_heat_unit = "J/(kg*K)"
 
 [nitrogen.optical]
 refractive_index = 1.000298
@@ -59,11 +66,14 @@ name = "Liquid Nitrogen"
 treatment = "cryogenic"
 
 [nitrogen.liquid.mechanical]
-density = 0.808  # g/cm³ at -196°C
+density_value = 0.808
+density_unit = "g/cm^3"
 
 [nitrogen.liquid.thermal]
-thermal_conductivity = 0.14
-specific_heat = 2042
+thermal_conductivity_value = 0.14
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 2042
+specific_heat_unit = "J/(kg*K)"
 
 [nitrogen.liquid.pbr]
 base_color = [0.85, 0.9, 0.95, 0.4]
@@ -79,11 +89,14 @@ name = "Oxygen"
 formula = "O2"
 
 [oxygen.mechanical]
-density = 0.001331  # g/cm³ at 20°C, 1 atm
+density_value = 0.001331
+density_unit = "g/cm^3"
 
 [oxygen.thermal]
-thermal_conductivity = 0.0265  # W/(m·K)
-specific_heat = 920  # J/(kg·K)
+thermal_conductivity_value = 0.0265
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 920
+specific_heat_unit = "J/(kg*K)"
 
 [oxygen.optical]
 refractive_index = 1.000271
@@ -104,11 +117,14 @@ name = "Argon"
 formula = "Ar"
 
 [argon.mechanical]
-density = 0.001662  # g/cm³ at 20°C, 1 atm
+density_value = 0.001662
+density_unit = "g/cm^3"
 
 [argon.thermal]
-thermal_conductivity = 0.0177  # W/(m·K)
-specific_heat = 520  # J/(kg·K)
+thermal_conductivity_value = 0.0177
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 520
+specific_heat_unit = "J/(kg*K)"
 
 [argon.optical]
 refractive_index = 1.000281
@@ -132,11 +148,14 @@ name = "Carbon Dioxide"
 formula = "CO2"
 
 [co2.mechanical]
-density = 0.001839  # g/cm³ at 20°C, 1 atm
+density_value = 0.001839
+density_unit = "g/cm^3"
 
 [co2.thermal]
-thermal_conductivity = 0.0166  # W/(m·K)
-specific_heat = 846  # J/(kg·K)
+thermal_conductivity_value = 0.0166
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 846
+specific_heat_unit = "J/(kg*K)"
 
 [co2.optical]
 refractive_index = 1.000449
@@ -154,10 +173,12 @@ name = "Dry Ice"
 treatment = "solid"
 
 [co2.dry_ice.mechanical]
-density = 1.56  # g/cm³ at -78.5°C
+density_value = 1.56
+density_unit = "g/cm^3"
 
 [co2.dry_ice.thermal]
-thermal_conductivity = 0.6
+thermal_conductivity_value = 0.6
+thermal_conductivity_unit = "W/(m*K)"
 
 [co2.dry_ice.pbr]
 base_color = [0.95, 0.95, 1.0, 0.7]
@@ -174,11 +195,14 @@ name = "Helium"
 formula = "He"
 
 [helium.mechanical]
-density = 0.000166  # g/cm³ at 20°C, 1 atm (very light!)
+density_value = 0.000166
+density_unit = "g/cm^3"
 
 [helium.thermal]
-thermal_conductivity = 0.152  # W/(m·K) - very high for a gas
-specific_heat = 5193  # J/(kg·K) - very high
+thermal_conductivity_value = 0.152
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 5193
+specific_heat_unit = "J/(kg*K)"
 
 [helium.optical]
 refractive_index = 1.000035
@@ -196,11 +220,14 @@ name = "Liquid Helium"
 treatment = "cryogenic"
 
 [helium.liquid.mechanical]
-density = 0.125  # g/cm³ at 4.2K
+density_value = 0.125
+density_unit = "g/cm^3"
 
 [helium.liquid.thermal]
-thermal_conductivity = 0.019
-specific_heat = 4700
+thermal_conductivity_value = 0.019
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 4700
+specific_heat_unit = "J/(kg*K)"
 
 [helium.liquid.pbr]
 base_color = [0.85, 0.9, 0.95, 0.3]
@@ -216,11 +243,14 @@ name = "Hydrogen"
 formula = "H2"
 
 [hydrogen.mechanical]
-density = 0.0000838  # g/cm³ at 20°C, 1 atm (lightest!)
+density_value = 0.0000838
+density_unit = "g/cm^3"
 
 [hydrogen.thermal]
-thermal_conductivity = 0.187  # W/(m·K)
-specific_heat = 14304  # J/(kg·K)
+thermal_conductivity_value = 0.187
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 14304
+specific_heat_unit = "J/(kg*K)"
 
 [hydrogen.optical]
 refractive_index = 1.000132
@@ -244,11 +274,14 @@ name = "Neon"
 formula = "Ne"
 
 [neon.mechanical]
-density = 0.000839  # g/cm³ at 20°C, 1 atm
+density_value = 0.000839
+density_unit = "g/cm^3"
 
 [neon.thermal]
-thermal_conductivity = 0.0491  # W/(m·K)
-specific_heat = 1030  # J/(kg·K)
+thermal_conductivity_value = 0.0491
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 1030
+specific_heat_unit = "J/(kg*K)"
 
 [neon.optical]
 refractive_index = 1.000067
@@ -269,11 +302,14 @@ name = "Xenon"
 formula = "Xe"
 
 [xenon.mechanical]
-density = 0.005458  # g/cm³ at 20°C, 1 atm (heavy gas)
+density_value = 0.005458
+density_unit = "g/cm^3"
 
 [xenon.thermal]
-thermal_conductivity = 0.00565  # W/(m·K)
-specific_heat = 158  # J/(kg·K)
+thermal_conductivity_value = 0.00565
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 158
+specific_heat_unit = "J/(kg*K)"
 
 [xenon.optical]
 refractive_index = 1.000702
@@ -297,11 +333,14 @@ name = "Methane"
 formula = "CH4"
 
 [methane.mechanical]
-density = 0.000668  # g/cm³ at 20°C, 1 atm
+density_value = 0.000668
+density_unit = "g/cm^3"
 
 [methane.thermal]
-thermal_conductivity = 0.0343  # W/(m·K)
-specific_heat = 2226  # J/(kg·K)
+thermal_conductivity_value = 0.0343
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 2226
+specific_heat_unit = "J/(kg*K)"
 
 [methane.optical]
 refractive_index = 1.000444
@@ -324,11 +363,14 @@ flammable = true
 name = "Vacuum"
 
 [vacuum.mechanical]
-density = 0.0
+density_value = 0.0
+density_unit = "g/cm^3"
 
 [vacuum.thermal]
-thermal_conductivity = 0.0
-specific_heat = 0.0
+thermal_conductivity_value = 0.0
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 0.0
+specific_heat_unit = "J/(kg*K)"
 
 [vacuum.optical]
 refractive_index = 1.0

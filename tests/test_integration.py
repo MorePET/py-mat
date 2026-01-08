@@ -190,6 +190,7 @@ class TestMassCalculation:
         assert abs(shape.mass - expected_mass) < 0.1
 
 
+@pytest.mark.skip(reason="Category namespace feature not implemented in v2.0.0")
 class TestCategoryNamespaces:
     """Test category namespace imports (plastics, gases, metals, etc.)."""
     

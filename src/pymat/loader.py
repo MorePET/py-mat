@@ -3,10 +3,13 @@ TOML loader with inheritance resolution.
 
 Parses hierarchical TOML files and builds Material trees with property inheritance.
 Children inherit all properties from parents unless explicitly overridden.
+
+Supports both legacy single-value format and new unit-aware (value, unit) format.
 """
 
 from __future__ import annotations
 import tomllib
+import logging
 from pathlib import Path
 from typing import Dict, Any, Optional, TYPE_CHECKING
 
@@ -19,12 +22,17 @@ from .properties import (
     ElectricalProperties, OpticalProperties, PBRProperties,
     ManufacturingProperties, ComplianceProperties, SourcingProperties
 )
+from .units import STANDARD_UNITS
 from . import registry
+
+logger = logging.getLogger(__name__)
 
 
 def _build_properties_from_dict(data: Dict[str, Any], parent_props: Optional[AllProperties] = None) -> AllProperties:
     """
     Build AllProperties from a dictionary, inheriting from parent if provided.
+    
+    Supports both legacy format (single values) and new unit-aware format (*_value, *_unit pairs).
     
     Args:
         data: Dictionary with property keys
@@ -32,6 +40,13 @@ def _build_properties_from_dict(data: Dict[str, Any], parent_props: Optional[All
         
     Returns:
         Fully populated AllProperties
+        
+    Legacy format (backward compatible):
+        thermal.melting_point = 1450  -> auto-assigns degC unit
+        
+    New unit-aware format:
+        thermal.melting_point_value = 1450
+        thermal.melting_point_unit = "degC"
     """
     from copy import deepcopy
     
@@ -40,9 +55,54 @@ def _build_properties_from_dict(data: Dict[str, Any], parent_props: Optional[All
     
     # Helper to safely get and update nested properties
     def update_properties(prop_obj, prop_dict, prop_name):
+        """Update property object from dictionary, handling both legacy and new formats."""
         for key, value in prop_dict.items():
-            if value is not None:
-                setattr(prop_obj, key, value)
+            if value is None:
+                continue
+            
+            # Skip processed value/unit pairs
+            if key.endswith("_unit"):
+                continue
+            
+            # Check if this is a value in a value/unit pair
+            if key.endswith("_value"):
+                base_key = key[:-6]  # Remove "_value" suffix
+                unit_key = f"{base_key}_unit"
+                
+                # Get the unit from the dictionary
+                unit = prop_dict.get(unit_key)
+                if unit is None:
+                    # No unit specified, try to assign default
+                    full_key = f"{prop_name}.{base_key}"
+                    default_unit = STANDARD_UNITS.get(base_key)
+                    if default_unit:
+                        unit = default_unit
+                        logger.warning(
+                            f"No unit specified for {full_key}, auto-assigning {default_unit}"
+                        )
+                    else:
+                        logger.warning(f"Could not determine unit for {full_key}")
+                        unit = None
+                
+                # Set both value and unit
+                if hasattr(prop_obj, base_key):
+                    setattr(prop_obj, base_key, value)
+                if unit and hasattr(prop_obj, unit_key):
+                    setattr(prop_obj, unit_key, unit)
+            
+            # Legacy format: single value (not a value/unit pair)
+            elif not key.endswith("_unit"):
+                if hasattr(prop_obj, key):
+                    setattr(prop_obj, key, value)
+                    # Try to set default unit
+                    unit_key = f"{key}_unit"
+                    if hasattr(prop_obj, unit_key):
+                        default_unit = STANDARD_UNITS.get(key)
+                        if default_unit:
+                            setattr(prop_obj, unit_key, default_unit)
+                            logger.warning(
+                                f"No unit specified for {prop_name}.{key}, auto-assigning {default_unit}"
+                            )
     
     # Parse each property group
     if "mechanical" in data:

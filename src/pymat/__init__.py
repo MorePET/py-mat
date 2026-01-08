@@ -8,9 +8,10 @@ Features:
 - Lazy loading: categories load on first access
 - periodictable integration: auto-fill density from formula
 - PBR support: rendering properties for glTF/3MF export
+- Unit-aware properties with Pint for dimensional analysis
 
 Usage:
-    from pymat import stainless, aluminum, lyso, s304, T6
+    from pymat import stainless, aluminum, lyso, s304, T6, ureg
     
     # Chainable
     housing = stainless.s316L.electropolished.apply_to(Box(50, 50, 10))
@@ -22,6 +23,13 @@ Usage:
     # Check properties
     print(housing.material.properties.pbr.roughness)
     print(crystal.material.properties.optical.light_yield)
+    
+    # Unit-aware calculations
+    density_qty = stainless.s304.properties.mechanical.density_qty
+    density_kg_m3 = density_qty.to('kg/m^3')
+    
+    # Temperature-dependent properties
+    k_at_100c = stainless.properties.thermal.thermal_conductivity_at(100 * ureg.degC)
 """
 
 from __future__ import annotations
@@ -38,12 +46,13 @@ from .properties import (
     ElectricalProperties, OpticalProperties, PBRProperties,
     ManufacturingProperties, ComplianceProperties, SourcingProperties,
 )
+from .units import ureg
 from . import registry
 from .loader import load_toml, load_category
 from .enrichers import enrich_from_periodictable, enrich_from_matproj, enrich_all
 from . import factories
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __all__ = [
     "Material",
     "AllProperties",
@@ -55,6 +64,7 @@ __all__ = [
     "ManufacturingProperties",
     "ComplianceProperties",
     "SourcingProperties",
+    "ureg",
     "load_toml",
     "load_category",
     "enrich_from_periodictable",

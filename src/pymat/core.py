@@ -21,33 +21,69 @@ from .properties import AllProperties, MechanicalProperties, OpticalProperties, 
 T = TypeVar('T')
 
 
+def _make_material(
+    name: str,
+    *,
+    density: Optional[float] = None,
+    formula: Optional[str] = None,
+    composition: Optional[Dict[str, float]] = None,
+    color: Optional[tuple] = None,
+    grade: Optional[str] = None,
+    temper: Optional[str] = None,
+    treatment: Optional[str] = None,
+    vendor: Optional[str] = None,
+    mechanical: Optional[Dict[str, Any]] = None,
+    thermal: Optional[Dict[str, Any]] = None,
+    electrical: Optional[Dict[str, Any]] = None,
+    optical: Optional[Dict[str, Any]] = None,
+    pbr: Optional[Dict[str, Any]] = None,
+    manufacturing: Optional[Dict[str, Any]] = None,
+    compliance: Optional[Dict[str, Any]] = None,
+    sourcing: Optional[Dict[str, Any]] = None,
+    properties: Optional[AllProperties] = None,
+    parent: Optional['Material'] = None,
+    _key: Optional[str] = None,
+) -> 'Material':
+    """Factory function to create Material with density convenience param."""
+    # Create the internal material object
+    mat = _MaterialInternal(
+        name=name,
+        formula=formula,
+        composition=composition,
+        color=color,
+        grade=grade,
+        temper=temper,
+        treatment=treatment,
+        vendor=vendor,
+        mechanical=mechanical,
+        thermal=thermal,
+        electrical=electrical,
+        optical=optical,
+        pbr=pbr,
+        manufacturing=manufacturing,
+        compliance=compliance,
+        sourcing=sourcing,
+        properties=properties or AllProperties(),
+        parent=parent,
+        _key=_key,
+    )
+    
+    # Apply density convenience param
+    if density is not None:
+        mat.properties.mechanical.density = density
+    
+    return mat
+
+
 @dataclass
-class Material:
+class _MaterialInternal:
     """
+    Internal Material implementation. Use Material() constructor.
+    
     A hierarchical, chainable material node.
     
     Properties cascade down the chain - children inherit from parents
     but can override any property at any level.
-    
-    Constructor parameters:
-    - name: Material name (required)
-    - density: Density in g/cm³ (convenience parameter)
-    - color: Visualization color - RGB tuple (r, g, b) or RGBA (r, g, b, alpha)
-    - formula: Chemical formula (e.g., "Al2O3")
-    - composition: Element fractions dict
-    - mechanical: Dict of mechanical properties (density, youngs_modulus, etc.)
-    - thermal: Dict of thermal properties (melting_point, conductivity, etc.)
-    - electrical: Dict of electrical properties (resistivity, dielectric_constant, etc.)
-    - optical: Dict of optical properties (refractive_index, transparency, etc.) - PHYSICS
-    - pbr: Dict of PBR visualization properties (base_color, metallic, roughness) - RENDERING
-    - manufacturing: Dict of manufacturing properties (machinability, weldability, etc.)
-    - compliance: Dict of compliance properties (rohs_compliant, food_safe, etc.)
-    - sourcing: Dict of sourcing properties (cost_per_kg, availability, etc.)
-    
-    Example usage:
-        Material(name="Steel", density=7.8, color=(0.7, 0.7, 0.7))
-        Material(name="Steel", mechanical={"density": 7.8, "youngs_modulus": 200})
-        Material(name="LYSO", optical={"transparency": 92, "refractive_index": 1.82})
     """
     
     # Identity
@@ -56,7 +92,6 @@ class Material:
     composition: Optional[Dict[str, float]] = None  # element -> fraction
     
     # Convenience parameters (backward compatibility)
-    density: Optional[float] = None              # g/cm³ (convenience for mechanical.density)
     color: Optional[tuple] = None                # RGB or RGBA for visualization
     
     # Hierarchy metadata
@@ -79,16 +114,13 @@ class Material:
     properties: AllProperties = field(default_factory=AllProperties)
     
     # Hierarchy (not shown in repr)
-    parent: Optional[Material] = field(default=None, repr=False)
-    _children: Dict[str, Material] = field(default_factory=dict, repr=False)
+    parent: Optional[_MaterialInternal] = field(default=None, repr=False)
+    _children: Dict[str, _MaterialInternal] = field(default_factory=dict, repr=False)
     _key: Optional[str] = field(default=None, repr=False)  # for registry
     
     def __post_init__(self):
         """Apply convenience parameters and property groups to properties object."""
-        # Apply convenience params (backward compatibility)
-        if self.density is not None:
-            self.properties.mechanical.density = self.density
-        
+        # Apply color if provided
         if self.color is not None:
             if len(self.color) == 3:
                 # RGB provided, add full opacity
@@ -139,31 +171,61 @@ class Material:
             for key, value in self.sourcing.items():
                 if hasattr(self.properties.sourcing, key):
                     setattr(self.properties.sourcing, key, value)
+        
+        # Apply PBR defaults from optical properties (DRY principle)
+        # Allow physics properties to drive rendering defaults, but preserve explicit overrides
+        
+        # If ior wasn't explicitly set (still at default 1.5) and optical.refractive_index exists,
+        # use optical.refractive_index as the PBR ior
+        if (self.properties.pbr.ior == 1.5 and 
+            self.properties.optical.refractive_index is not None):
+            self.properties.pbr.ior = self.properties.optical.refractive_index
+        
+        # If transmission wasn't explicitly set (still at default 0.0) and optical.transparency exists,
+        # convert transparency (0-100%) to transmission (0-1)
+        if (self.properties.pbr.transmission == 0.0 and 
+            self.properties.optical.transparency is not None):
+            self.properties.pbr.transmission = self.properties.optical.transparency / 100.0
     
     # =========================================================================
     # Chaining API
     # =========================================================================
     
-    def __getattr__(self, name: str) -> Material:
+    def __getattr__(self, name: str) -> _MaterialInternal:
         """
         Access child variants by attribute.
         
         Usage:
             stainless.s316L -> accesses s316L grade
             s316L.electropolished -> accesses treatment
-        """
-        if name.startswith("_"):
-            raise AttributeError(name)
-        if name in self._children:
-            return self._children[name]
         
-        available = list(self._children.keys())
+        Note: This is only called when normal attribute lookup fails.
+        """
+        # For private/protected attributes that don't exist, raise immediately
+        if name.startswith("_"):
+            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+        
+        # For public attributes, try to find in children
+        try:
+            children = object.__getattribute__(self, "_children")
+            if name in children:
+                return children[name]
+        except AttributeError:
+            pass
+        
+        # Not found in children either
+        try:
+            children = object.__getattribute__(self, "_children")
+            available = list(children.keys())
+        except AttributeError:
+            available = []
+        
         raise AttributeError(
             f"'{self.name}' has no variant '{name}'. "
             f"Available: {available if available else 'none'}"
         )
     
-    def _add_child(self, key: str, **overrides) -> Material:
+    def _add_child(self, key: str, **overrides) -> _MaterialInternal:
         """
         Internal: add a child node with inherited properties.
         
@@ -173,35 +235,26 @@ class Material:
         from copy import deepcopy
         inherited_props = deepcopy(self.properties)
         
-        # Merge overridden properties
-        override_props = overrides.pop("properties", {})
-        if isinstance(override_props, dict):
-            # Merge into existing properties (for simple properties)
-            # For dataclass properties, individual fields override
-            if "mechanical_overrides" in overrides:
-                for k, v in overrides.pop("mechanical_overrides").items():
-                    if v is not None:
-                        setattr(inherited_props.mechanical, k, v)
-            if "thermal_overrides" in overrides:
-                for k, v in overrides.pop("thermal_overrides").items():
-                    if v is not None:
-                        setattr(inherited_props.thermal, k, v)
-            if "electrical_overrides" in overrides:
-                for k, v in overrides.pop("electrical_overrides").items():
-                    if v is not None:
-                        setattr(inherited_props.electrical, k, v)
-            if "optical_overrides" in overrides:
-                for k, v in overrides.pop("optical_overrides").items():
-                    if v is not None:
-                        setattr(inherited_props.optical, k, v)
-            if "pbr_overrides" in overrides:
-                for k, v in overrides.pop("pbr_overrides").items():
-                    if v is not None:
-                        setattr(inherited_props.pbr, k, v)
-            if "manufacturing_overrides" in overrides:
-                for k, v in overrides.pop("manufacturing_overrides").items():
-                    if v is not None:
-                        setattr(inherited_props.manufacturing, k, v)
+        # Handle property group overrides (mechanical, thermal, etc.)
+        # These are dicts that should be applied to the inherited properties
+        property_groups = [
+            ("mechanical", inherited_props.mechanical),
+            ("thermal", inherited_props.thermal),
+            ("electrical", inherited_props.electrical),
+            ("optical", inherited_props.optical),
+            ("pbr", inherited_props.pbr),
+            ("manufacturing", inherited_props.manufacturing),
+            ("compliance", inherited_props.compliance),
+            ("sourcing", inherited_props.sourcing),
+        ]
+        
+        for group_name, prop_obj in property_groups:
+            if group_name in overrides:
+                group_dict = overrides.pop(group_name)
+                if isinstance(group_dict, dict):
+                    for k, v in group_dict.items():
+                        if v is not None and hasattr(prop_obj, k):
+                            setattr(prop_obj, k, v)
         
         # Build child properties
         child_props = {
@@ -234,23 +287,23 @@ class Material:
     # Chainable Methods
     # =========================================================================
     
-    def grade_(self, key: str, **props) -> Material:
+    def grade_(self, key: str, **props) -> _MaterialInternal:
         """Add a grade variant (e.g., 304, 316L, 6061, a7075)."""
         return self._add_child(key, grade=key, **props)
     
-    def temper_(self, key: str, **props) -> Material:
+    def temper_(self, key: str, **props) -> _MaterialInternal:
         """Add a temper/heat treatment (e.g., T6, O, annealed)."""
         return self._add_child(key, temper=key, **props)
     
-    def treatment_(self, key: str, **props) -> Material:
+    def treatment_(self, key: str, **props) -> _MaterialInternal:
         """Add a surface treatment (e.g., passivated, anodized, electropolished)."""
         return self._add_child(key, treatment=key, **props)
     
-    def vendor_(self, key: str, **props) -> Material:
+    def vendor_(self, key: str, **props) -> _MaterialInternal:
         """Add a vendor-specific variant."""
         return self._add_child(key, vendor=key, **props)
     
-    def variant_(self, key: str, **props) -> Material:
+    def variant_(self, key: str, **props) -> _MaterialInternal:
         """Add a generic variant (dopant, alloy composition, etc.)."""
         return self._add_child(key, **props)
     
@@ -298,14 +351,20 @@ class Material:
         # Check for build123d Shape characteristics: has volume and color attributes
         try:
             if hasattr(obj, 'volume') and hasattr(obj, 'color'):
-                # Set color from PBR
+                # Set color from PBR with transparency from pbr.transmission
                 color = self.properties.pbr.base_color
-                if len(color) == 4:  # RGBA
-                    # For build123d viewer: use RGB, transparency via alpha
-                    obj.color = color[:3]
-                    # Note: alpha would be set separately if shape supports it
-                else:
+                transmission = self.properties.pbr.transmission
+                
+                # Use transmission for alpha channel if it's set (> 0.0)
+                if transmission > 0.0:
+                    # transmission is 0-1 scale, same as alpha
+                    obj.color = (*color[:3], transmission)
+                elif len(color) == 4:
+                    # Fallback: use base_color alpha if transmission not used
                     obj.color = color
+                else:
+                    # No transparency specified, fully opaque
+                    obj.color = (*color, 1.0)
                 
                 # Calculate mass if density is available
                 if self.properties.mechanical.density and self.properties.mechanical.density > 0:
@@ -338,20 +397,21 @@ class Material:
     
     @property
     def density(self) -> Optional[float]:
-        """Density in g/cm³."""
+        """Density in g/cm³ (convenience property for mechanical.density)."""
         return self.properties.mechanical.density
     
     @density.setter
-    def density(self, value: float) -> None:
+    def density(self, value: Optional[float]) -> None:
         """Set density in g/cm³."""
         self.properties.mechanical.density = value
     
     @property
     def density_g_mm3(self) -> float:
         """Density in g/mm³ (for build123d calculations)."""
-        if not self.density:
+        mech_density = self.properties.mechanical.density
+        if not mech_density:
             return 0.0
-        return self.density / 1000
+        return mech_density / 1000
     
     def mass_from_volume_mm3(self, volume_mm3: float) -> float:
         """Calculate mass in grams from volume in mm³."""
@@ -387,3 +447,83 @@ class Material:
         
         return "\n".join(line for line in lines if line)
 
+
+# Create the public Material class as an alias that accepts density param
+class Material(_MaterialInternal):
+    """
+    A hierarchical, chainable material node.
+    
+    Properties cascade down the chain - children inherit from parents
+    but can override any property at any level.
+    
+    Constructor parameters:
+    - name: Material name (required)
+    - density: Density in g/cm³ (convenience parameter, sets mechanical.density)
+    - color: Visualization color - RGB tuple (r, g, b) or RGBA (r, g, b, alpha)
+    - formula: Chemical formula (e.g., "Al2O3")
+    - composition: Element fractions dict
+    - mechanical: Dict of mechanical properties (density, youngs_modulus, etc.)
+    - thermal: Dict of thermal properties (melting_point, conductivity, etc.)
+    - electrical: Dict of electrical properties (resistivity, dielectric_constant, etc.)
+    - optical: Dict of optical properties (refractive_index, transparency, etc.) - PHYSICS
+    - pbr: Dict of PBR visualization properties (base_color, metallic, roughness) - RENDERING
+    - manufacturing: Dict of manufacturing properties (machinability, weldability, etc.)
+    - compliance: Dict of compliance properties (rohs_compliant, food_safe, etc.)
+    - sourcing: Dict of sourcing properties (cost_per_kg, availability, etc.)
+    
+    Example usage:
+        Material(name="Steel", density=7.8, color=(0.7, 0.7, 0.7))
+        Material(name="Steel", mechanical={"density": 7.8, "youngs_modulus": 200})
+        Material(name="LYSO", optical={"transparency": 92, "refractive_index": 1.82})
+    """
+    
+    def __init__(
+        self,
+        name: str,
+        *,
+        density: Optional[float] = None,
+        formula: Optional[str] = None,
+        composition: Optional[Dict[str, float]] = None,
+        color: Optional[tuple] = None,
+        grade: Optional[str] = None,
+        temper: Optional[str] = None,
+        treatment: Optional[str] = None,
+        vendor: Optional[str] = None,
+        mechanical: Optional[Dict[str, Any]] = None,
+        thermal: Optional[Dict[str, Any]] = None,
+        electrical: Optional[Dict[str, Any]] = None,
+        optical: Optional[Dict[str, Any]] = None,
+        pbr: Optional[Dict[str, Any]] = None,
+        manufacturing: Optional[Dict[str, Any]] = None,
+        compliance: Optional[Dict[str, Any]] = None,
+        sourcing: Optional[Dict[str, Any]] = None,
+        properties: Optional[AllProperties] = None,
+        parent: Optional['Material'] = None,
+        _key: Optional[str] = None,
+    ):
+        # Call parent init without density
+        super().__init__(
+            name=name,
+            formula=formula,
+            composition=composition,
+            color=color,
+            grade=grade,
+            temper=temper,
+            treatment=treatment,
+            vendor=vendor,
+            mechanical=mechanical,
+            thermal=thermal,
+            electrical=electrical,
+            optical=optical,
+            pbr=pbr,
+            manufacturing=manufacturing,
+            compliance=compliance,
+            sourcing=sourcing,
+            properties=properties or AllProperties(),
+            parent=parent,
+            _key=_key,
+        )
+        
+        # Apply density convenience param after parent init
+        if density is not None:
+            self.properties.mechanical.density = density

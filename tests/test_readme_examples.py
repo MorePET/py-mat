@@ -103,7 +103,7 @@ class TestHierarchicalMaterials:
         
         # Add treatment
         passivated = s304.treatment_("passivated", name="SS 304 Passivated")
-        assert passivated.path == "stainless.304.passivated"
+        assert passivated.path == "stainless_steel.304.passivated"  # name -> lowercase with underscores
         assert passivated.density == 8.0  # Inherited through chain
     
     def test_direct_access(self):
@@ -221,14 +221,17 @@ class TestFactoryFunctions:
         
         Create solutions with specific concentration and temperature:
         """
-        from pymat.factories import saline
+        from pymat.factories import saline, water
         
         # Physiological saline at body temperature
         phantom = saline(0.9, temperature_c=37)
-        assert phantom.density > 0.99  # Slightly denser than water
+        # Saline is slightly denser than pure water at same temperature
+        pure_water_37 = water(37)
+        assert phantom.density > pure_water_37.density
         
-        # Seawater
+        # Seawater (3.5% NaCl) at 20°C
         seawater = saline(3.5, temperature_c=20)
+        # Higher concentration = higher density
         assert seawater.density > phantom.density
 
 

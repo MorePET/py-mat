@@ -1,5 +1,6 @@
 # Liquids database
 # Note: For temperature-dependent properties, use the factory functions in pymat.factories
+# Units: All values use explicit *_value and *_unit format for v2.0.0 compatibility
 
 # ============================================================================
 # Water (at 20°C by default)
@@ -10,19 +11,24 @@ name = "Water"
 formula = "H2O"
 
 [water.mechanical]
-density = 0.998  # g/cm³ at 20°C
+density_value = 0.998
+density_unit = "g/cm^3"
 
 [water.thermal]
-melting_point = 0
-thermal_conductivity = 0.598  # W/(m·K) at 20°C
-specific_heat = 4182  # J/(kg·K) at 20°C
+melting_point_value = 0
+melting_point_unit = "degC"
+thermal_conductivity_value = 0.598
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 4182
+specific_heat_unit = "J/(kg*K)"
 
 [water.optical]
 refractive_index = 1.333
 
 [water.electrical]
-dielectric_constant = 80.1  # at 20°C
-resistivity = 182000  # Ω·m (pure water)
+dielectric_constant = 80.1
+resistivity_value = 182000
+resistivity_unit = "ohm*m"
 
 [water.pbr]
 base_color = [0.7, 0.85, 0.95, 0.3]
@@ -37,11 +43,14 @@ name = "Ice"
 treatment = "frozen"
 
 [water.ice.mechanical]
-density = 0.917
+density_value = 0.917
+density_unit = "g/cm^3"
 
 [water.ice.thermal]
-thermal_conductivity = 2.22
-specific_heat = 2090
+thermal_conductivity_value = 2.22
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 2090
+specific_heat_unit = "J/(kg*K)"
 
 [water.ice.pbr]
 base_color = [0.9, 0.95, 1.0, 0.7]
@@ -58,12 +67,16 @@ name = "Heavy Water (D2O)"
 formula = "D2O"
 
 [heavy_water.mechanical]
-density = 1.107  # g/cm³ at 20°C
+density_value = 1.107
+density_unit = "g/cm^3"
 
 [heavy_water.thermal]
-melting_point = 3.82
-thermal_conductivity = 0.595
-specific_heat = 4210
+melting_point_value = 3.82
+melting_point_unit = "degC"
+thermal_conductivity_value = 0.595
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 4210
+specific_heat_unit = "J/(kg*K)"
 
 [heavy_water.optical]
 refractive_index = 1.328
@@ -84,18 +97,22 @@ ior = 1.328
 name = "Mineral Oil"
 
 [mineral_oil.mechanical]
-density = 0.85
+density_value = 0.85
+density_unit = "g/cm^3"
 
 [mineral_oil.thermal]
-thermal_conductivity = 0.14
-specific_heat = 1670
+thermal_conductivity_value = 0.14
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 1670
+specific_heat_unit = "J/(kg*K)"
 
 [mineral_oil.optical]
 refractive_index = 1.47
 
 [mineral_oil.electrical]
 dielectric_constant = 2.2
-breakdown_voltage = 30
+breakdown_voltage_value = 30
+breakdown_voltage_unit = "kV/mm"
 
 [mineral_oil.pbr]
 base_color = [0.95, 0.9, 0.7, 0.4]
@@ -114,12 +131,16 @@ name = "Glycerol"
 formula = "C3H8O3"
 
 [glycerol.mechanical]
-density = 1.261
+density_value = 1.261
+density_unit = "g/cm^3"
 
 [glycerol.thermal]
-melting_point = 18
-thermal_conductivity = 0.29
-specific_heat = 2430
+melting_point_value = 18
+melting_point_unit = "degC"
+thermal_conductivity_value = 0.29
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 2430
+specific_heat_unit = "J/(kg*K)"
 
 [glycerol.optical]
 refractive_index = 1.473
@@ -140,20 +161,26 @@ ior = 1.473
 name = "Silicone Oil"
 
 [silicone_oil.mechanical]
-density = 0.97
+density_value = 0.97
+density_unit = "g/cm^3"
 
 [silicone_oil.thermal]
-thermal_conductivity = 0.15
-specific_heat = 1500
-max_service_temp = 200
-min_service_temp = -50
+thermal_conductivity_value = 0.15
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 1500
+specific_heat_unit = "J/(kg*K)"
+max_service_temp_value = 200
+max_service_temp_unit = "degC"
+min_service_temp_value = -50
+min_service_temp_unit = "degC"
 
 [silicone_oil.optical]
 refractive_index = 1.40
 
 [silicone_oil.electrical]
 dielectric_constant = 2.7
-breakdown_voltage = 15
+breakdown_voltage_value = 15
+breakdown_voltage_unit = "kV/mm"
 
 [silicone_oil.pbr]
 base_color = [0.9, 0.9, 0.9, 0.4]

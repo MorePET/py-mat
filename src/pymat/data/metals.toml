@@ -1,19 +1,26 @@
 # Metals and alloys database
 # Format: hierarchical TOML with property groups
+# Units: All values use explicit *_value and *_unit format for v2.0.0 compatibility
 
 [stainless]
 name = "Stainless Steel"
 
 [stainless.mechanical]
-density = 8.0
-youngs_modulus = 193
+density_value = 8.0
+density_unit = "g/cm^3"
+youngs_modulus_value = 193
+youngs_modulus_unit = "GPa"
 poissons_ratio = 0.27
 
 [stainless.thermal]
-melting_point = 1450
-thermal_conductivity = 15.1
-specific_heat = 500
-thermal_expansion = 16
+melting_point_value = 1450
+melting_point_unit = "degC"
+thermal_conductivity_value = 15.1
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 500
+specific_heat_unit = "J/(kg*K)"
+thermal_expansion_value = 16e-6
+thermal_expansion_unit = "1/K"
 
 [stainless.pbr]
 base_color = [0.75, 0.75, 0.77, 1.0]
@@ -26,13 +33,16 @@ name = "Stainless Steel 304"
 grade = "304"
 
 [stainless.s304.mechanical]
-yield_strength = 170
-tensile_strength = 515
+yield_strength_value = 170
+yield_strength_unit = "MPa"
+tensile_strength_value = 515
+tensile_strength_unit = "MPa"
 elongation = 40
 hardness_vickers = 217
 
 [stainless.s304.electrical]
-resistivity = 7.2e-7
+resistivity_value = 7.2e-7
+resistivity_unit = "ohm*m"
 
 # Stainless Steel 316L
 [stainless.s316L]
@@ -40,14 +50,18 @@ name = "Stainless Steel 316L"
 grade = "316L"
 
 [stainless.s316L.mechanical]
-density = 8.0
-yield_strength = 170
-tensile_strength = 485
+density_value = 8.0
+density_unit = "g/cm^3"
+yield_strength_value = 170
+yield_strength_unit = "MPa"
+tensile_strength_value = 485
+tensile_strength_unit = "MPa"
 elongation = 30
 hardness_vickers = 217
 
 [stainless.s316L.electrical]
-resistivity = 7.4e-7
+resistivity_value = 7.4e-7
+resistivity_unit = "ohm*m"
 
 # 316L Electropolished
 [stainless.s316L.electropolished]
@@ -71,8 +85,10 @@ name = "Stainless Steel 303"
 grade = "303"
 
 [stainless.s303.mechanical]
-yield_strength = 205
-tensile_strength = 515
+yield_strength_value = 205
+yield_strength_unit = "MPa"
+tensile_strength_value = 515
+tensile_strength_unit = "MPa"
 
 # Stainless Steel 17-4 PH (precipitation hardened)
 [stainless.s17_4PH]
@@ -80,9 +96,12 @@ name = "Stainless Steel 17-4 PH"
 grade = "17-4 PH"
 
 [stainless.s17_4PH.mechanical]
-density = 7.8
-yield_strength = 1170
-tensile_strength = 1310
+density_value = 7.8
+density_unit = "g/cm^3"
+yield_strength_value = 1170
+yield_strength_unit = "MPa"
+tensile_strength_value = 1310
+tensile_strength_unit = "MPa"
 
 
 # ============================================================================
@@ -93,15 +112,21 @@ tensile_strength = 1310
 name = "Aluminum"
 
 [aluminum.mechanical]
-density = 2.7
-youngs_modulus = 69
+density_value = 2.7
+density_unit = "g/cm^3"
+youngs_modulus_value = 69
+youngs_modulus_unit = "GPa"
 poissons_ratio = 0.33
 
 [aluminum.thermal]
-melting_point = 660
-thermal_conductivity = 235
-specific_heat = 900
-thermal_expansion = 23.1
+melting_point_value = 660
+melting_point_unit = "degC"
+thermal_conductivity_value = 235
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 900
+specific_heat_unit = "J/(kg*K)"
+thermal_expansion_value = 23.1e-6
+thermal_expansion_unit = "1/K"
 
 [aluminum.pbr]
 base_color = [0.88, 0.88, 0.88, 1.0]
@@ -114,8 +139,10 @@ name = "Aluminum 6061-T6"
 grade = "6061"
 
 [aluminum.a6061.mechanical]
-yield_strength = 276
-tensile_strength = 310
+yield_strength_value = 276
+yield_strength_unit = "MPa"
+tensile_strength_value = 310
+tensile_strength_unit = "MPa"
 elongation = 12
 
 [aluminum.a6061.T6]
@@ -123,8 +150,10 @@ name = "Aluminum 6061-T6"
 temper = "T6"
 
 [aluminum.a6061.T6.mechanical]
-yield_strength = 276
-tensile_strength = 310
+yield_strength_value = 276
+yield_strength_unit = "MPa"
+tensile_strength_value = 310
+tensile_strength_unit = "MPa"
 
 [aluminum.a6061.T6.anodized]
 name = "Aluminum 6061-T6 - Anodized"
@@ -140,16 +169,20 @@ name = "Aluminum 7075"
 grade = "7075"
 
 [aluminum.a7075.mechanical]
-density = 2.81
-youngs_modulus = 72
+density_value = 2.81
+density_unit = "g/cm^3"
+youngs_modulus_value = 72
+youngs_modulus_unit = "GPa"
 
 [aluminum.a7075.T6]
 name = "Aluminum 7075-T6"
 temper = "T6"
 
 [aluminum.a7075.T6.mechanical]
-yield_strength = 503
-tensile_strength = 572
+yield_strength_value = 503
+yield_strength_unit = "MPa"
+tensile_strength_value = 572
+tensile_strength_unit = "MPa"
 elongation = 11
 
 [aluminum.a7075.T73]
@@ -157,8 +190,10 @@ name = "Aluminum 7075-T73"
 temper = "T73"
 
 [aluminum.a7075.T73.mechanical]
-yield_strength = 434
-tensile_strength = 505
+yield_strength_value = 434
+yield_strength_unit = "MPa"
+tensile_strength_value = 505
+tensile_strength_unit = "MPa"
 
 # Aluminum 2024-T4 (old aircraft grade)
 [aluminum.a2024]
@@ -166,7 +201,8 @@ name = "Aluminum 2024"
 grade = "2024"
 
 [aluminum.a2024.mechanical]
-density = 2.78
+density_value = 2.78
+density_unit = "g/cm^3"
 
 
 # ============================================================================
@@ -177,15 +213,22 @@ density = 2.78
 name = "Copper"
 
 [copper.mechanical]
-density = 8.96
-youngs_modulus = 110
-yield_strength = 40
-tensile_strength = 200
+density_value = 8.96
+density_unit = "g/cm^3"
+youngs_modulus_value = 110
+youngs_modulus_unit = "GPa"
+yield_strength_value = 40
+yield_strength_unit = "MPa"
+tensile_strength_value = 200
+tensile_strength_unit = "MPa"
 
 [copper.thermal]
-melting_point = 1085
-thermal_conductivity = 398
-specific_heat = 385
+melting_point_value = 1085
+melting_point_unit = "degC"
+thermal_conductivity_value = 398
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 385
+specific_heat_unit = "J/(kg*K)"
 
 [copper.pbr]
 base_color = [0.72, 0.45, 0.2, 1.0]
@@ -197,11 +240,14 @@ name = "OFHC Copper (Oxygen-Free High Conductivity)"
 grade = "OFHC"
 
 [copper.OFHC.mechanical]
-density = 8.94
+density_value = 8.94
+density_unit = "g/cm^3"
 
 [copper.OFHC.electrical]
-resistivity = 1.68e-8
-conductivity = 5.96e7
+resistivity_value = 1.68e-8
+resistivity_unit = "ohm*m"
+conductivity_value = 5.96e7
+conductivity_unit = "S/m"
 
 
 # ============================================================================
@@ -213,13 +259,18 @@ name = "Tungsten"
 formula = "W"
 
 [tungsten.mechanical]
-density = 19.3
-youngs_modulus = 411
-melting_point = 3422
+density_value = 19.3
+density_unit = "g/cm^3"
+youngs_modulus_value = 411
+youngs_modulus_unit = "GPa"
 
 [tungsten.thermal]
-thermal_conductivity = 173
-specific_heat = 133
+melting_point_value = 3422
+melting_point_unit = "degC"
+thermal_conductivity_value = 173
+thermal_conductivity_unit = "W/(m*K)"
+specific_heat_value = 133
+specific_heat_unit = "J/(kg*K)"
 
 [tungsten.pbr]
 base_color = [0.2, 0.2, 0.22, 1.0]
@@ -231,7 +282,8 @@ name = "Tungsten 99.95%"
 grade = "pure"
 
 [tungsten.pure.mechanical]
-density = 19.3
+density_value = 19.3
+density_unit = "g/cm^3"
 
 # Tungsten Heavy Alloy W90
 [tungsten.W90]
@@ -239,7 +291,8 @@ name = "Tungsten Heavy Alloy (90% W)"
 grade = "W90"
 
 [tungsten.W90.mechanical]
-density = 17.0
+density_value = 17.0
+density_unit = "g/cm^3"
 
 
 # ============================================================================
@@ -251,13 +304,18 @@ name = "Lead"
 formula = "Pb"
 
 [lead.mechanical]
-density = 11.34
-youngs_modulus = 16
-yield_strength = 12
+density_value = 11.34
+density_unit = "g/cm^3"
+youngs_modulus_value = 16
+youngs_modulus_unit = "GPa"
+yield_strength_value = 12
+yield_strength_unit = "MPa"
 
 [lead.thermal]
-melting_point = 327
-thermal_conductivity = 35.3
+melting_point_value = 327
+melting_point_unit = "degC"
+thermal_conductivity_value = 35.3
+thermal_conductivity_unit = "W/(m*K)"
 
 [lead.pbr]
 base_color = [0.3, 0.3, 0.33, 1.0]
@@ -273,14 +331,20 @@ roughness = 0.5
 name = "Titanium"
 
 [titanium.mechanical]
-density = 4.51
-youngs_modulus = 103
-yield_strength = 880
-tensile_strength = 950
+density_value = 4.51
+density_unit = "g/cm^3"
+youngs_modulus_value = 103
+youngs_modulus_unit = "GPa"
+yield_strength_value = 880
+yield_strength_unit = "MPa"
+tensile_strength_value = 950
+tensile_strength_unit = "MPa"
 
 [titanium.thermal]
-melting_point = 1668
-thermal_conductivity = 21.9
+melting_point_value = 1668
+melting_point_unit = "degC"
+thermal_conductivity_value = 21.9
+thermal_conductivity_unit = "W/(m*K)"
 
 [titanium.pbr]
 base_color = [0.6, 0.6, 0.6, 1.0]
@@ -296,16 +360,19 @@ roughness = 0.3
 name = "Brass (Cu-Zn)"
 
 [brass.mechanical]
-density = 8.5
-youngs_modulus = 97
-yield_strength = 200
+density_value = 8.5
+density_unit = "g/cm^3"
+youngs_modulus_value = 97
+youngs_modulus_unit = "GPa"
+yield_strength_value = 200
+yield_strength_unit = "MPa"
 
 [brass.thermal]
-melting_point = 900
+melting_point_value = 900
+melting_point_unit = "degC"
 
 [brass.pbr]
 base_color = [0.88, 0.78, 0.5, 1.0]
 metallic = 1.0
 roughness = 0.25
-
 

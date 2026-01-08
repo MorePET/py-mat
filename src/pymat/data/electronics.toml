@@ -1,4 +1,5 @@
 # Electronics and PCB materials database
+# Units: All values use explicit *_value and *_unit format for v2.0.0 compatibility
 
 # ============================================================================
 # FR4 (Fiberglass-Reinforced Epoxy)
@@ -8,20 +9,28 @@
 name = "FR4"
 
 [fr4.mechanical]
-density = 1.86
-youngs_modulus = 19
-tensile_strength = 60
+density_value = 1.86
+density_unit = "g/cm^3"
+youngs_modulus_value = 19
+youngs_modulus_unit = "GPa"
+tensile_strength_value = 60
+tensile_strength_unit = "MPa"
 
 [fr4.thermal]
-glass_transition = 130
-thermal_conductivity = 0.3
-thermal_expansion = 14
+glass_transition_value = 130
+glass_transition_unit = "degC"
+thermal_conductivity_value = 0.3
+thermal_conductivity_unit = "W/(m*K)"
+thermal_expansion_value = 14e-6
+thermal_expansion_unit = "1/K"
 
 [fr4.electrical]
 dielectric_constant = 4.5
 dielectric_loss_tangent = 0.02
-volume_resistivity = 1e11
-breakdown_voltage = 15
+volume_resistivity_value = 1e11
+volume_resistivity_unit = "ohm*cm"
+breakdown_voltage_value = 15
+breakdown_voltage_unit = "kV/mm"
 
 [fr4.pbr]
 base_color = [0.15, 0.15, 0.15, 1.0]
@@ -44,7 +53,8 @@ reach_compliant = true
 name = "Rogers RF Laminate"
 
 [rogers.mechanical]
-density = 1.9
+density_value = 1.9
+density_unit = "g/cm^3"
 
 [rogers.electrical]
 dielectric_constant = 3.5
@@ -60,7 +70,8 @@ name = "Rogers 4350B"
 grade = "4350B"
 
 [rogers.r4350b.mechanical]
-density = 1.86
+density_value = 1.86
+density_unit = "g/cm^3"
 
 [rogers.r4350b.electrical]
 dielectric_constant = 3.48
@@ -75,17 +86,23 @@ dielectric_loss_tangent = 0.0037
 name = "Kapton (Polyimide)"
 
 [kapton.mechanical]
-density = 1.42
-tensile_strength = 230
+density_value = 1.42
+density_unit = "g/cm^3"
+tensile_strength_value = 230
+tensile_strength_unit = "MPa"
 
 [kapton.thermal]
-glass_transition = 360
-melting_point = 400
-thermal_conductivity = 0.12
+glass_transition_value = 360
+glass_transition_unit = "degC"
+melting_point_value = 400
+melting_point_unit = "degC"
+thermal_conductivity_value = 0.12
+thermal_conductivity_unit = "W/(m*K)"
 
 [kapton.electrical]
 dielectric_constant = 3.5
-breakdown_voltage = 600
+breakdown_voltage_value = 600
+breakdown_voltage_unit = "kV/mm"
 
 [kapton.pbr]
 base_color = [0.95, 0.85, 0.4, 1.0]
@@ -104,11 +121,14 @@ rohs_compliant = true
 name = "Copper (PCB)"
 
 [copper_pcb.mechanical]
-density = 8.96
+density_value = 8.96
+density_unit = "g/cm^3"
 
 [copper_pcb.electrical]
-resistivity = 1.68e-8
-conductivity = 5.96e7
+resistivity_value = 1.68e-8
+resistivity_unit = "ohm*m"
+conductivity_value = 5.96e7
+conductivity_unit = "S/m"
 
 [copper_pcb.pbr]
 base_color = [0.72, 0.45, 0.2, 1.0]
@@ -144,10 +164,12 @@ roughness = 0.2
 name = "Solder"
 
 [solder.mechanical]
-density = 8.4
+density_value = 8.4
+density_unit = "g/cm^3"
 
 [solder.electrical]
-resistivity = 1.5e-7
+resistivity_value = 1.5e-7
+resistivity_unit = "ohm*m"
 
 [solder.pbr]
 base_color = [0.7, 0.7, 0.7, 1.0]
@@ -160,10 +182,12 @@ name = "Sn63Pb37 (60% Tin / 40% Lead)"
 grade = "Sn63Pb37"
 
 [solder.Sn63Pb37.mechanical]
-density = 8.4
+density_value = 8.4
+density_unit = "g/cm^3"
 
 [solder.Sn63Pb37.thermal]
-melting_point = 183
+melting_point_value = 183
+melting_point_unit = "degC"
 
 # SAC305 (lead-free, RoHS)
 [solder.SAC305]
@@ -171,10 +195,12 @@ name = "SAC305 (96.5% Tin / 3% Silver / 0.5% Copper)"
 grade = "SAC305"
 
 [solder.SAC305.mechanical]
-density = 7.3
+density_value = 7.3
+density_unit = "g/cm^3"
 
 [solder.SAC305.thermal]
-melting_point = 217
+melting_point_value = 217
+melting_point_unit = "degC"
 
 [solder.SAC305.compliance]
 lead_free = true
@@ -189,15 +215,19 @@ rohs_compliant = true
 name = "Epoxy Potting Compound"
 
 [epoxy_potting.mechanical]
-density = 1.15
+density_value = 1.15
+density_unit = "g/cm^3"
 
 [epoxy_potting.thermal]
-melting_point = 150
-thermal_conductivity = 0.3
+melting_point_value = 150
+melting_point_unit = "degC"
+thermal_conductivity_value = 0.3
+thermal_conductivity_unit = "W/(m*K)"
 
 [epoxy_potting.electrical]
 dielectric_constant = 3.8
-volume_resistivity = 1e15
+volume_resistivity_value = 1e15
+volume_resistivity_unit = "ohm*cm"
 
 [epoxy_potting.pbr]
 base_color = [0.5, 0.4, 0.3, 1.0]
@@ -212,11 +242,14 @@ rohs_compliant = true
 name = "Silicone Potting Compound"
 
 [silicone_potting.mechanical]
-density = 1.02
+density_value = 1.02
+density_unit = "g/cm^3"
 
 [silicone_potting.thermal]
-melting_point = 200
-thermal_conductivity = 0.2
+melting_point_value = 200
+melting_point_unit = "degC"
+thermal_conductivity_value = 0.2
+thermal_conductivity_unit = "W/(m*K)"
 
 [silicone_potting.electrical]
 dielectric_constant = 3.0
@@ -238,7 +271,8 @@ weldability = "poor"
 name = "Ferrite"
 
 [ferrite.mechanical]
-density = 5.0
+density_value = 5.0
+density_unit = "g/cm^3"
 
 [ferrite.electrical]
 permeability = 100
@@ -250,7 +284,8 @@ metallic = 0.0
 roughness = 0.8
 
 [ferrite.thermal]
-max_service_temp = 200
+max_service_temp_value = 200
+max_service_temp_unit = "degC"
 
 
 # ============================================================================
@@ -262,7 +297,8 @@ name = "Ceramic Capacitor (X7R)"
 
 [ceramic_capacitor.electrical]
 dielectric_constant = 1000
-breakdown_voltage = 100
+breakdown_voltage_value = 100
+breakdown_voltage_unit = "kV/mm"
 
 [ceramic_capacitor.pbr]
 base_color = [0.95, 0.8, 0.1, 1.0]
@@ -278,17 +314,23 @@ roughness = 0.5
 name = "Alumina PCB (96% Al2O3)"
 
 [alumina_pcb.mechanical]
-density = 3.85
-youngs_modulus = 200
+density_value = 3.85
+density_unit = "g/cm^3"
+youngs_modulus_value = 200
+youngs_modulus_unit = "GPa"
 
 [alumina_pcb.electrical]
 dielectric_constant = 9.9
-volume_resistivity = 1e14
-breakdown_voltage = 20
+volume_resistivity_value = 1e14
+volume_resistivity_unit = "ohm*cm"
+breakdown_voltage_value = 20
+breakdown_voltage_unit = "kV/mm"
 
 [alumina_pcb.thermal]
-thermal_conductivity = 18
-thermal_expansion = 5.8
+thermal_conductivity_value = 18
+thermal_conductivity_unit = "W/(m*K)"
+thermal_expansion_value = 5.8e-6
+thermal_expansion_unit = "1/K"
 
 [alumina_pcb.pbr]
 base_color = [0.9, 0.88, 0.85, 1.0]
@@ -300,5 +342,4 @@ weldability = "good"
 
 [alumina_pcb.compliance]
 rohs_compliant = true
-
 

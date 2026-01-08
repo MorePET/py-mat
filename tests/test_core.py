@@ -96,9 +96,8 @@ class TestPropertyInheritance:
         
         parent = Material(name="Parent", properties=props)
         
-        child_props = AllProperties()
-        child_props.mechanical.yield_strength = 300
-        child = parent.grade_("child", name="Child", mechanical_overrides={"yield_strength": 300})
+        # Use mechanical= dict to override properties
+        child = parent.grade_("child", name="Child", mechanical={"yield_strength": 300})
         
         assert child.density == 8.0  # Inherited
         assert child.properties.mechanical.yield_strength == 300  # Overridden
@@ -134,10 +133,12 @@ class TestMaterialAccess:
     def test_nested_access(self):
         """Test accessing deeply nested materials."""
         root = Material(name="Root")
-        mid = root.grade_("grade", name="Grade")
+        # Use keys that don't conflict with field names
+        mid = root.grade_("s304", name="Grade 304")
         leaf = mid.temper_("T6", name="T6")
         
-        assert root.grade.temper == leaf
+        # Access by key through __getattr__
+        assert root.s304.T6 == leaf
 
 
 class TestMaterialInfo:
@@ -150,8 +151,8 @@ class TestMaterialInfo:
         leaf = mid.treatment_("passivated", name="Passivated")
         
         assert root.path == "root"
-        assert mid.path == "root.s316l"
-        assert leaf.path == "root.s316l.passivated"
+        assert mid.path == "root.s316L"  # Preserves case from _key
+        assert leaf.path == "root.s316L.passivated"
     
     def test_str_representation(self):
         """Test string representation."""
