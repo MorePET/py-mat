@@ -10,12 +10,15 @@ Supports:
 
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Dict, Optional, Any, TYPE_CHECKING
+from typing import Dict, Optional, Any, TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
     from build123d import Shape
 
 from .properties import AllProperties, MechanicalProperties, OpticalProperties, PBRProperties
+
+# Type variable for generic object application
+T = TypeVar('T')
 
 
 @dataclass
@@ -164,40 +167,68 @@ class Material:
     # Application to Shapes
     # =========================================================================
     
-    def apply_to(self, shape: Shape) -> Shape:
+    def apply_to(self, obj):
         """
-        Apply this material to a build123d shape.
+        Apply this material to an object.
         
-        Sets:
-        - shape.material = self
-        - shape.color (from PBR base_color)
-        - shape.mass (from density and volume)
+        For build123d Shapes: sets material, color, and calculates mass
+        For other objects: sets obj.material = self
         
         Args:
-            shape: build123d Shape object
+            obj: Object to apply material to (build123d Shape or any object)
             
         Returns:
-            The modified shape
+            The modified object
+            
+        Raises:
+            TypeError: If obj doesn't support attribute assignment
+            
+        Example:
+            # build123d Shape - full features
+            crystal = Box(10, 10, 10)
+            lyso.apply_to(crystal)  # Sets: material, color, mass
+            
+            # Custom object - just material attribute
+            class MyPart:
+                pass
+            part = MyPart()
+            stainless.apply_to(part)  # Sets: part.material = stainless
         """
-        shape.material = self
+        # Check if object supports attribute assignment
+        try:
+            obj.material = self
+        except (AttributeError, TypeError) as e:
+            raise TypeError(
+                f"Cannot apply material to {type(obj).__name__}: "
+                f"object doesn't support attribute assignment ({e})"
+            )
         
-        # Set color from PBR
-        color = self.properties.pbr.base_color
-        if len(color) == 4:  # RGBA
-            # For build123d viewer: use RGB, transparency via alpha
-            shape.color = color[:3]
-            # Note: alpha would be set separately if shape supports it
-        else:
-            shape.color = color
+        # Try build123d-specific features (color, mass calculation)
+        # Check for build123d Shape characteristics: has volume and color attributes
+        try:
+            if hasattr(obj, 'volume') and hasattr(obj, 'color'):
+                # Set color from PBR
+                color = self.properties.pbr.base_color
+                if len(color) == 4:  # RGBA
+                    # For build123d viewer: use RGB, transparency via alpha
+                    obj.color = color[:3]
+                    # Note: alpha would be set separately if shape supports it
+                else:
+                    obj.color = color
+                
+                # Calculate mass if density is available
+                if self.properties.mechanical.density and self.properties.mechanical.density > 0:
+                    # build123d volume is in mm³, density is g/cm³
+                    # 1 cm³ = 1000 mm³, so g/mm³ = g/cm³ / 1000
+                    density_g_mm3 = self.properties.mechanical.density / 1000
+                    obj.mass = obj.volume * density_g_mm3
         
-        # Calculate mass if density is available
-        if self.properties.mechanical.density and self.properties.mechanical.density > 0:
-            # build123d volume is in mm³, density is g/cm³
-            # 1 cm³ = 1000 mm³, so g/mm³ = g/cm³ / 1000
-            density_g_mm3 = self.properties.mechanical.density / 1000
-            shape.mass = shape.volume * density_g_mm3
+        except (AttributeError, TypeError):
+            # If build123d-specific features fail, that's fine
+            # The material attribute is already set, which is the minimum requirement
+            pass
         
-        return shape
+        return obj
     
     # =========================================================================
     # Information & Inspection

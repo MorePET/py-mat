@@ -61,14 +61,6 @@ __all__ = [
     "enrich_from_matproj",
     "enrich_all",
     "factories",
-    # Category namespaces
-    "plastics",
-    "gases",
-    "metals",
-    "liquids",
-    "ceramics",
-    "scintillators",
-    "electronics",
 ]
 
 # ============================================================================
@@ -88,61 +80,6 @@ _CATEGORY_BASES: Dict[str, list[str]] = {
     "liquids": ["water", "heavy_water", "mineral_oil", "glycerol", "silicone_oil"],
     "gases": ["air", "nitrogen", "oxygen", "argon", "co2", "helium", "hydrogen", "neon", "xenon", "methane", "vacuum"],
 }
-
-
-# ============================================================================
-# Category Namespaces
-# ============================================================================
-
-class _CategoryNamespace:
-    """
-    Lazy-loading namespace for a material category.
-    
-    Enables organized imports by category:
-        from pymat import plastics, gases
-        phantom_shell = plastics.pmma
-        lung_fill = gases.air
-    """
-    
-    def __init__(self, category: str):
-        self._category = category
-    
-    def __getattr__(self, name: str) -> "Material":
-        if name.startswith("_"):
-            raise AttributeError(f"'{self._category}' has no attribute '{name}'")
-        
-        # Ensure category is loaded
-        _ensure_loaded(self._category)
-        
-        # Check if material exists in this category
-        if name not in _CATEGORY_BASES.get(self._category, []):
-            raise AttributeError(
-                f"No material '{name}' in category '{self._category}'. "
-                f"Available: {_CATEGORY_BASES.get(self._category, [])}"
-            )
-        
-        material = registry.get(name)
-        if material:
-            return material
-        
-        raise AttributeError(f"Material '{name}' not found in '{self._category}'")
-    
-    def __dir__(self) -> list[str]:
-        """IDE autocompletion support."""
-        return _CATEGORY_BASES.get(self._category, [])
-    
-    def __repr__(self) -> str:
-        return f"<pymat.{self._category}>"
-
-
-# Category namespace instances for organized imports
-plastics = _CategoryNamespace("plastics")
-gases = _CategoryNamespace("gases")
-metals = _CategoryNamespace("metals")
-liquids = _CategoryNamespace("liquids")
-ceramics = _CategoryNamespace("ceramics")
-scintillators = _CategoryNamespace("scintillators")
-electronics = _CategoryNamespace("electronics")
 
 
 def _ensure_loaded(category: str) -> None:
@@ -216,9 +153,6 @@ def __dir__() -> list[str]:
         "ComplianceProperties", "SourcingProperties",
         "load_toml", "load_category",
         "enrich_from_periodictable", "enrich_from_matproj", "enrich_all",
-        # Category namespaces
-        "plastics", "gases", "metals", "liquids",
-        "ceramics", "scintillators", "electronics",
     ]
     
     # Add all known base materials
