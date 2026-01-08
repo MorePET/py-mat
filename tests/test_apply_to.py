@@ -179,6 +179,73 @@ class TestApplyToErrorHandling:
         # Mass might be 0 or previous value, just shouldn't crash
 
 
+class TestApplyToTransparency:
+    """Test that apply_to() correctly sets alpha from transmission."""
+    
+    def test_apply_to_sets_alpha_from_transmission(self):
+        """Test that transmission=0.9 results in alpha=0.1."""
+        pytest.importorskip("build123d")
+        
+        from build123d import Box
+        
+        # Create a transparent material (90% transmission = 10% alpha)
+        glass = Material(
+            name="Glass",
+            pbr={"base_color": (0.9, 0.95, 1.0, 1.0), "transmission": 0.9}
+        )
+        
+        shape = Box(10, 10, 10)
+        glass.apply_to(shape)
+        
+        # Alpha should be 1 - transmission = 1 - 0.9 = 0.1
+        assert shape.color is not None
+        r, g, b, alpha = shape.color
+        assert r == pytest.approx(0.9, rel=0.01)
+        assert g == pytest.approx(0.95, rel=0.01)
+        assert b == pytest.approx(1.0, rel=0.01)
+        assert alpha == pytest.approx(0.1, rel=0.01), f"Expected alpha=0.1, got {alpha}"
+    
+    def test_apply_to_opaque_material_has_alpha_one(self):
+        """Test that transmission=0 (opaque) results in alpha=1."""
+        pytest.importorskip("build123d")
+        
+        from build123d import Box
+        
+        # Create an opaque material (transmission=0)
+        steel = Material(
+            name="Steel",
+            pbr={"base_color": (0.5, 0.5, 0.5, 1.0), "transmission": 0.0}
+        )
+        
+        shape = Box(10, 10, 10)
+        steel.apply_to(shape)
+        
+        # Alpha should be 1 - transmission = 1 - 0 = 1.0
+        assert shape.color is not None
+        r, g, b, alpha = shape.color
+        assert alpha == pytest.approx(1.0, rel=0.01), f"Expected alpha=1.0, got {alpha}"
+    
+    def test_apply_to_half_transparent(self):
+        """Test that transmission=0.5 results in alpha=0.5."""
+        pytest.importorskip("build123d")
+        
+        from build123d import Box
+        
+        # Create a half-transparent material
+        frosted = Material(
+            name="Frosted Glass",
+            pbr={"base_color": (0.8, 0.8, 0.8, 1.0), "transmission": 0.5}
+        )
+        
+        shape = Box(10, 10, 10)
+        frosted.apply_to(shape)
+        
+        # Alpha should be 1 - transmission = 1 - 0.5 = 0.5
+        assert shape.color is not None
+        r, g, b, alpha = shape.color
+        assert alpha == pytest.approx(0.5, rel=0.01), f"Expected alpha=0.5, got {alpha}"
+
+
 class TestApplyToReturnValue:
     """Test that apply_to() returns the object for chaining."""
     

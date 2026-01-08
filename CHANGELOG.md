@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.3] - 2025-01-08
+
+### Fixed
+- **Added explicit `transmission` to all PBR sections** in TOML data files
+  - Metals, electronics: `transmission = 0.0` (opaque)
+  - Plastics: opaque except PMMA (0.9) and PC (0.85)
+  - Ceramics: opaque except glass (0.9) and BK7 (0.95)
+  - Gases, liquids, scintillators: already had correct transparency values
+- **Added transparency tests** for `apply_to()` to verify alpha is correctly derived from transmission
+
 ## [2.0.2] - 2025-01-08
 
 ### Fixed

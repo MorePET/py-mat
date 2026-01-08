@@ -26,6 +26,7 @@ thermal_expansion_unit = "1/K"
 base_color = [0.75, 0.75, 0.77, 1.0]
 metallic = 1.0
 roughness = 0.3
+transmission = 0.0
 
 # Stainless Steel 304
 [stainless.s304]
@@ -70,6 +71,7 @@ treatment = "electropolished"
 
 [stainless.s316L.electropolished.pbr]
 roughness = 0.1
+transmission = 0.0
 
 # 316L Passivated
 [stainless.s316L.passivated]
@@ -78,6 +80,7 @@ treatment = "passivated"
 
 [stainless.s316L.passivated.pbr]
 roughness = 0.25
+transmission = 0.0
 
 # Stainless Steel 303 (free-cutting)
 [stainless.s303]
@@ -132,6 +135,7 @@ thermal_expansion_unit = "1/K"
 base_color = [0.88, 0.88, 0.88, 1.0]
 metallic = 1.0
 roughness = 0.4
+transmission = 0.0
 
 # Aluminum 6061-T6
 [aluminum.a6061]
@@ -162,6 +166,7 @@ treatment = "anodized"
 [aluminum.a6061.T6.anodized.pbr]
 base_color = [0.2, 0.2, 0.2, 1.0]
 roughness = 0.5
+transmission = 0.0
 
 # Aluminum 7075-T6 (aerospace)
 [aluminum.a7075]
@@ -234,6 +239,7 @@ specific_heat_unit = "J/(kg*K)"
 base_color = [0.72, 0.45, 0.2, 1.0]
 metallic = 1.0
 roughness = 0.3
+transmission = 0.0
 
 [copper.OFHC]
 name = "OFHC Copper (Oxygen-Free High Conductivity)"
@@ -276,6 +282,7 @@ specific_heat_unit = "J/(kg*K)"
 base_color = [0.2, 0.2, 0.22, 1.0]
 metallic = 1.0
 roughness = 0.4
+transmission = 0.0
 
 [tungsten.pure]
 name = "Tungsten 99.95%"
@@ -321,6 +328,7 @@ thermal_conductivity_unit = "W/(m*K)"
 base_color = [0.3, 0.3, 0.33, 1.0]
 metallic = 1.0
 roughness = 0.5
+transmission = 0.0
 
 
 # ============================================================================
@@ -350,6 +358,7 @@ thermal_conductivity_unit = "W/(m*K)"
 base_color = [0.6, 0.6, 0.6, 1.0]
 metallic = 1.0
 roughness = 0.3
+transmission = 0.0
 
 
 # ============================================================================
@@ -375,4 +384,5 @@ melting_point_unit = "degC"
 base_color = [0.88, 0.78, 0.5, 1.0]
 metallic = 1.0
 roughness = 0.25
+transmission = 0.0
 

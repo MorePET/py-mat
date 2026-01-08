@@ -184,6 +184,7 @@ thermal_conductivity_unit = "W/(m*K)"
 base_color = [0.95, 0.95, 1.0, 0.7]
 metallic = 0.0
 roughness = 0.3
+transmission = 0.7
 
 
 # ============================================================================
