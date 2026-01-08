@@ -1,0 +1,341 @@
+# Gases database
+# Note: Properties at STP (0°C, 1 atm) unless otherwise noted
+# For temperature/pressure-dependent properties, use factory functions
+
+# ============================================================================
+# Air (at 20°C, 1 atm by default)
+# ============================================================================
+
+[air]
+name = "Air"
+formula = "N2O2"  # Simplified (78% N2, 21% O2)
+
+[air.mechanical]
+density = 0.001204  # g/cm³ at 20°C, 1 atm
+
+[air.thermal]
+thermal_conductivity = 0.0257  # W/(m·K) at 20°C
+specific_heat = 1005  # J/(kg·K) at constant pressure
+
+[air.optical]
+refractive_index = 1.000293  # at STP
+
+[air.pbr]
+base_color = [0.9, 0.95, 1.0, 0.01]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.99
+ior = 1.000293
+
+
+# ============================================================================
+# Nitrogen (N2)
+# ============================================================================
+
+[nitrogen]
+name = "Nitrogen"
+formula = "N2"
+
+[nitrogen.mechanical]
+density = 0.001165  # g/cm³ at 20°C, 1 atm
+
+[nitrogen.thermal]
+thermal_conductivity = 0.0259  # W/(m·K)
+specific_heat = 1040  # J/(kg·K)
+
+[nitrogen.optical]
+refractive_index = 1.000298
+
+[nitrogen.pbr]
+base_color = [0.9, 0.95, 1.0, 0.01]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.99
+
+
+# Liquid Nitrogen
+[nitrogen.liquid]
+name = "Liquid Nitrogen"
+treatment = "cryogenic"
+
+[nitrogen.liquid.mechanical]
+density = 0.808  # g/cm³ at -196°C
+
+[nitrogen.liquid.thermal]
+thermal_conductivity = 0.14
+specific_heat = 2042
+
+[nitrogen.liquid.pbr]
+base_color = [0.85, 0.9, 0.95, 0.4]
+transmission = 0.9
+
+
+# ============================================================================
+# Oxygen (O2)
+# ============================================================================
+
+[oxygen]
+name = "Oxygen"
+formula = "O2"
+
+[oxygen.mechanical]
+density = 0.001331  # g/cm³ at 20°C, 1 atm
+
+[oxygen.thermal]
+thermal_conductivity = 0.0265  # W/(m·K)
+specific_heat = 920  # J/(kg·K)
+
+[oxygen.optical]
+refractive_index = 1.000271
+
+[oxygen.pbr]
+base_color = [0.9, 0.95, 1.0, 0.01]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.99
+
+
+# ============================================================================
+# Argon (Ar)
+# ============================================================================
+
+[argon]
+name = "Argon"
+formula = "Ar"
+
+[argon.mechanical]
+density = 0.001662  # g/cm³ at 20°C, 1 atm
+
+[argon.thermal]
+thermal_conductivity = 0.0177  # W/(m·K)
+specific_heat = 520  # J/(kg·K)
+
+[argon.optical]
+refractive_index = 1.000281
+
+[argon.pbr]
+base_color = [0.9, 0.95, 1.0, 0.01]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.99
+
+[argon.compliance]
+radiation_resistant = true  # Good for radiation detectors
+
+
+# ============================================================================
+# Carbon Dioxide (CO2)
+# ============================================================================
+
+[co2]
+name = "Carbon Dioxide"
+formula = "CO2"
+
+[co2.mechanical]
+density = 0.001839  # g/cm³ at 20°C, 1 atm
+
+[co2.thermal]
+thermal_conductivity = 0.0166  # W/(m·K)
+specific_heat = 846  # J/(kg·K)
+
+[co2.optical]
+refractive_index = 1.000449
+
+[co2.pbr]
+base_color = [0.9, 0.95, 1.0, 0.01]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.99
+
+
+# Dry Ice (solid CO2)
+[co2.dry_ice]
+name = "Dry Ice"
+treatment = "solid"
+
+[co2.dry_ice.mechanical]
+density = 1.56  # g/cm³ at -78.5°C
+
+[co2.dry_ice.thermal]
+thermal_conductivity = 0.6
+
+[co2.dry_ice.pbr]
+base_color = [0.95, 0.95, 1.0, 0.7]
+metallic = 0.0
+roughness = 0.3
+
+
+# ============================================================================
+# Helium (He)
+# ============================================================================
+
+[helium]
+name = "Helium"
+formula = "He"
+
+[helium.mechanical]
+density = 0.000166  # g/cm³ at 20°C, 1 atm (very light!)
+
+[helium.thermal]
+thermal_conductivity = 0.152  # W/(m·K) - very high for a gas
+specific_heat = 5193  # J/(kg·K) - very high
+
+[helium.optical]
+refractive_index = 1.000035
+
+[helium.pbr]
+base_color = [0.9, 0.95, 1.0, 0.005]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.995
+
+
+# Liquid Helium
+[helium.liquid]
+name = "Liquid Helium"
+treatment = "cryogenic"
+
+[helium.liquid.mechanical]
+density = 0.125  # g/cm³ at 4.2K
+
+[helium.liquid.thermal]
+thermal_conductivity = 0.019
+specific_heat = 4700
+
+[helium.liquid.pbr]
+base_color = [0.85, 0.9, 0.95, 0.3]
+transmission = 0.95
+
+
+# ============================================================================
+# Hydrogen (H2)
+# ============================================================================
+
+[hydrogen]
+name = "Hydrogen"
+formula = "H2"
+
+[hydrogen.mechanical]
+density = 0.0000838  # g/cm³ at 20°C, 1 atm (lightest!)
+
+[hydrogen.thermal]
+thermal_conductivity = 0.187  # W/(m·K)
+specific_heat = 14304  # J/(kg·K)
+
+[hydrogen.optical]
+refractive_index = 1.000132
+
+[hydrogen.pbr]
+base_color = [0.9, 0.95, 1.0, 0.005]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.995
+
+[hydrogen.compliance]
+flammable = true
+
+
+# ============================================================================
+# Neon (Ne)
+# ============================================================================
+
+[neon]
+name = "Neon"
+formula = "Ne"
+
+[neon.mechanical]
+density = 0.000839  # g/cm³ at 20°C, 1 atm
+
+[neon.thermal]
+thermal_conductivity = 0.0491  # W/(m·K)
+specific_heat = 1030  # J/(kg·K)
+
+[neon.optical]
+refractive_index = 1.000067
+
+[neon.pbr]
+base_color = [1.0, 0.7, 0.3, 0.02]  # Slight orange glow hint
+metallic = 0.0
+roughness = 0.0
+transmission = 0.98
+
+
+# ============================================================================
+# Xenon (Xe)
+# ============================================================================
+
+[xenon]
+name = "Xenon"
+formula = "Xe"
+
+[xenon.mechanical]
+density = 0.005458  # g/cm³ at 20°C, 1 atm (heavy gas)
+
+[xenon.thermal]
+thermal_conductivity = 0.00565  # W/(m·K)
+specific_heat = 158  # J/(kg·K)
+
+[xenon.optical]
+refractive_index = 1.000702
+
+[xenon.pbr]
+base_color = [0.8, 0.85, 1.0, 0.02]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.98
+
+[xenon.compliance]
+radiation_resistant = true  # Used in radiation detectors
+
+
+# ============================================================================
+# Methane (CH4)
+# ============================================================================
+
+[methane]
+name = "Methane"
+formula = "CH4"
+
+[methane.mechanical]
+density = 0.000668  # g/cm³ at 20°C, 1 atm
+
+[methane.thermal]
+thermal_conductivity = 0.0343  # W/(m·K)
+specific_heat = 2226  # J/(kg·K)
+
+[methane.optical]
+refractive_index = 1.000444
+
+[methane.pbr]
+base_color = [0.9, 0.95, 1.0, 0.01]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.99
+
+[methane.compliance]
+flammable = true
+
+
+# ============================================================================
+# Vacuum (for reference)
+# ============================================================================
+
+[vacuum]
+name = "Vacuum"
+
+[vacuum.mechanical]
+density = 0.0
+
+[vacuum.thermal]
+thermal_conductivity = 0.0
+specific_heat = 0.0
+
+[vacuum.optical]
+refractive_index = 1.0
+
+[vacuum.pbr]
+base_color = [0.0, 0.0, 0.0, 0.0]
+metallic = 0.0
+roughness = 0.0
+transmission = 1.0
+

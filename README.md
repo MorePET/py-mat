@@ -57,9 +57,11 @@ print(bracket.mass)  # Automatically calculated from density
 
 - **Metals**: Stainless steel, aluminum, copper, tungsten, lead, titanium, brass
 - **Scintillators**: LYSO, BGO, NaI, CsI, LaBr3, PWO, plastic scintillators
-- **Plastics**: PEEK, Delrin, Ultem, PTFE, ESR, Nylon, PLA, ABS, PETG, TPU
+- **Plastics**: PEEK, Delrin, Ultem, PTFE, ESR, Nylon, PLA, ABS, PETG, TPU, PMMA, PE, PC
 - **Ceramics**: Alumina, Macor, Zirconia, Glass (borosilicate, fused silica, BK7)
 - **Electronics**: FR4, Rogers, Kapton, copper PCB, solder, ferrite
+- **Liquids**: Water, Heavy Water, Mineral Oil, Glycerol, Silicone Oil
+- **Gases**: Air, Nitrogen, Oxygen, Argon, CO₂, Helium, Hydrogen, Neon, Xenon, Methane, Vacuum
 
 ## Property Groups
 

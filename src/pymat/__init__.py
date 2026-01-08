@@ -43,7 +43,7 @@ from .loader import load_toml, load_category
 from .enrichers import enrich_from_periodictable, enrich_from_matproj, enrich_all
 from . import factories
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __all__ = [
     "Material",
     "AllProperties",
@@ -78,6 +78,7 @@ _CATEGORY_BASES: Dict[str, list[str]] = {
     "ceramics": ["alumina", "macor", "zirconia", "glass"],
     "electronics": ["fr4", "rogers", "kapton", "copper_pcb", "solder"],
     "liquids": ["water", "heavy_water", "mineral_oil", "glycerol", "silicone_oil"],
+    "gases": ["air", "nitrogen", "oxygen", "argon", "co2", "helium", "hydrogen", "neon", "xenon", "methane", "vacuum"],
 }
 
 
