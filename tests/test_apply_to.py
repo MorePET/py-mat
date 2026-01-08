@@ -159,7 +159,7 @@ class TestApplyToErrorHandling:
         
         # Should preserve full hierarchy
         assert shape.material.name == "Stainless Steel 316L - Electropolished"
-        assert shape.material.path == "stainless.s316l.electropolished"
+        assert shape.material.path == "stainless.s316L.electropolished"  # Preserves case from TOML key
         assert shape.mass > 0
     
     def test_apply_to_without_density(self):

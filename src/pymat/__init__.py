@@ -52,7 +52,7 @@ from .loader import load_toml, load_category
 from .enrichers import enrich_from_periodictable, enrich_from_matproj, enrich_all
 from . import factories
 
-__version__ = "2.0.1"
+__version__ = "2.0.2"
 __all__ = [
     "Material",
     "AllProperties",
