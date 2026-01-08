@@ -1,0 +1,304 @@
+# Electronics and PCB materials database
+
+# ============================================================================
+# FR4 (Fiberglass-Reinforced Epoxy)
+# ============================================================================
+
+[fr4]
+name = "FR4"
+
+[fr4.mechanical]
+density = 1.86
+youngs_modulus = 19
+tensile_strength = 60
+
+[fr4.thermal]
+glass_transition = 130
+thermal_conductivity = 0.3
+thermal_expansion = 14
+
+[fr4.electrical]
+dielectric_constant = 4.5
+dielectric_loss_tangent = 0.02
+volume_resistivity = 1e11
+breakdown_voltage = 15
+
+[fr4.pbr]
+base_color = [0.15, 0.15, 0.15, 1.0]
+metallic = 0.0
+roughness = 0.7
+
+[fr4.manufacturing]
+weldability = "good"
+
+[fr4.compliance]
+rohs_compliant = true
+reach_compliant = true
+
+
+# ============================================================================
+# Rogers High-Frequency Laminates
+# ============================================================================
+
+[rogers]
+name = "Rogers RF Laminate"
+
+[rogers.mechanical]
+density = 1.9
+
+[rogers.electrical]
+dielectric_constant = 3.5
+
+[rogers.pbr]
+base_color = [0.2, 0.2, 0.2, 1.0]
+metallic = 0.0
+roughness = 0.6
+
+# Rogers 4350B
+[rogers.r4350b]
+name = "Rogers 4350B"
+grade = "4350B"
+
+[rogers.r4350b.mechanical]
+density = 1.86
+
+[rogers.r4350b.electrical]
+dielectric_constant = 3.48
+dielectric_loss_tangent = 0.0037
+
+
+# ============================================================================
+# Kapton (Polyimide Film)
+# ============================================================================
+
+[kapton]
+name = "Kapton (Polyimide)"
+
+[kapton.mechanical]
+density = 1.42
+tensile_strength = 230
+
+[kapton.thermal]
+glass_transition = 360
+melting_point = 400
+thermal_conductivity = 0.12
+
+[kapton.electrical]
+dielectric_constant = 3.5
+breakdown_voltage = 600
+
+[kapton.pbr]
+base_color = [0.95, 0.85, 0.4, 1.0]
+metallic = 0.0
+roughness = 0.5
+
+[kapton.compliance]
+rohs_compliant = true
+
+
+# ============================================================================
+# Copper (PCB Traces and Layers)
+# ============================================================================
+
+[copper_pcb]
+name = "Copper (PCB)"
+
+[copper_pcb.mechanical]
+density = 8.96
+
+[copper_pcb.electrical]
+resistivity = 1.68e-8
+conductivity = 5.96e7
+
+[copper_pcb.pbr]
+base_color = [0.72, 0.45, 0.2, 1.0]
+metallic = 1.0
+roughness = 0.35
+
+# 1 oz Copper (35 µm)
+[copper_pcb.oz1]
+name = "1 oz Copper (35 µm)"
+grade = "1oz"
+
+# 2 oz Copper (70 µm)
+[copper_pcb.oz2]
+name = "2 oz Copper (70 µm)"
+grade = "2oz"
+
+# Gold Plated (ENIG)
+[copper_pcb.gold_plated]
+name = "Gold Plated Copper (ENIG)"
+treatment = "gold_plated"
+
+[copper_pcb.gold_plated.pbr]
+base_color = [1.0, 0.84, 0.0, 1.0]
+metallic = 1.0
+roughness = 0.2
+
+
+# ============================================================================
+# Solder
+# ============================================================================
+
+[solder]
+name = "Solder"
+
+[solder.mechanical]
+density = 8.4
+
+[solder.electrical]
+resistivity = 1.5e-7
+
+[solder.pbr]
+base_color = [0.7, 0.7, 0.7, 1.0]
+metallic = 1.0
+roughness = 0.4
+
+# Sn63Pb37 (traditional, leaded)
+[solder.Sn63Pb37]
+name = "Sn63Pb37 (60% Tin / 40% Lead)"
+grade = "Sn63Pb37"
+
+[solder.Sn63Pb37.mechanical]
+density = 8.4
+
+[solder.Sn63Pb37.thermal]
+melting_point = 183
+
+# SAC305 (lead-free, RoHS)
+[solder.SAC305]
+name = "SAC305 (96.5% Tin / 3% Silver / 0.5% Copper)"
+grade = "SAC305"
+
+[solder.SAC305.mechanical]
+density = 7.3
+
+[solder.SAC305.thermal]
+melting_point = 217
+
+[solder.SAC305.compliance]
+lead_free = true
+rohs_compliant = true
+
+
+# ============================================================================
+# Potting and Encapsulation
+# ============================================================================
+
+[epoxy_potting]
+name = "Epoxy Potting Compound"
+
+[epoxy_potting.mechanical]
+density = 1.15
+
+[epoxy_potting.thermal]
+melting_point = 150
+thermal_conductivity = 0.3
+
+[epoxy_potting.electrical]
+dielectric_constant = 3.8
+volume_resistivity = 1e15
+
+[epoxy_potting.pbr]
+base_color = [0.5, 0.4, 0.3, 1.0]
+metallic = 0.0
+roughness = 0.6
+
+[epoxy_potting.compliance]
+rohs_compliant = true
+
+
+[silicone_potting]
+name = "Silicone Potting Compound"
+
+[silicone_potting.mechanical]
+density = 1.02
+
+[silicone_potting.thermal]
+melting_point = 200
+thermal_conductivity = 0.2
+
+[silicone_potting.electrical]
+dielectric_constant = 3.0
+
+[silicone_potting.pbr]
+base_color = [0.8, 0.6, 0.4, 1.0]
+metallic = 0.0
+roughness = 0.7
+
+[silicone_potting.manufacturing]
+weldability = "poor"
+
+
+# ============================================================================
+# Ferrite (EMI Shielding)
+# ============================================================================
+
+[ferrite]
+name = "Ferrite"
+
+[ferrite.mechanical]
+density = 5.0
+
+[ferrite.electrical]
+permeability = 100
+dielectric_constant = 10
+
+[ferrite.pbr]
+base_color = [0.1, 0.1, 0.1, 1.0]
+metallic = 0.0
+roughness = 0.8
+
+[ferrite.thermal]
+max_service_temp = 200
+
+
+# ============================================================================
+# Ceramic Capacitor Dielectric
+# ============================================================================
+
+[ceramic_capacitor]
+name = "Ceramic Capacitor (X7R)"
+
+[ceramic_capacitor.electrical]
+dielectric_constant = 1000
+breakdown_voltage = 100
+
+[ceramic_capacitor.pbr]
+base_color = [0.95, 0.8, 0.1, 1.0]
+metallic = 0.0
+roughness = 0.5
+
+
+# ============================================================================
+# Alumina PCB (Ceramic Substrate)
+# ============================================================================
+
+[alumina_pcb]
+name = "Alumina PCB (96% Al2O3)"
+
+[alumina_pcb.mechanical]
+density = 3.85
+youngs_modulus = 200
+
+[alumina_pcb.electrical]
+dielectric_constant = 9.9
+volume_resistivity = 1e14
+breakdown_voltage = 20
+
+[alumina_pcb.thermal]
+thermal_conductivity = 18
+thermal_expansion = 5.8
+
+[alumina_pcb.pbr]
+base_color = [0.9, 0.88, 0.85, 1.0]
+metallic = 0.0
+roughness = 0.4
+
+[alumina_pcb.manufacturing]
+weldability = "good"
+
+[alumina_pcb.compliance]
+rohs_compliant = true
+
+

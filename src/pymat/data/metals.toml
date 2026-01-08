@@ -1,0 +1,311 @@
+# Metals and alloys database
+# Format: hierarchical TOML with property groups
+
+[stainless]
+name = "Stainless Steel"
+
+[stainless.mechanical]
+density = 8.0
+youngs_modulus = 193
+poissons_ratio = 0.27
+
+[stainless.thermal]
+melting_point = 1450
+thermal_conductivity = 15.1
+specific_heat = 500
+thermal_expansion = 16
+
+[stainless.pbr]
+base_color = [0.75, 0.75, 0.77, 1.0]
+metallic = 1.0
+roughness = 0.3
+
+# Stainless Steel 304
+[stainless.s304]
+name = "Stainless Steel 304"
+grade = "304"
+
+[stainless.s304.mechanical]
+yield_strength = 170
+tensile_strength = 515
+elongation = 40
+hardness_vickers = 217
+
+[stainless.s304.electrical]
+resistivity = 7.2e-7
+
+# Stainless Steel 316L
+[stainless.s316L]
+name = "Stainless Steel 316L"
+grade = "316L"
+
+[stainless.s316L.mechanical]
+density = 8.0
+yield_strength = 170
+tensile_strength = 485
+elongation = 30
+hardness_vickers = 217
+
+[stainless.s316L.electrical]
+resistivity = 7.4e-7
+
+# 316L Electropolished
+[stainless.s316L.electropolished]
+name = "Stainless Steel 316L - Electropolished"
+treatment = "electropolished"
+
+[stainless.s316L.electropolished.pbr]
+roughness = 0.1
+
+# 316L Passivated
+[stainless.s316L.passivated]
+name = "Stainless Steel 316L - Passivated"
+treatment = "passivated"
+
+[stainless.s316L.passivated.pbr]
+roughness = 0.25
+
+# Stainless Steel 303 (free-cutting)
+[stainless.s303]
+name = "Stainless Steel 303"
+grade = "303"
+
+[stainless.s303.mechanical]
+yield_strength = 205
+tensile_strength = 515
+
+# Stainless Steel 17-4 PH (precipitation hardened)
+[stainless.s17_4PH]
+name = "Stainless Steel 17-4 PH"
+grade = "17-4 PH"
+
+[stainless.s17_4PH.mechanical]
+density = 7.8
+yield_strength = 1170
+tensile_strength = 1310
+
+
+# ============================================================================
+# ALUMINUM
+# ============================================================================
+
+[aluminum]
+name = "Aluminum"
+
+[aluminum.mechanical]
+density = 2.7
+youngs_modulus = 69
+poissons_ratio = 0.33
+
+[aluminum.thermal]
+melting_point = 660
+thermal_conductivity = 235
+specific_heat = 900
+thermal_expansion = 23.1
+
+[aluminum.pbr]
+base_color = [0.88, 0.88, 0.88, 1.0]
+metallic = 1.0
+roughness = 0.4
+
+# Aluminum 6061-T6
+[aluminum.a6061]
+name = "Aluminum 6061-T6"
+grade = "6061"
+
+[aluminum.a6061.mechanical]
+yield_strength = 276
+tensile_strength = 310
+elongation = 12
+
+[aluminum.a6061.T6]
+name = "Aluminum 6061-T6"
+temper = "T6"
+
+[aluminum.a6061.T6.mechanical]
+yield_strength = 276
+tensile_strength = 310
+
+[aluminum.a6061.T6.anodized]
+name = "Aluminum 6061-T6 - Anodized"
+treatment = "anodized"
+
+[aluminum.a6061.T6.anodized.pbr]
+base_color = [0.2, 0.2, 0.2, 1.0]
+roughness = 0.5
+
+# Aluminum 7075-T6 (aerospace)
+[aluminum.a7075]
+name = "Aluminum 7075"
+grade = "7075"
+
+[aluminum.a7075.mechanical]
+density = 2.81
+youngs_modulus = 72
+
+[aluminum.a7075.T6]
+name = "Aluminum 7075-T6"
+temper = "T6"
+
+[aluminum.a7075.T6.mechanical]
+yield_strength = 503
+tensile_strength = 572
+elongation = 11
+
+[aluminum.a7075.T73]
+name = "Aluminum 7075-T73"
+temper = "T73"
+
+[aluminum.a7075.T73.mechanical]
+yield_strength = 434
+tensile_strength = 505
+
+# Aluminum 2024-T4 (old aircraft grade)
+[aluminum.a2024]
+name = "Aluminum 2024"
+grade = "2024"
+
+[aluminum.a2024.mechanical]
+density = 2.78
+
+
+# ============================================================================
+# COPPER & BRASS
+# ============================================================================
+
+[copper]
+name = "Copper"
+
+[copper.mechanical]
+density = 8.96
+youngs_modulus = 110
+yield_strength = 40
+tensile_strength = 200
+
+[copper.thermal]
+melting_point = 1085
+thermal_conductivity = 398
+specific_heat = 385
+
+[copper.pbr]
+base_color = [0.72, 0.45, 0.2, 1.0]
+metallic = 1.0
+roughness = 0.3
+
+[copper.OFHC]
+name = "OFHC Copper (Oxygen-Free High Conductivity)"
+grade = "OFHC"
+
+[copper.OFHC.mechanical]
+density = 8.94
+
+[copper.OFHC.electrical]
+resistivity = 1.68e-8
+conductivity = 5.96e7
+
+
+# ============================================================================
+# TUNGSTEN
+# ============================================================================
+
+[tungsten]
+name = "Tungsten"
+formula = "W"
+
+[tungsten.mechanical]
+density = 19.3
+youngs_modulus = 411
+melting_point = 3422
+
+[tungsten.thermal]
+thermal_conductivity = 173
+specific_heat = 133
+
+[tungsten.pbr]
+base_color = [0.2, 0.2, 0.22, 1.0]
+metallic = 1.0
+roughness = 0.4
+
+[tungsten.pure]
+name = "Tungsten 99.95%"
+grade = "pure"
+
+[tungsten.pure.mechanical]
+density = 19.3
+
+# Tungsten Heavy Alloy W90
+[tungsten.W90]
+name = "Tungsten Heavy Alloy (90% W)"
+grade = "W90"
+
+[tungsten.W90.mechanical]
+density = 17.0
+
+
+# ============================================================================
+# LEAD
+# ============================================================================
+
+[lead]
+name = "Lead"
+formula = "Pb"
+
+[lead.mechanical]
+density = 11.34
+youngs_modulus = 16
+yield_strength = 12
+
+[lead.thermal]
+melting_point = 327
+thermal_conductivity = 35.3
+
+[lead.pbr]
+base_color = [0.3, 0.3, 0.33, 1.0]
+metallic = 1.0
+roughness = 0.5
+
+
+# ============================================================================
+# TITANIUM
+# ============================================================================
+
+[titanium]
+name = "Titanium"
+
+[titanium.mechanical]
+density = 4.51
+youngs_modulus = 103
+yield_strength = 880
+tensile_strength = 950
+
+[titanium.thermal]
+melting_point = 1668
+thermal_conductivity = 21.9
+
+[titanium.pbr]
+base_color = [0.6, 0.6, 0.6, 1.0]
+metallic = 1.0
+roughness = 0.3
+
+
+# ============================================================================
+# BRASS
+# ============================================================================
+
+[brass]
+name = "Brass (Cu-Zn)"
+
+[brass.mechanical]
+density = 8.5
+youngs_modulus = 97
+yield_strength = 200
+
+[brass.thermal]
+melting_point = 900
+
+[brass.pbr]
+base_color = [0.88, 0.78, 0.5, 1.0]
+metallic = 1.0
+roughness = 0.25
+
+

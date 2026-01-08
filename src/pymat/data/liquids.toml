@@ -1,0 +1,164 @@
+# Liquids database
+# Note: For temperature-dependent properties, use the factory functions in pymat.factories
+
+# ============================================================================
+# Water (at 20°C by default)
+# ============================================================================
+
+[water]
+name = "Water"
+formula = "H2O"
+
+[water.mechanical]
+density = 0.998  # g/cm³ at 20°C
+
+[water.thermal]
+melting_point = 0
+thermal_conductivity = 0.598  # W/(m·K) at 20°C
+specific_heat = 4182  # J/(kg·K) at 20°C
+
+[water.optical]
+refractive_index = 1.333
+
+[water.electrical]
+dielectric_constant = 80.1  # at 20°C
+resistivity = 182000  # Ω·m (pure water)
+
+[water.pbr]
+base_color = [0.7, 0.85, 0.95, 0.3]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.95
+ior = 1.333
+
+# Ice
+[water.ice]
+name = "Ice"
+treatment = "frozen"
+
+[water.ice.mechanical]
+density = 0.917
+
+[water.ice.thermal]
+thermal_conductivity = 2.22
+specific_heat = 2090
+
+[water.ice.pbr]
+base_color = [0.9, 0.95, 1.0, 0.7]
+roughness = 0.1
+transmission = 0.8
+
+
+# ============================================================================
+# Heavy Water (D2O)
+# ============================================================================
+
+[heavy_water]
+name = "Heavy Water (D2O)"
+formula = "D2O"
+
+[heavy_water.mechanical]
+density = 1.107  # g/cm³ at 20°C
+
+[heavy_water.thermal]
+melting_point = 3.82
+thermal_conductivity = 0.595
+specific_heat = 4210
+
+[heavy_water.optical]
+refractive_index = 1.328
+
+[heavy_water.pbr]
+base_color = [0.7, 0.85, 0.95, 0.3]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.95
+ior = 1.328
+
+
+# ============================================================================
+# Mineral Oil
+# ============================================================================
+
+[mineral_oil]
+name = "Mineral Oil"
+
+[mineral_oil.mechanical]
+density = 0.85
+
+[mineral_oil.thermal]
+thermal_conductivity = 0.14
+specific_heat = 1670
+
+[mineral_oil.optical]
+refractive_index = 1.47
+
+[mineral_oil.electrical]
+dielectric_constant = 2.2
+breakdown_voltage = 30
+
+[mineral_oil.pbr]
+base_color = [0.95, 0.9, 0.7, 0.4]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.9
+ior = 1.47
+
+
+# ============================================================================
+# Glycerol
+# ============================================================================
+
+[glycerol]
+name = "Glycerol"
+formula = "C3H8O3"
+
+[glycerol.mechanical]
+density = 1.261
+
+[glycerol.thermal]
+melting_point = 18
+thermal_conductivity = 0.29
+specific_heat = 2430
+
+[glycerol.optical]
+refractive_index = 1.473
+
+[glycerol.pbr]
+base_color = [0.95, 0.95, 0.9, 0.5]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.9
+ior = 1.473
+
+
+# ============================================================================
+# Silicone Oil
+# ============================================================================
+
+[silicone_oil]
+name = "Silicone Oil"
+
+[silicone_oil.mechanical]
+density = 0.97
+
+[silicone_oil.thermal]
+thermal_conductivity = 0.15
+specific_heat = 1500
+max_service_temp = 200
+min_service_temp = -50
+
+[silicone_oil.optical]
+refractive_index = 1.40
+
+[silicone_oil.electrical]
+dielectric_constant = 2.7
+breakdown_voltage = 15
+
+[silicone_oil.pbr]
+base_color = [0.9, 0.9, 0.9, 0.4]
+metallic = 0.0
+roughness = 0.0
+transmission = 0.9
+ior = 1.40
+

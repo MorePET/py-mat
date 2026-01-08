@@ -1,0 +1,272 @@
+# Ceramics and glass database
+
+# ============================================================================
+# Alumina (Al2O3)
+# ============================================================================
+
+[alumina]
+name = "Alumina"
+formula = "Al2O3"
+
+[alumina.mechanical]
+density = 3.95
+youngs_modulus = 345
+yield_strength = 240
+
+[alumina.thermal]
+melting_point = 2072
+thermal_conductivity = 30
+specific_heat = 880
+
+[alumina.electrical]
+dielectric_constant = 9.0
+breakdown_voltage = 12
+
+[alumina.pbr]
+base_color = [0.95, 0.95, 0.93, 1.0]
+metallic = 0.0
+roughness = 0.5
+
+[alumina.manufacturing]
+machinability = 30
+
+# 99.5% Alumina
+[alumina.al995]
+name = "99.5% Alumina"
+grade = "995"
+
+[alumina.al995.mechanical]
+density = 3.89
+
+# 99.9% Alumina
+[alumina.al999]
+name = "99.9% Alumina"
+grade = "999"
+
+[alumina.al999.mechanical]
+density = 3.96
+
+
+# ============================================================================
+# Zirconia (ZrO2)
+# ============================================================================
+
+[zirconia]
+name = "Zirconia"
+formula = "ZrO2"
+
+[zirconia.mechanical]
+density = 6.0
+youngs_modulus = 200
+yield_strength = 1000
+
+[zirconia.thermal]
+melting_point = 2715
+thermal_conductivity = 2.0
+
+[zirconia.electrical]
+dielectric_constant = 25
+
+[zirconia.pbr]
+base_color = [0.9, 0.88, 0.85, 1.0]
+metallic = 0.0
+roughness = 0.4
+
+
+# ============================================================================
+# Silicon Carbide (SiC)
+# ============================================================================
+
+[sic]
+name = "Silicon Carbide"
+formula = "SiC"
+
+[sic.mechanical]
+density = 3.1
+youngs_modulus = 410
+yield_strength = 350
+
+[sic.thermal]
+melting_point = 2700
+thermal_conductivity = 90
+
+[sic.electrical]
+dielectric_constant = 10
+
+[sic.pbr]
+base_color = [0.5, 0.5, 0.5, 1.0]
+metallic = 0.0
+roughness = 0.6
+
+
+# ============================================================================
+# Macor (Machinable Glass Ceramic)
+# ============================================================================
+
+[macor]
+name = "Macor"
+
+[macor.mechanical]
+density = 2.52
+youngs_modulus = 66
+yield_strength = 60
+
+[macor.thermal]
+melting_point = 1000
+thermal_conductivity = 1.46
+
+[macor.electrical]
+dielectric_constant = 5.8
+volume_resistivity = 1e11
+
+[macor.pbr]
+base_color = [0.98, 0.98, 0.96, 1.0]
+metallic = 0.0
+roughness = 0.4
+
+[macor.manufacturing]
+machinability = 100
+
+
+# ============================================================================
+# Shapal (Machinable Ceramic)
+# ============================================================================
+
+[shapal]
+name = "Shapal"
+
+[shapal.mechanical]
+density = 3.58
+youngs_modulus = 270
+
+[shapal.thermal]
+melting_point = 1600
+thermal_conductivity = 17
+
+[shapal.pbr]
+base_color = [0.85, 0.82, 0.8, 1.0]
+metallic = 0.0
+roughness = 0.5
+
+[shapal.manufacturing]
+machinability = 80
+
+
+# ============================================================================
+# Glass
+# ============================================================================
+
+[glass]
+name = "Glass"
+
+[glass.mechanical]
+density = 2.5
+youngs_modulus = 70
+tensile_strength = 50
+
+[glass.thermal]
+melting_point = 1600
+thermal_conductivity = 1.0
+specific_heat = 800
+
+[glass.electrical]
+dielectric_constant = 6.0
+breakdown_voltage = 15
+
+[glass.pbr]
+base_color = [0.9, 0.93, 0.95, 0.85]
+metallic = 0.0
+roughness = 0.1
+transmission = 0.9
+ior = 1.52
+
+# Borosilicate Glass (e.g., Pyrex)
+[glass.borosilicate]
+name = "Borosilicate Glass"
+grade = "borosilicate"
+
+[glass.borosilicate.thermal]
+melting_point = 1700
+thermal_expansion = 3.25
+
+# Fused Silica (SiO2)
+[glass.fused_silica]
+name = "Fused Silica"
+grade = "fused_silica"
+formula = "SiO2"
+
+[glass.fused_silica.mechanical]
+density = 2.2
+
+[glass.fused_silica.optical]
+refractive_index = 1.46
+transparency = 99
+
+[glass.fused_silica.thermal]
+thermal_expansion = 0.5
+
+# BK7 (Schott Glass)
+[glass.BK7]
+name = "BK7 Optical Glass"
+grade = "BK7"
+
+[glass.BK7.optical]
+refractive_index = 1.517
+
+[glass.BK7.pbr]
+transmission = 0.95
+
+
+# ============================================================================
+# Beryllia (BeO)
+# ============================================================================
+
+[beryllia]
+name = "Beryllia"
+formula = "BeO"
+
+[beryllia.mechanical]
+density = 3.01
+youngs_modulus = 345
+
+[beryllia.thermal]
+melting_point = 2530
+thermal_conductivity = 270
+
+[beryllia.electrical]
+dielectric_constant = 7.35
+
+[beryllia.pbr]
+base_color = [0.9, 0.9, 0.9, 1.0]
+metallic = 0.0
+roughness = 0.3
+
+[beryllia.compliance]
+toxic = true
+
+
+# ============================================================================
+# Yttria (Y2O3)
+# ============================================================================
+
+[yttria]
+name = "Yttria"
+formula = "Y2O3"
+
+[yttria.mechanical]
+density = 5.0
+youngs_modulus = 170
+
+[yttria.thermal]
+melting_point = 2410
+thermal_conductivity = 10
+
+[yttria.electrical]
+dielectric_constant = 10
+
+[yttria.pbr]
+base_color = [0.95, 0.93, 0.9, 1.0]
+metallic = 0.0
+roughness = 0.4
+
+

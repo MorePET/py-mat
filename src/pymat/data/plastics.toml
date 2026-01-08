@@ -1,0 +1,558 @@
+# Plastics and polymers database
+
+# ============================================================================
+# PEEK (Polyetheretherketone)
+# ============================================================================
+
+[peek]
+name = "PEEK"
+formula = "C19H12O3"
+
+[peek.mechanical]
+density = 1.32
+youngs_modulus = 3.6
+yield_strength = 100
+tensile_strength = 100
+melting_point = 334
+
+[peek.thermal]
+glass_transition = 143
+thermal_conductivity = 0.25
+specific_heat = 1200
+
+[peek.electrical]
+dielectric_constant = 3.2
+volume_resistivity = 1e16
+
+[peek.pbr]
+base_color = [0.82, 0.7, 0.55, 1.0]
+metallic = 0.0
+roughness = 0.5
+
+[peek.manufacturing]
+printable_fdm = true
+print_nozzle_temp = 360
+print_bed_temp = 200
+
+# PEEK Unfilled
+[peek.unfilled]
+name = "PEEK Unfilled"
+grade = "unfilled"
+
+[peek.unfilled.mechanical]
+density = 1.32
+
+# PEEK GF30 (30% Glass Filled)
+[peek.GF30]
+name = "PEEK 30% Glass Filled"
+grade = "GF30"
+
+[peek.GF30.mechanical]
+density = 1.53
+youngs_modulus = 10
+yield_strength = 170
+
+# PEEK CF30 (30% Carbon Filled)
+[peek.CF30]
+name = "PEEK 30% Carbon Filled"
+grade = "CF30"
+
+[peek.CF30.mechanical]
+density = 1.41
+youngs_modulus = 13
+
+# Victrex vendor
+[peek.victrex]
+name = "Victrex PEEK"
+vendor = "victrex"
+
+[peek.victrex.v450G]
+name = "Victrex PEEK 450G"
+vendor = "victrex"
+grade = "450G"
+
+[peek.victrex.v450G.mechanical]
+density = 1.30
+
+
+# ============================================================================
+# Delrin (POM - Polyoxymethylene)
+# ============================================================================
+
+[delrin]
+name = "Delrin (POM)"
+formula = "-(CH2-O)n-"
+
+[delrin.mechanical]
+density = 1.41
+youngs_modulus = 2.8
+yield_strength = 70
+tensile_strength = 70
+
+[delrin.thermal]
+glass_transition = 80
+melting_point = 165
+thermal_conductivity = 0.25
+
+[delrin.electrical]
+dielectric_constant = 3.7
+volume_resistivity = 1e17
+
+[delrin.pbr]
+base_color = [0.9, 0.9, 0.85, 1.0]
+metallic = 0.0
+roughness = 0.6
+
+[delrin.manufacturing]
+machinability = 80
+printable_fdm = true
+print_nozzle_temp = 220
+print_bed_temp = 60
+
+
+# ============================================================================
+# Ultem (PEI - Polyetherimide)
+# ============================================================================
+
+[ultem]
+name = "Ultem (PEI)"
+formula = "C37H24N2O6"
+
+[ultem.mechanical]
+density = 1.27
+youngs_modulus = 3.6
+yield_strength = 90
+
+[ultem.thermal]
+glass_transition = 217
+melting_point = 340
+thermal_conductivity = 0.22
+
+[ultem.electrical]
+dielectric_constant = 3.15
+
+[ultem.pbr]
+base_color = [0.85, 0.65, 0.2, 1.0]
+metallic = 0.0
+roughness = 0.5
+
+[ultem.manufacturing]
+printable_fdm = true
+print_nozzle_temp = 340
+print_bed_temp = 170
+
+
+# ============================================================================
+# PTFE (Polytetrafluoroethylene)
+# ============================================================================
+
+[ptfe]
+name = "PTFE (Teflon)"
+formula = "-(CF2-CF2)n-"
+
+[ptfe.mechanical]
+density = 2.15
+yield_strength = 20
+
+[ptfe.thermal]
+glass_transition = -90
+melting_point = 327
+thermal_conductivity = 0.24
+
+[ptfe.electrical]
+dielectric_constant = 2.1
+volume_resistivity = 1e18
+
+[ptfe.pbr]
+base_color = [0.95, 0.95, 0.95, 1.0]
+metallic = 0.0
+roughness = 0.3
+
+[ptfe.compliance]
+food_safe = true
+
+# PTFE Reflector Tape (for scintillator wrapping)
+[ptfe.reflector]
+name = "PTFE Reflector Tape"
+treatment = "reflector"
+
+[ptfe.reflector.optical]
+transparency = 0
+reflectivity = 98
+
+[ptfe.reflector.pbr]
+base_color = [0.98, 0.98, 0.98, 1.0]
+roughness = 0.2
+
+
+# ============================================================================
+# ESR (Enhanced Specular Reflector - 3M Vikuiti)
+# ============================================================================
+
+[esr]
+name = "ESR (3M Vikuiti)"
+vendor = "3M"
+
+[esr.mechanical]
+density = 1.0
+tensile_strength = 100
+
+[esr.thermal]
+max_service_temp = 100
+
+[esr.optical]
+transparency = 0
+reflectivity = 98.5
+
+[esr.pbr]
+base_color = [0.99, 0.99, 0.99, 1.0]
+metallic = 0.0
+roughness = 0.1
+
+[esr.compliance]
+radiation_resistant = true
+
+
+# ============================================================================
+# Nylon (PA)
+# ============================================================================
+
+[nylon]
+name = "Nylon 6"
+formula = "-(CH2)5-CO-NH-"
+
+[nylon.mechanical]
+density = 1.13
+youngs_modulus = 2.8
+yield_strength = 45
+
+[nylon.thermal]
+glass_transition = 50
+melting_point = 215
+
+[nylon.pbr]
+base_color = [0.85, 0.85, 0.8, 1.0]
+metallic = 0.0
+roughness = 0.6
+
+[nylon.manufacturing]
+printable_fdm = true
+print_nozzle_temp = 240
+print_bed_temp = 50
+
+
+# ============================================================================
+# 3D Printing Plastics
+# ============================================================================
+
+[pla]
+name = "PLA (Polylactic Acid)"
+formula = "C3H4O2"
+
+[pla.mechanical]
+density = 1.25
+youngs_modulus = 2.7
+yield_strength = 50
+
+[pla.thermal]
+glass_transition = 55
+melting_point = 160
+
+[pla.pbr]
+base_color = [0.8, 0.8, 0.8, 1.0]
+metallic = 0.0
+roughness = 0.6
+
+[pla.manufacturing]
+printable_fdm = true
+printable_sla = false
+print_nozzle_temp = 200
+print_bed_temp = 20
+
+
+[abs]
+name = "ABS (Acrylonitrile Butadiene Styrene)"
+
+[abs.mechanical]
+density = 1.05
+youngs_modulus = 2.3
+yield_strength = 40
+
+[abs.thermal]
+glass_transition = 105
+melting_point = 225
+
+[abs.pbr]
+base_color = [0.3, 0.3, 0.3, 1.0]
+metallic = 0.0
+roughness = 0.6
+
+[abs.manufacturing]
+printable_fdm = true
+print_nozzle_temp = 240
+print_bed_temp = 80
+
+
+[petg]
+name = "PETG"
+
+[petg.mechanical]
+density = 1.27
+youngs_modulus = 2.3
+
+[petg.thermal]
+glass_transition = 80
+melting_point = 225
+
+[petg.pbr]
+base_color = [0.85, 0.85, 0.8, 1.0]
+metallic = 0.0
+roughness = 0.5
+
+[petg.manufacturing]
+printable_fdm = true
+print_nozzle_temp = 235
+print_bed_temp = 70
+
+
+[tpu]
+name = "TPU (Thermoplastic Polyurethane)"
+
+[tpu.mechanical]
+density = 1.21
+
+[tpu.pbr]
+base_color = [0.6, 0.6, 0.6, 0.8]
+metallic = 0.0
+roughness = 0.7
+
+[tpu.manufacturing]
+printable_fdm = true
+print_nozzle_temp = 220
+
+
+# ============================================================================
+# High-Performance Plastics
+# ============================================================================
+
+[vespel]
+name = "Vespel (Polyimide)"
+
+[vespel.mechanical]
+density = 1.42
+youngs_modulus = 3.8
+yield_strength = 70
+
+[vespel.thermal]
+melting_point = 400
+
+[vespel.pbr]
+base_color = [0.4, 0.2, 0.1, 1.0]
+metallic = 0.0
+roughness = 0.5
+
+
+[torlon]
+name = "Torlon (PAI)"
+
+[torlon.mechanical]
+density = 1.45
+youngs_modulus = 5.2
+yield_strength = 110
+
+[torlon.thermal]
+melting_point = 330
+
+[torlon.pbr]
+base_color = [0.85, 0.6, 0.3, 1.0]
+metallic = 0.0
+roughness = 0.5
+
+
+[pctfe]
+name = "PCTFE (Polychlorotrifluoroethylene)"
+
+[pctfe.mechanical]
+density = 2.13
+yield_strength = 50
+
+[pctfe.thermal]
+melting_point = 217
+
+[pctfe.pbr]
+base_color = [0.9, 0.9, 0.95, 1.0]
+metallic = 0.0
+roughness = 0.4
+
+
+# ============================================================================
+# PMMA (Acrylic / Plexiglas)
+# ============================================================================
+
+[pmma]
+name = "PMMA (Acrylic)"
+formula = "C5H8O2"
+
+[pmma.mechanical]
+density = 1.18
+youngs_modulus = 3.0
+yield_strength = 70
+tensile_strength = 75
+
+[pmma.thermal]
+glass_transition = 105
+melting_point = 160
+thermal_conductivity = 0.19
+specific_heat = 1470
+
+[pmma.optical]
+refractive_index = 1.49
+transparency = 92
+
+[pmma.electrical]
+dielectric_constant = 3.0
+volume_resistivity = 1e14
+
+[pmma.pbr]
+base_color = [0.95, 0.95, 0.95, 0.9]
+metallic = 0.0
+roughness = 0.1
+transmission = 0.9
+ior = 1.49
+
+[pmma.manufacturing]
+machinability = 90
+printable_fdm = false
+printable_sla = true
+
+[pmma.compliance]
+food_safe = true
+uv_resistant = false
+
+
+# ============================================================================
+# PE (Polyethylene)
+# ============================================================================
+
+[pe]
+name = "Polyethylene"
+formula = "-(CH2-CH2)n-"
+
+[pe.mechanical]
+density = 0.94
+youngs_modulus = 0.8
+yield_strength = 25
+
+[pe.thermal]
+melting_point = 130
+thermal_conductivity = 0.4
+specific_heat = 2300
+
+[pe.electrical]
+dielectric_constant = 2.3
+volume_resistivity = 1e16
+
+[pe.pbr]
+base_color = [0.9, 0.9, 0.88, 1.0]
+metallic = 0.0
+roughness = 0.6
+
+[pe.compliance]
+food_safe = true
+recyclable = true
+recycling_symbol = 2
+
+# HDPE (High-Density Polyethylene)
+[pe.hdpe]
+name = "HDPE (High-Density Polyethylene)"
+grade = "HDPE"
+
+[pe.hdpe.mechanical]
+density = 0.95
+youngs_modulus = 1.1
+yield_strength = 26
+tensile_strength = 32
+
+[pe.hdpe.thermal]
+melting_point = 130
+
+[pe.hdpe.compliance]
+recycling_symbol = 2
+
+# LDPE (Low-Density Polyethylene)
+[pe.ldpe]
+name = "LDPE (Low-Density Polyethylene)"
+grade = "LDPE"
+
+[pe.ldpe.mechanical]
+density = 0.92
+youngs_modulus = 0.2
+yield_strength = 10
+tensile_strength = 15
+
+[pe.ldpe.thermal]
+melting_point = 110
+
+[pe.ldpe.compliance]
+recycling_symbol = 4
+
+# UHMWPE (Ultra-High Molecular Weight PE)
+[pe.uhmwpe]
+name = "UHMWPE"
+grade = "UHMWPE"
+
+[pe.uhmwpe.mechanical]
+density = 0.93
+youngs_modulus = 0.8
+yield_strength = 20
+tensile_strength = 40
+
+[pe.uhmwpe.compliance]
+biocompatible = true
+
+
+# ============================================================================
+# PC (Polycarbonate)
+# ============================================================================
+
+[pc]
+name = "Polycarbonate"
+formula = "C16H14O3"
+
+[pc.mechanical]
+density = 1.20
+youngs_modulus = 2.3
+yield_strength = 60
+tensile_strength = 65
+
+[pc.thermal]
+glass_transition = 147
+melting_point = 267
+thermal_conductivity = 0.2
+specific_heat = 1200
+
+[pc.optical]
+refractive_index = 1.58
+transparency = 89
+
+[pc.electrical]
+dielectric_constant = 2.9
+volume_resistivity = 1e14
+
+[pc.pbr]
+base_color = [0.92, 0.92, 0.92, 0.85]
+metallic = 0.0
+roughness = 0.15
+transmission = 0.85
+ior = 1.58
+
+[pc.manufacturing]
+machinability = 85
+printable_fdm = true
+print_nozzle_temp = 260
+print_bed_temp = 100
+
+[pc.compliance]
+food_safe = true
+recycling_symbol = 7
+
