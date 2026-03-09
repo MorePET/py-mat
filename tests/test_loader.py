@@ -193,6 +193,69 @@ class TestFormulaAndComposition:
         assert "Lu1.8Y0.2SiO5" in info or "Formula" not in info  # May or may not include
 
 
+class TestCompositionData:
+    """Test elemental composition data for alloys and target materials."""
+
+    def test_alloy_compositions_sum_to_one(self):
+        """All composition dicts should sum to ~1.0."""
+        from pymat import load_all
+
+        materials = load_all()
+        for name, mat in materials.items():
+            if mat.composition:
+                total = sum(mat.composition.values())
+                assert abs(total - 1.0) < 0.02, (
+                    f"{name}: composition sums to {total}, expected ~1.0"
+                )
+
+    def test_havar_composition(self):
+        """Havar should have correct elemental breakdown."""
+        materials = load_category("metals")
+        havar = materials["havar"]
+        assert havar.composition is not None
+        assert "Co" in havar.composition
+        assert "Cr" in havar.composition
+        assert abs(havar.composition["Co"] - 0.425) < 0.001
+        assert havar.density == 8.3
+
+    def test_ss316L_composition(self):
+        """SS 316L should have Mo in composition (distinguishes from 304)."""
+        materials = load_category("metals")
+        s316L = materials["stainless"]._children["s316L"]
+        assert s316L.composition is not None
+        assert "Mo" in s316L.composition
+        assert "Fe" in s316L.composition
+
+    def test_ti64_composition(self):
+        """Ti-6Al-4V should have Ti, Al, V."""
+        materials = load_category("metals")
+        grade5 = materials["titanium"]._children["grade5"]
+        assert grade5.composition is not None
+        assert abs(grade5.composition["Ti"] - 0.90) < 0.001
+        assert abs(grade5.composition["Al"] - 0.06) < 0.001
+        assert abs(grade5.composition["V"] - 0.04) < 0.001
+
+    def test_pure_metals_have_formula(self):
+        """Pure metals should have a formula (single element)."""
+        materials = load_category("metals")
+        for name in ["copper", "aluminum", "titanium", "niobium", "silver",
+                      "gold", "molybdenum", "gallium", "bismuth", "rhodium",
+                      "yttrium", "nickel", "iron", "zinc", "tin", "radium"]:
+            mat = materials.get(name)
+            assert mat is not None, f"Missing material: {name}"
+            assert mat.formula is not None, f"{name} should have a formula"
+
+    def test_target_materials_have_density(self):
+        """All target materials should have density set."""
+        materials = load_category("metals")
+        for name in ["havar", "niobium", "silver", "gold", "molybdenum",
+                      "gallium", "bismuth", "rhodium", "yttrium", "radium"]:
+            mat = materials.get(name)
+            assert mat is not None, f"Missing target material: {name}"
+            assert mat.density is not None, f"{name} should have density"
+            assert mat.density > 0, f"{name} density should be positive"
+
+
 class TestManufacturingProperties:
     """Test manufacturing properties are loaded."""
     
