@@ -6,6 +6,17 @@ use std::path::{Path, PathBuf};
 use crate::error::MatError;
 use crate::material::{Material, OpticalProperties};
 
+/// Embedded TOML data files (compiled into the binary).
+const BUILTIN_TOML: &[(&str, &str)] = &[
+    ("metals", include_str!("../data/metals.toml")),
+    ("scintillators", include_str!("../data/scintillators.toml")),
+    ("plastics", include_str!("../data/plastics.toml")),
+    ("ceramics", include_str!("../data/ceramics.toml")),
+    ("electronics", include_str!("../data/electronics.toml")),
+    ("liquids", include_str!("../data/liquids.toml")),
+    ("gases", include_str!("../data/gases.toml")),
+];
+
 /// Categories of TOML data files.
 const CATEGORIES: &[&str] = &[
     "metals",
@@ -36,9 +47,24 @@ pub struct MaterialDb {
 }
 
 impl MaterialDb {
+    /// Load the built-in material database (no external files needed).
+    ///
+    /// All 7 TOML category files are embedded in the binary at compile time.
+    /// This is the recommended way to use the database as a crates.io dependency.
+    pub fn builtin() -> Self {
+        let mut materials = HashMap::new();
+        for &(_category, raw) in BUILTIN_TOML {
+            let table: toml::Table = toml::from_str(raw)
+                .expect("embedded TOML should always parse");
+            parse_top_level(&table, &mut materials);
+        }
+        Self { materials }
+    }
+
     /// Load all TOML category files from a data directory.
     ///
     /// The directory should contain `metals.toml`, `scintillators.toml`, etc.
+    /// Use this for custom or extended material databases.
     pub fn open(data_dir: impl AsRef<Path>) -> Result<Self, MatError> {
         let dir = data_dir.as_ref();
         if !dir.is_dir() {
@@ -70,7 +96,7 @@ impl MaterialDb {
     /// Load from the default py-mat data directory (auto-detected relative to the crate).
     ///
     /// This looks for `../src/pymat/data/` relative to the mat-rs crate root,
-    /// which works for development within the py-mat monorepo.
+    /// which works for development within the mat monorepo.
     pub fn from_pymat_data() -> Result<Self, MatError> {
         let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let data_dir = manifest.join("../src/pymat/data");

@@ -8,10 +8,10 @@
 //!
 //! ## Quick start
 //!
-//! ```no_run
+//! ```
 //! use rs_materials::MaterialDb;
 //!
-//! let db = MaterialDb::open("path/to/mat/data").unwrap();
+//! let db = MaterialDb::builtin();
 //! let lyso = db.get("lyso").unwrap();
 //! assert_eq!(lyso.density(), Some(7.1));
 //! ```

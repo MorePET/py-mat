@@ -17,6 +17,32 @@ fn loads_all_categories() {
 }
 
 #[test]
+fn builtin_matches_file_loaded() {
+    let from_files = db();
+    let builtin = MaterialDb::builtin();
+    assert_eq!(builtin.len(), from_files.len(),
+        "builtin and file-loaded should have same number of materials");
+
+    // Spot-check a few materials
+    for key in &["lyso", "stainless.s316L", "water", "air", "alumina", "fr4", "peek"] {
+        let b = builtin.get(key).unwrap();
+        let f = from_files.get(key).unwrap();
+        assert_eq!(b.density(), f.density(), "density mismatch for {key}");
+        assert_eq!(b.formula(), f.formula(), "formula mismatch for {key}");
+    }
+}
+
+#[test]
+fn builtin_lyso_properties() {
+    let db = MaterialDb::builtin();
+    let lyso = db.get("lyso").unwrap();
+    assert_eq!(lyso.density(), Some(7.1));
+    assert_eq!(lyso.formula(), Some("Lu1.8Y0.2SiO5"));
+    let opt = lyso.optical().unwrap();
+    assert_eq!(opt.light_yield, Some(32000.0));
+}
+
+#[test]
 fn all_materials_have_names() {
     let db = db();
     for key in db.keys() {
