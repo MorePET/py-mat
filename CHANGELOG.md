@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [rs-materials 0.2.0] - 2026-03-25
+
+### Added
+- `MaterialDb::builtin()` — zero-config constructor with all TOML data embedded via `include_str!()`
+- No external data directory needed when used as a crates.io dependency
+
+## [rs-materials 0.1.0] - 2026-03-25
+
+### Added
+- Initial Rust crate for material database and formula parsing
+- `MaterialDb::open(path)` — loads all 7 TOML category files with property inheritance
+- `parse_formula()` — fractional stoichiometry support (e.g. `Lu1.8Y0.2SiO5`)
+- `formula_to_mass_fractions()`, `mass_to_atom_fractions()`, `atom_to_mass_fractions()`
+- `Material` struct with density, formula, composition, `OpticalProperties`
+- `Send + Sync` for `Arc` sharing in multi-threaded transport engines
+- Separate release workflow triggered on `rs-materials/v*` tags
+
 ## [2.0.4] - 2025-01-08
 
 ### Fixed
