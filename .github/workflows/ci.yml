@@ -61,14 +61,31 @@ jobs:
       - name: Run pre-commit hooks
         run: uv run pre-commit run --all-files --show-diff-on-failure
 
-  test:
-    name: Tests
+  test-matrix:
+    # Matrix of (python-version, extras set). Each cell is a visible
+    # status check. The roll-up `test` job below aggregates them into
+    # the single `Tests` context consumers of the ruleset depend on.
+    name: "Tests (${{ matrix.label }})"
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     if: |
       github.event_name != 'workflow_dispatch' ||
       inputs.test-suite == 'all' ||
       inputs.test-suite == 'test'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Full integration including build123d (pulls cadquery-ocp + vtk,
+          # which have cp311/cp312 wheels only). See #11.
+          - label: "py3.12, all"
+            python-version: "3.12"
+            uv-sync-args: "--all-extras"
+          # Core + lightweight extras on the latest Python the ecosystem
+          # lets us use.
+          - label: "py3.13, core"
+            python-version: "3.13"
+            uv-sync-args: "--extra periodictable --extra matproj"
 
     steps:
       - name: Checkout repository
@@ -77,7 +94,9 @@ jobs:
       - name: Set up environment
         uses: ./.github/actions/setup-env
         with:
+          python-version: ${{ matrix.python-version }}
           sync-dependencies: 'true'
+          uv-sync-args: ${{ matrix.uv-sync-args }}
 
       - name: Run tests with coverage
         run: uv run pytest --cov --cov-report=term-missing --cov-report=xml
@@ -86,10 +105,28 @@ jobs:
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7.0.0
         with:
-          name: coverage-report
+          name: coverage-report-${{ matrix.python-version }}
           path: coverage.xml
           retention-days: 30
           if-no-files-found: ignore
+
+  test:
+    # Roll-up status check. Keeps `Tests` stable as a required-status
+    # context in branch rulesets while individual matrix cells report
+    # under `Tests (py3.12, all)` / `Tests (py3.13, core)`.
+    name: Tests
+    runs-on: ubuntu-22.04
+    timeout-minutes: 2
+    needs: [test-matrix]
+    if: always()
+    steps:
+      - name: Check matrix result
+        run: |
+          if [ "${{ needs.test-matrix.result }}" != "success" ]; then
+            echo "::error::One or more test-matrix cells failed"
+            exit 1
+          fi
+          echo "All test-matrix cells passed"
 
   security:
     name: Security Scan
