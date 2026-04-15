@@ -36,8 +36,7 @@ class TestPeriodictableEnrichment:
 
     @pytest.mark.xfail(
         reason=(
-            "periodictable only has density for pure elements, not compounds. "
-            "Tracked separately."
+            "periodictable only has density for pure elements, not compounds. Tracked separately."
         ),
         strict=True,
     )
@@ -92,8 +91,7 @@ class TestEnrichAll:
 
     @pytest.mark.xfail(
         reason=(
-            "periodictable only has density for pure elements, not compounds. "
-            "Tracked separately."
+            "periodictable only has density for pure elements, not compounds. Tracked separately."
         ),
         strict=True,
     )
