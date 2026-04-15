@@ -76,16 +76,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Full integration including build123d (pulls cadquery-ocp + vtk,
-          # which have cp311/cp312 wheels only). See #11.
+          # Full integration. On 3.12, `--all-extras` installs
+          # periodictable, matproj, build123d, and dev (pytest). On
+          # 3.13+, the env marker on build123d drops it silently,
+          # which is exactly what we want for forward-compat testing.
           - label: "py3.12, all"
             python-version: "3.12"
             uv-sync-args: "--all-extras"
-          # Core + lightweight extras on the latest Python the ecosystem
-          # lets us use.
-          - label: "py3.13, core"
+          - label: "py3.13, all"
             python-version: "3.13"
-            uv-sync-args: "--extra periodictable --extra matproj"
+            uv-sync-args: "--all-extras"
 
     steps:
       - name: Checkout repository
