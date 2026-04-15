@@ -44,10 +44,18 @@ name: 'Setup Environment'
 description: 'Set up CI environment with Python, uv, pre-commit, and optional tools (podman, Node.js, devcontainer CLI, BATS)'
 
 inputs:
+  python-version:
+    description: 'Explicit Python version. Overrides .python-version when set.'
+    required: false
+    default: ''
   sync-dependencies:
     description: 'Run uv sync to install project dependencies'
     required: false
     default: 'false'
+  uv-sync-args:
+    description: 'Extra args to pass to uv sync (e.g. "--all-extras", "--extra periodictable"). Used only when sync-dependencies is true.'
+    required: false
+    default: '--all-extras'
   install-podman:
     description: 'Install podman for container operations'
     required: false
@@ -82,7 +90,16 @@ runs:
   using: composite
   steps:
     # ── Python ───────────────────────────────────────────────────────────
-    - name: "Set up Python"
+    # Explicit python-version wins over .python-version file. Matrix jobs
+    # pass their version in; un-parameterized callers fall back to the file.
+    - name: "Set up Python (from input)"
+      if: inputs.python-version != ''
+      uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: "Set up Python (from .python-version)"
+      if: inputs.python-version == ''
       uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6
       with:
         python-version-file: ".python-version"
@@ -105,7 +122,7 @@ runs:
     - name: Sync Python dependencies
       if: inputs.sync-dependencies == 'true'
       shell: bash
-      run: uv sync --frozen --all-extras
+      run: uv sync --frozen ${{ inputs.uv-sync-args }}
 
     # ── Podman ──────────────────────────────────────────────────────────
     - name: Install podman

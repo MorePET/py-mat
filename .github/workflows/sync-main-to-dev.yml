@@ -158,13 +158,31 @@ jobs:
         id: merge-check
         run: |
           set -euo pipefail
-          git fetch origin main
-          if git merge --no-commit --no-ff origin/main 2>/dev/null; then
+          git fetch origin main dev
+          # git merge-tree --write-tree does an in-memory trial merge
+          # without touching the working tree or index. Exits 0 on clean
+          # merge, 1 on conflicts, anything else is an error. This is the
+          # right tool for "can these be merged" checks — the previous
+          # implementation used `git merge --no-commit --no-ff 2>/dev/null`
+          # which misfired when the trial merge was a degenerate
+          # fast-forward-with-no-ff (e.g. dev tip is an ancestor of main's
+          # merge commit after a dev→main PR) and reported false-positive
+          # conflicts with the error output silenced.
+          if merge_out="$(git merge-tree --write-tree origin/dev origin/main 2>&1)"; then
             echo "conflict=false" >> "$GITHUB_OUTPUT"
+            echo "Merge-tree check: no conflicts between origin/dev and origin/main."
           else
-            echo "conflict=true" >> "$GITHUB_OUTPUT"
+            merge_rc=$?
+            if [ "${merge_rc}" -eq 1 ]; then
+              echo "conflict=true" >> "$GITHUB_OUTPUT"
+              echo "::warning::Merge conflicts detected between origin/dev and origin/main."
+              echo "${merge_out}"
+            else
+              echo "::error::git merge-tree failed with exit code ${merge_rc}"
+              echo "${merge_out}"
+              exit "${merge_rc}"
+            fi
           fi
-          git merge --abort 2>/dev/null || true
 
       - name: Create sync branch from main
         if: steps.existing-pr.outputs.count == '0' && steps.recheck.outputs.up_to_date != 'true'

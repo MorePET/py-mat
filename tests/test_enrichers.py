@@ -13,43 +13,36 @@ from pymat.enrichers import enrich_all, enrich_from_periodictable
 class TestPeriodictableEnrichment:
     """Test enrichment from periodictable library."""
 
-    @pytest.mark.xfail(
-        reason=(
-            "periodictable only has density for pure elements, not compounds. "
-            "enrich_from_periodictable needs a density-from-composition "
-            "calculator before this test can pass. Tracked separately."
-        ),
-        strict=True,
-    )
-    def test_enrich_simple_formula(self):
-        """Test enriching material with simple formula."""
+    def test_enrich_simple_compound_extracts_composition(self):
+        """
+        Enriching a compound populates `composition` (element → atom
+        count) and leaves `density` unset. Density for compounds cannot
+        be derived from periodictable; use `enrich_from_matproj` for
+        that. See ADR-0001.
+        """
         mat = Material(name="Aluminum Oxide", formula="Al2O3")
-
-        # Initially no density
         assert mat.density is None or mat.density == 0
 
         enrich_from_periodictable(mat)
 
-        # After enrichment should have density
-        assert mat.density is not None
-        assert mat.density > 0
+        assert mat.composition == {"Al": 2, "O": 3}
+        # Molar mass is always derivable from the formula via the
+        # computed property — independent of enrichment.
+        assert mat.molar_mass is not None
+        assert abs(mat.molar_mass - 101.96) < 0.1  # Al2O3 = 2*26.98 + 3*16.00
+        # Density is NOT set for compounds.
+        assert mat.density is None or mat.density == 0
 
-    @pytest.mark.xfail(
-        reason=(
-            "periodictable only has density for pure elements, not compounds. Tracked separately."
-        ),
-        strict=True,
-    )
-    def test_enrich_complex_formula(self):
-        """Test enriching with complex formula."""
+    def test_enrich_complex_compound_extracts_composition(self):
+        """Same as above for a fractional-stoichiometry compound."""
         mat = Material(name="LYSO", formula="Lu1.8Y0.2SiO5")
 
         enrich_from_periodictable(mat)
 
-        # Should have set density
-        assert mat.density is not None
-        # LYSO should be around 7.1 g/cm³
-        assert 6.5 < mat.density < 7.5
+        assert mat.composition == {"Lu": 1.8, "Y": 0.2, "Si": 1, "O": 5}
+        assert mat.molar_mass is not None
+        assert 440 < mat.molar_mass < 441  # Lu1.8Y0.2SiO5 ≈ 440.87
+        assert mat.density is None or mat.density == 0
 
     def test_enrich_without_formula(self):
         """Test enrichment with no formula."""
@@ -89,21 +82,20 @@ class TestPeriodictableEnrichment:
 class TestEnrichAll:
     """Test enrich_all function."""
 
-    @pytest.mark.xfail(
-        reason=(
-            "periodictable only has density for pure elements, not compounds. Tracked separately."
-        ),
-        strict=True,
-    )
-    def test_enrich_all_with_periodictable(self):
-        """Test enriching all data sources."""
+    def test_enrich_all_with_periodictable_extracts_composition(self):
+        """
+        `enrich_all` with periodictable populates composition and
+        leaves compound density unset — same contract as
+        `enrich_from_periodictable` directly. See ADR-0001.
+        """
         mat = Material(name="Test", formula="SiO2")
 
         result = enrich_all(mat, use_periodictable=True)
 
         assert result is mat
-        # Should have enriched from periodictable
-        assert mat.density is not None
+        assert mat.composition == {"Si": 1, "O": 2}
+        assert mat.molar_mass is not None
+        assert abs(mat.molar_mass - 60.09) < 0.1  # SiO2 = 28.09 + 2*16.00
 
     def test_enrich_all_without_periodictable(self):
         """Test enriching without periodictable."""

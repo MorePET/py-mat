@@ -411,6 +411,41 @@ class _MaterialInternal:
             return 0.0
         return mech_density / 1000
 
+    @property
+    def molar_mass(self) -> Optional[float]:
+        """
+        Molar mass in g/mol, parsed from `formula`.
+
+        Only meaningful for materials with a well-defined chemical
+        formula (compounds, pure elements). Returns `None` for
+        alloys/mixtures without a formula, and for formulas containing
+        element symbols not in the local atomic-weight table. Derived
+        on every access — not stored, not authored in TOML. See
+        ADR-0001.
+
+        Note: this intentionally does not use `composition` because
+        alloys store composition as mass fractions, not atom counts,
+        and a single "molar mass" isn't well-defined for mixtures.
+        """
+        if not self.formula:
+            return None
+        from .elements import compute_molar_mass
+
+        try:
+            return compute_molar_mass(self.formula)
+        except ValueError:
+            return None
+
+    @property
+    def molar_mass_qty(self):
+        """Molar mass as a Pint Quantity in g/mol, or None."""
+        mass = self.molar_mass
+        if mass is None:
+            return None
+        from .units import ureg
+
+        return mass * ureg("g/mol")
+
     def mass_from_volume_mm3(self, volume_mm3: float) -> float:
         """Calculate mass in grams from volume in mm³."""
         return volume_mm3 * self.density_g_mm3
