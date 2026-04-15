@@ -324,6 +324,7 @@ class PBRProperties:
     clearcoat: float = 0.0  # secondary glossy layer
 
     # Texture maps (paths or URIs)
+    base_color_map: Optional[str] = None  # albedo / diffuse texture
     normal_map: Optional[str] = None
     roughness_map: Optional[str] = None
     metallic_map: Optional[str] = None
@@ -362,6 +363,8 @@ class PBRProperties:
             out["opacity"] = a
             out["transparent"] = True
         # Texture maps — keys use Three.js naming (normalMap, etc.).
+        if self.base_color_map is not None:
+            out["map"] = self.base_color_map  # Three.js color channel is plain `map`
         if self.normal_map is not None:
             out["normalMap"] = self.normal_map
         if self.roughness_map is not None:

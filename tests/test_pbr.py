@@ -115,6 +115,9 @@ class TestPbrBackfill:
     """
 
     def _make_rich_backend(self):
+        """Flat Three.js-shaped dict (matches the native lite backend's
+        output shape)."""
+
         class RichBackend:
             def to_dict(self) -> dict:
                 return {
@@ -125,6 +128,7 @@ class TestPbrBackfill:
                     "transmission": 0.0,
                     "clearcoat": 0.2,
                     "emissive": [0.01, 0.01, 0.01],
+                    "map": "cache/albedo.png",
                     "normalMap": "cache/normal.png",
                     "roughnessMap": "cache/roughness.png",
                     "metalnessMap": "cache/metalness.png",
@@ -132,6 +136,34 @@ class TestPbrBackfill:
                 }
 
         return RichBackend()
+
+    def _make_nested_rich_backend(self):
+        """Nested `{values, textures}` dict shape — what
+        `threejs_materials.PbrProperties.to_dict()` actually emits
+        (verified against the real library at v1.0.4)."""
+
+        class NestedBackend:
+            def to_dict(self) -> dict:
+                return {
+                    "id": "ivory_walnut",
+                    "name": "Ivory Walnut Solid Wood",
+                    "source": "gpuopen",
+                    "url": "https://matlib.gpuopen.com/...",
+                    "license": "MIT Public Domain",
+                    "values": {
+                        "color": [0.8, 0.8, 0.8],  # neutral tint, map carries visual
+                        "metalness": 0.0,
+                        "roughness": 1.0,
+                        "ior": 1.5,
+                    },
+                    "textures": {
+                        "color": "data:image/png;base64,AAAA",  # albedo
+                        "normal": "data:image/png;base64,BBBB",
+                        "roughness": "data:image/png;base64,CCCC",
+                    },
+                }
+
+        return NestedBackend()
 
     def test_backfill_populates_lite_scalars(self):
         steel = Material(
@@ -154,10 +186,36 @@ class TestPbrBackfill:
             pbr_source=self._make_rich_backend(),
         )
         lite = steel.properties.pbr
+        assert lite.base_color_map == "cache/albedo.png"
         assert lite.normal_map == "cache/normal.png"
         assert lite.roughness_map == "cache/roughness.png"
         assert lite.metallic_map == "cache/metalness.png"
         assert lite.ambient_occlusion_map == "cache/ao.png"
+
+    def test_backfill_handles_nested_threejs_shape(self):
+        """
+        `threejs_materials.PbrProperties.to_dict()` emits a nested
+        `{id, name, source, url, license, values: {...}, textures: {...}}`
+        dict, NOT a flat Three.js MeshPhysicalMaterial dict. The
+        backfill must read scalars from `values` and texture paths
+        from `textures`. See ADR-0002 + the live verification on
+        the build123d fork (gerchowl:feature/pymat-material-integration).
+        """
+        wood = Material(
+            name="Walnut",
+            density=0.65,
+            pbr_source=self._make_nested_rich_backend(),
+        )
+        lite = wood.properties.pbr
+        # Scalars from `values`.
+        assert lite.base_color[:3] == (0.8, 0.8, 0.8)
+        assert lite.metallic == 0.0
+        assert lite.roughness == 1.0
+        assert lite.ior == 1.5
+        # Texture maps from `textures` (short names: color, normal, ...).
+        assert lite.base_color_map == "data:image/png;base64,AAAA"
+        assert lite.normal_map == "data:image/png;base64,BBBB"
+        assert lite.roughness_map == "data:image/png;base64,CCCC"
 
     def test_backfill_existing_adapter_compat(self):
         """

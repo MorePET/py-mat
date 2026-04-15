@@ -270,16 +270,16 @@ class _MaterialInternal:
         if "clearcoat" in values:
             lite.clearcoat = values["clearcoat"]
 
-        # Texture maps (nested: `textures` dict keys are short names like
-        # `normal`, `roughness`, `metalness`, `ao`. Flat: `normalMap`,
-        # `roughnessMap`, `metalnessMap`, `aoMap` camelCase.)
+        # Texture maps. Nested (`textures`) keys are short names like
+        # `color`, `normal`, `roughness`, `metalness`, `ao`. Flat
+        # format uses Three.js camelCase: `map` (the color channel),
+        # `normalMap`, `roughnessMap`, `metalnessMap`, `aoMap`.
+        lite.base_color_map = maps.get("color") or values.get("map") or lite.base_color_map
         lite.normal_map = maps.get("normal") or values.get("normalMap") or lite.normal_map
         lite.roughness_map = (
             maps.get("roughness") or values.get("roughnessMap") or lite.roughness_map
         )
-        lite.metallic_map = (
-            maps.get("metalness") or values.get("metalnessMap") or lite.metallic_map
-        )
+        lite.metallic_map = maps.get("metalness") or values.get("metalnessMap") or lite.metallic_map
         lite.ambient_occlusion_map = (
             maps.get("ao") or values.get("aoMap") or lite.ambient_occlusion_map
         )
