@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Dict, Optional, TypeVar
 
 if TYPE_CHECKING:
-    pass
+    from .pbr import PbrSource
 
 from .properties import AllProperties
 
@@ -113,6 +113,13 @@ class _MaterialInternal:
 
     # Properties (all domains)
     properties: AllProperties = field(default_factory=AllProperties)
+
+    # Optional rich PBR backend. When set, takes precedence over
+    # `properties.pbr` (the lite native dataclass) for rendering. See
+    # ADR-0002 — this is the integration point for
+    # `threejs_materials.PbrProperties` and any other external PBR
+    # loader that conforms to the `pymat.pbr.PbrSource` Protocol.
+    pbr_source: Optional["PbrSource"] = field(default=None, repr=False)
 
     # Hierarchy (not shown in repr)
     parent: Optional[_MaterialInternal] = field(default=None, repr=False)
@@ -450,6 +457,19 @@ class _MaterialInternal:
         """Calculate mass in grams from volume in mm³."""
         return volume_mm3 * self.density_g_mm3
 
+    def to_three_js_material_dict(self) -> dict:
+        """
+        Return a Three.js ``MeshPhysicalMaterial`` dict for this material.
+
+        Uses `pbr_source` if set (rich backend such as
+        `threejs_materials.PbrProperties` with full MaterialX
+        support), otherwise falls back to `properties.pbr` (the
+        lite native in-tree backend). See ADR-0002.
+        """
+        if self.pbr_source is not None:
+            return self.pbr_source.to_three_js_dict()
+        return self.properties.pbr.to_three_js_dict()
+
     def __repr__(self) -> str:
         """String representation showing path and density."""
         density_str = f"ρ={self.density} g/cm³" if self.density else "ρ=?"
@@ -502,6 +522,9 @@ class Material(_MaterialInternal):
     - electrical: Dict of electrical properties (resistivity, dielectric_constant, etc.)
     - optical: Dict of optical properties (refractive_index, transparency, etc.) - PHYSICS
     - pbr: Dict of PBR visualization properties (base_color, metallic, roughness) - RENDERING
+    - pbr_source: Optional rich PBR backend conforming to `pymat.pbr.PbrSource`
+      (typically `threejs_materials.PbrProperties` via the `[pbr]` extra).
+      Takes precedence over `pbr` for `to_three_js_material_dict()`.
     - manufacturing: Dict of manufacturing properties (machinability, weldability, etc.)
     - compliance: Dict of compliance properties (rohs_compliant, food_safe, etc.)
     - sourcing: Dict of sourcing properties (cost_per_kg, availability, etc.)
@@ -529,6 +552,7 @@ class Material(_MaterialInternal):
         electrical: Optional[Dict[str, Any]] = None,
         optical: Optional[Dict[str, Any]] = None,
         pbr: Optional[Dict[str, Any]] = None,
+        pbr_source: Optional["PbrSource"] = None,
         manufacturing: Optional[Dict[str, Any]] = None,
         compliance: Optional[Dict[str, Any]] = None,
         sourcing: Optional[Dict[str, Any]] = None,
@@ -551,6 +575,7 @@ class Material(_MaterialInternal):
             electrical=electrical,
             optical=optical,
             pbr=pbr,
+            pbr_source=pbr_source,
             manufacturing=manufacturing,
             compliance=compliance,
             sourcing=sourcing,
