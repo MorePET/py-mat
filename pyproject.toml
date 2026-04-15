@@ -21,6 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Physics",
 ]
@@ -30,16 +31,20 @@ dependencies = ["pint>=0.20"]
 [project.optional-dependencies]
 periodictable = ["periodictable>=1.6.0"]
 matproj = ["pymatgen>=2024.0.0"]
-build123d = ["build123d>=0.7.0"]
+# build123d pulls cadquery-ocp and vtk, which only publish wheels for
+# cp311/cp312 as of 2026-04. The environment marker means `pip install
+# py-materials[build123d]` on Python 3.13+ is a no-op rather than a hard
+# wheel-resolution error — installers silently drop the dep. See #11.
+build123d = ["build123d>=0.7.0; python_version<'3.13'"]
 dev = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
-    "build123d>=0.7.0",
+    "build123d>=0.7.0; python_version<'3.13'",
 ]
 all = [
     "periodictable>=1.6.0",
     "pymatgen>=2024.0.0",
-    "build123d>=0.7.0",
+    "build123d>=0.7.0; python_version<'3.13'",
 ]
 
 [project.urls]
