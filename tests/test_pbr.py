@@ -102,3 +102,115 @@ class TestMaterialToThreeJs:
             pass
 
         assert not isinstance(NotPbr(), PbrSource)
+
+
+class TestPbrBackfill:
+    """
+    When `pbr_source` is set, the rich backend's `to_three_js_dict()`
+    output is projected onto the lite `properties.pbr` dataclass. This
+    lets existing ocp_vscode / downstream renderers that only read
+    `material.properties.pbr.<field>` pick up the rich data without
+    needing adapter changes on their side. See ADR-0002 + the session
+    discussion on MorePET/mat#3.
+    """
+
+    def _make_rich_backend(self):
+        class RichBackend:
+            def to_three_js_dict(self) -> dict:
+                return {
+                    "color": [0.91, 0.91, 0.88],
+                    "metalness": 1.0,
+                    "roughness": 0.08,
+                    "ior": 2.5,
+                    "transmission": 0.0,
+                    "clearcoat": 0.2,
+                    "emissive": [0.01, 0.01, 0.01],
+                    "normalMap": "cache/normal.png",
+                    "roughnessMap": "cache/roughness.png",
+                    "metalnessMap": "cache/metalness.png",
+                    "aoMap": "cache/ao.png",
+                }
+
+        return RichBackend()
+
+    def test_backfill_populates_lite_scalars(self):
+        steel = Material(
+            name="Brushed Steel",
+            density=7.85,
+            pbr_source=self._make_rich_backend(),
+        )
+        lite = steel.properties.pbr
+        assert lite.base_color[:3] == (0.91, 0.91, 0.88)
+        assert lite.metallic == 1.0
+        assert lite.roughness == 0.08
+        assert lite.ior == 2.5
+        assert lite.clearcoat == 0.2
+        assert lite.emissive == (0.01, 0.01, 0.01)
+
+    def test_backfill_populates_texture_maps(self):
+        steel = Material(
+            name="Brushed Steel",
+            density=7.85,
+            pbr_source=self._make_rich_backend(),
+        )
+        lite = steel.properties.pbr
+        assert lite.normal_map == "cache/normal.png"
+        assert lite.roughness_map == "cache/roughness.png"
+        assert lite.metallic_map == "cache/metalness.png"
+        assert lite.ambient_occlusion_map == "cache/ao.png"
+
+    def test_backfill_existing_adapter_compat(self):
+        """
+        Simulate Bernhard's `_extract_materials_from_node` adapter:
+        read from `material.properties.pbr.<field>` as he does today,
+        verify the rich-backend data makes it through.
+        """
+        steel = Material(
+            name="Brushed Steel",
+            density=7.85,
+            pbr_source=self._make_rich_backend(),
+        )
+        pbr = steel.properties.pbr
+        simulated_extraction = {
+            "color": pbr.base_color,
+            "metalness": pbr.metallic,
+            "roughness": pbr.roughness,
+            "normal_map": pbr.normal_map,
+            "roughness_map": pbr.roughness_map,
+            "metalness_map": pbr.metallic_map,
+            "ao_map": pbr.ambient_occlusion_map,
+        }
+        # Every field the adapter reads should carry the rich backend value.
+        assert simulated_extraction["color"][:3] == (0.91, 0.91, 0.88)
+        assert simulated_extraction["metalness"] == 1.0
+        assert simulated_extraction["roughness"] == 0.08
+        assert simulated_extraction["normal_map"] == "cache/normal.png"
+        assert simulated_extraction["metalness_map"] == "cache/metalness.png"
+
+    def test_backfill_noop_when_no_source(self):
+        """With no pbr_source, lite dataclass keeps its authored values."""
+        steel = Material(
+            name="Steel",
+            density=7.85,
+            pbr={"base_color": (0.5, 0.5, 0.5, 1.0), "metallic": 0.3},
+        )
+        assert steel.properties.pbr.base_color == (0.5, 0.5, 0.5, 1.0)
+        assert steel.properties.pbr.metallic == 0.3
+        # Roughness stays at its dataclass default, not overridden.
+        assert steel.properties.pbr.roughness == 0.5
+
+    def test_rich_still_takes_precedence_in_dispatch(self):
+        """
+        Even with backfill, `Material.to_three_js_material_dict()` still
+        prefers the rich `pbr_source` (full fidelity for callers that
+        can handle extra fields).
+        """
+        rich = self._make_rich_backend()
+        steel = Material(
+            name="Brushed Steel",
+            density=7.85,
+            pbr_source=rich,
+        )
+        out = steel.to_three_js_material_dict()
+        # Same object as rich's output, not re-serialized from lite.
+        assert out == rich.to_three_js_dict()

@@ -97,6 +97,40 @@ density_for_mass = steel.density
 molar_mass_for_radiation = steel.molar_mass  # see ADR-0001
 ```
 
+## Backfill pattern (graceful enhancement for existing consumers)
+
+Setting `Material.pbr_source` also **projects the rich backend's
+serialized fields onto the lite `properties.pbr` dataclass** via an
+internal `_backfill_pbr_from_source()` pass in `__post_init__`. This
+copies the overlapping fields (color, metalness, roughness, ior,
+emissive, transmission, clearcoat, normal/roughness/metalness/ao
+maps) from `pbr_source.to_three_js_dict()` into the lite dataclass
+one-way at construction time.
+
+Why: existing downstream renderers that read
+`material.properties.pbr.<field>` directly — for example,
+`ocp_vscode`'s `_extract_materials_from_node()` in `show.py`, which
+reads `base_color`, `metallic`, `roughness`, `normal_map`, etc. —
+pick up the rich-backend data **without any code change on their
+side**. A user can assign
+`material.pbr_source = PbrProperties.from_gpuopen("...")` and
+`ocp_vscode.show()` will render with the MaterialX textures today.
+
+Fields on the rich source that don't have a corresponding lite
+field (sheen, anisotropy, iridescence, dispersion, clearcoat
+normal/roughness maps, specular, thickness, displacement, etc.)
+are dropped in the projection — the lite dataclass is a lossy
+subset. Consumers that can handle the full fidelity should read
+`material.pbr_source` directly or call
+`material.to_three_js_material_dict()`, which delegates to the
+rich source first and so preserves every field.
+
+The backfill is a one-way copy at `__post_init__` — it does not
+keep the lite dataclass in sync if the rich source is mutated
+later. That's intentional: mutating a loaded PBR material after
+assignment is unusual, and re-assigning `pbr_source` will re-run
+the backfill.
+
 ## Consequences
 
 **Enables**:

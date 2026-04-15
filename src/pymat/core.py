@@ -199,6 +199,65 @@ class _MaterialInternal:
         ):
             self.properties.pbr.transmission = self.properties.optical.transparency / 100.0
 
+        # When a rich pbr_source is provided, project its fields down
+        # onto the lite `properties.pbr` dataclass. This lets existing
+        # ocp_vscode / downstream renderers that only read
+        # `material.properties.pbr.<field>` pick up the rich data
+        # without any changes on their side (graceful enhancement).
+        # `to_three_js_material_dict()` still prefers the full rich
+        # source for callers that can handle it.
+        if self.pbr_source is not None:
+            self._backfill_pbr_from_source()
+
+    def _backfill_pbr_from_source(self) -> None:
+        """
+        Populate the lite `properties.pbr` dataclass from the rich
+        `pbr_source`'s `to_three_js_dict()` output.
+
+        The lite dataclass is a strict subset of the Three.js
+        MeshPhysicalMaterial spec — fields on the rich source that
+        don't have a corresponding lite field (sheen, anisotropy,
+        iridescence, dispersion, etc.) are dropped. Downstream
+        consumers that need the full fidelity can still read
+        `material.pbr_source` directly or call
+        `material.to_three_js_material_dict()` which delegates to
+        the rich source first.
+        """
+        if self.pbr_source is None:
+            return
+        try:
+            d = self.pbr_source.to_three_js_dict()
+        except Exception:
+            # Rich backend can't serialize — leave lite alone.
+            return
+
+        lite = self.properties.pbr
+        if "color" in d and isinstance(d["color"], (list, tuple)) and len(d["color"]) >= 3:
+            r, g, b = d["color"][:3]
+            # Preserve alpha from existing base_color if rich didn't specify.
+            alpha = d.get("opacity", lite.base_color[3] if len(lite.base_color) >= 4 else 1.0)
+            lite.base_color = (r, g, b, alpha)
+        if "metalness" in d:
+            lite.metallic = d["metalness"]
+        if "roughness" in d:
+            lite.roughness = d["roughness"]
+        if "emissive" in d and isinstance(d["emissive"], (list, tuple)):
+            lite.emissive = tuple(d["emissive"])
+        if "ior" in d:
+            lite.ior = d["ior"]
+        if "transmission" in d:
+            lite.transmission = d["transmission"]
+        if "clearcoat" in d:
+            lite.clearcoat = d["clearcoat"]
+        if "normalMap" in d:
+            lite.normal_map = d["normalMap"]
+        if "roughnessMap" in d:
+            lite.roughness_map = d["roughnessMap"]
+        if "metalnessMap" in d:
+            lite.metallic_map = d["metalnessMap"]
+        if "aoMap" in d:
+            lite.ambient_occlusion_map = d["aoMap"]
+
     # =========================================================================
     # Chaining API
     # =========================================================================
