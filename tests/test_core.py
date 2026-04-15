@@ -184,6 +184,49 @@ class TestFormulas:
         assert mat.composition == comp
 
 
+class TestMolarMass:
+    """`Material.molar_mass` — computed from formula. See ADR-0001."""
+
+    def test_pure_element(self):
+        fe = Material(name="Iron", formula="Fe")
+        assert fe.molar_mass == pytest.approx(55.85, abs=0.01)
+
+    def test_simple_compound(self):
+        al2o3 = Material(name="Alumina", formula="Al2O3")
+        assert al2o3.molar_mass == pytest.approx(101.96, abs=0.1)
+
+    def test_fractional_stoichiometry(self):
+        lyso = Material(name="LYSO", formula="Lu1.8Y0.2SiO5")
+        assert lyso.molar_mass == pytest.approx(440.87, abs=0.1)
+
+    def test_dopant_notation_stripped(self):
+        """`:Ce` dopant suffix is ignored for molar mass."""
+        doped = Material(name="LYSO:Ce", formula="Lu1.8Y0.2SiO5:Ce")
+        plain = Material(name="LYSO", formula="Lu1.8Y0.2SiO5")
+        assert doped.molar_mass == plain.molar_mass
+
+    def test_no_formula_returns_none(self):
+        mat = Material(name="Unknown Alloy")
+        assert mat.molar_mass is None
+
+    def test_unknown_element_returns_none(self):
+        """Gracefully degrades when formula references an element we
+        don't have in the local atomic-weight table."""
+        mat = Material(name="Junk", formula="Xx2")
+        assert mat.molar_mass is None
+
+    def test_molar_mass_qty_is_pint_quantity(self):
+        fe = Material(name="Iron", formula="Fe")
+        qty = fe.molar_mass_qty
+        assert qty is not None
+        # Unit-aware conversion works
+        assert qty.to("kg/mol").magnitude == pytest.approx(0.05585, abs=0.0001)
+
+    def test_molar_mass_qty_none_when_no_formula(self):
+        mat = Material(name="Unknown")
+        assert mat.molar_mass_qty is None
+
+
 class TestDensityCalculations:
     """Test density-related calculations."""
 
