@@ -1,9 +1,9 @@
 ---
 type: pull_request
-state: open
-branch: py310 → main
+state: closed (merged)
+branch: py310 → dev
 created: 2026-04-04T12:47:32Z
-updated: 2026-04-04T12:47:32Z
+updated: 2026-04-15T12:18:07Z
 author: bernhard-42
 author_url: https://github.com/bernhard-42
 url: https://github.com/MorePET/mat/pull/6
@@ -12,7 +12,8 @@ labels: none
 assignees: none
 milestone: none
 projects: none
-synced: 2026-04-15T04:38:31.295Z
+merged: 2026-04-15T12:18:07Z
+synced: 2026-04-16T04:44:44.281Z
 ---
 
 # [PR 6](https://github.com/MorePET/mat/pull/6) enable Python 3.10 support
@@ -86,3 +87,15 @@ Refs:
 
 (https://github.com/MorePET/mat/issues/3)
 
+
+
+---
+---
+
+## Commits
+
+### Commit 1: [e0f70e5](https://github.com/MorePET/mat/commit/e0f70e51ec885869a17fbc6f862c346eb16793bd) by [bernhard-42](https://github.com/bernhard-42) on April 4, 2026 at 12:36 PM
+enable Python 3.10 support, 15 files modified (pyproject.toml, src/pymat/loader.py)
+
+### Commit 2: [20df829](https://github.com/MorePET/mat/commit/20df829f69676da018ae7bf83296370144ed0882) by [gerchowl](https://github.com/gerchowl) on April 15, 2026 at 12:10 PM
+ci: add py3.10 and py3.11 matrix cells for #6, 815 files modified (.github/workflows/ci.yml, uv.lock)
