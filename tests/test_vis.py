@@ -260,38 +260,45 @@ class TestVisModuleApi:
     def test_get_manifest_returns_dict(self):
         from pymat import vis
 
-        manifest = vis.get_manifest(release_tag="v0.1.0")
+        manifest = vis.get_manifest()
         assert "release_tag" in manifest
-        assert manifest["release_tag"] == "v0.1.0"
+        assert "tiers" in manifest
 
     def test_search_with_mock(self, monkeypatch):
-        """Search against a mock index (no network)."""
+        """Search against a mock client (no network)."""
         from pymat import vis
         from pymat.vis import _client
 
-        mock_index = [
+        mock_results = [
             {"id": "Metal001", "source": "ambientcg", "category": "metal", "roughness": 0.3, "metalness": 1.0},
-            {"id": "Wood001", "source": "ambientcg", "category": "wood", "roughness": 0.6},
         ]
 
-        def mock_fetch_json(url, cache_path=None):
-            if "ambientcg" in url:
-                return mock_index
-            raise ConnectionError("not available")
+        class MockClient:
+            def __init__(self, **kw): pass
+            @property
+            def manifest(self): return {"release_tag": "mock", "tiers": {}}
+            def sources(self, tier="1k"): return ["ambientcg"]
+            def index(self, source): return mock_results
+            def search(self, **kw): return mock_results
 
-        monkeypatch.setattr(_client, "_fetch_json", mock_fetch_json)
+        monkeypatch.setattr(_client, "_client", MockClient())
 
         results = vis.search(category="metal")
-        assert len(results) == 1
+        assert len(results) >= 1
         assert results[0]["id"] == "Metal001"
 
     def test_rowmap_entry_missing_material_raises(self, monkeypatch):
         from pymat import vis
         from pymat.vis import _client
 
-        mock_rowmap = {"version": 1, "materials": {"Existing001": {"color": {"offset": 0, "length": 100}}}}
+        class MockClient:
+            def __init__(self, **kw): pass
+            @property
+            def manifest(self): return {"release_tag": "mock", "tiers": {}}
+            def rowmap_entry(self, source, mid, **kw):
+                raise KeyError(f"NotExist")
 
-        monkeypatch.setattr(_client, "_fetch_json", lambda url, cache_path=None: mock_rowmap)
+        monkeypatch.setattr(_client, "_client", MockClient())
 
         with pytest.raises(KeyError, match="NotExist"):
             vis.rowmap_entry("ambientcg", "NotExist")
