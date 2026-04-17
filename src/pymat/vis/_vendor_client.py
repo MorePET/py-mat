@@ -124,34 +124,47 @@ class MatVisClient:
         return list(self.manifest.get("tiers", {}).keys())
 
     def rowmap(self, source: str, tier: str, category: str | None = None) -> dict:
-        """Fetch and cache a rowmap."""
+        """Fetch and cache rowmaps. Merges partitioned rowmaps into one."""
         key = f"{source}-{tier}-{category or 'all'}"
         if key not in self._rowmaps:
             tier_data = self.manifest["tiers"][tier]
             base_url = tier_data["base_url"]
             src_data = tier_data["sources"][source]
 
-            # Find matching rowmap file
             rowmap_files = src_data.get("rowmap_files", [])
             if not rowmap_files:
-                # Legacy single rowmap
                 rowmap_file = src_data.get("rowmap_file", f"{source}-{tier}-rowmap.json")
                 rowmap_files = [rowmap_file]
 
             if category:
-                matches = [f for f in rowmap_files if category in f]
-                rowmap_file = matches[0] if matches else rowmap_files[0]
-            else:
-                rowmap_file = rowmap_files[0]
+                rowmap_files = [f for f in rowmap_files if category in f] or rowmap_files[:1]
 
-            cache_path = self._cache_dir / ".rowmaps" / rowmap_file
-            if cache_path.exists():
-                self._rowmaps[key] = json.loads(cache_path.read_text())
-            else:
-                url = base_url + rowmap_file
-                self._rowmaps[key] = _get_json(url)
-                cache_path.parent.mkdir(parents=True, exist_ok=True)
-                cache_path.write_text(json.dumps(self._rowmaps[key], indent=2))
+            # Fetch all partition rowmaps and merge materials
+            merged: dict = {"materials": {}}
+            for rmf in rowmap_files:
+                cache_path = self._cache_dir / ".rowmaps" / rmf
+                if cache_path.exists():
+                    rm = json.loads(cache_path.read_text())
+                else:
+                    url = base_url + rmf
+                    rm = _get_json(url)
+                    cache_path.parent.mkdir(parents=True, exist_ok=True)
+                    cache_path.write_text(json.dumps(rm, indent=2))
+
+                # Each partitioned rowmap has its own parquet_file
+                pq_file = rm.get("parquet_file", "")
+                for mid, channels in rm.get("materials", {}).items():
+                    # Tag each channel with its parquet file for range reads
+                    for ch_data in channels.values():
+                        ch_data["parquet_file"] = pq_file
+                    merged["materials"][mid] = channels
+
+                # Keep metadata from last rowmap (they're all the same except materials)
+                for k in ("version", "release_tag", "source", "tier"):
+                    if k in rm:
+                        merged[k] = rm[k]
+
+            self._rowmaps[key] = merged
 
         return self._rowmaps[key]
 
@@ -315,10 +328,10 @@ class MatVisClient:
         offset = rng["offset"]
         length = rng["length"]
 
-        # Find parquet URL
+        # Find parquet URL (per-partition from merged rowmap)
         tier_data = self.manifest["tiers"][tier]
         base_url = tier_data["base_url"]
-        parquet_file = rm["parquet_file"]
+        parquet_file = rng.get("parquet_file") or rm.get("parquet_file", "")
         url = base_url + parquet_file
 
         # HTTP range read

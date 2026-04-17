@@ -27,8 +27,10 @@ if TYPE_CHECKING:
 def _extract_scalars(material: Material) -> dict[str, Any]:
     """Extract PBR scalars from Material.properties.pbr as a plain dict."""
     pbr = material.properties.pbr
+    # Map py-mat field names → mat-vis field names
+    # See docs/specs/field-name-mapping.md: py-mat "metallic" → mat-vis "metalness"
     scalars: dict[str, Any] = {
-        "metallic": pbr.metallic,
+        "metalness": pbr.metallic,
         "roughness": pbr.roughness,
         "base_color": pbr.base_color,
         "ior": pbr.ior,
