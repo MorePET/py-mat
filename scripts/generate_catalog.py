@@ -156,8 +156,16 @@ def _material_page(mat, thumb_path: str | None, category: str) -> str:
         lines.append("")
         lines.append("| Element | Fraction |")
         lines.append("|---|---|")
-        for el, frac in sorted(mat.composition.items(), key=lambda x: -x[1]):
-            lines.append(f"| {el} | {frac:.4g} |")
+        for el, frac in sorted(
+            mat.composition.items(),
+            key=lambda x: -(getattr(x[1], "nominal_value", x[1])),
+        ):
+            nominal = getattr(frac, "nominal_value", frac)
+            stddev = getattr(frac, "std_dev", None)
+            if stddev and stddev > 0:
+                lines.append(f"| {el} | {nominal:.4g} ± {stddev:.4g} |")
+            else:
+                lines.append(f"| {el} | {nominal:.4g} |")
         lines.append("")
 
     return "\n".join(lines)
