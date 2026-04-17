@@ -161,6 +161,48 @@ class TestResolvedChannel:
         assert rc.scalar is None
 
 
+# ── Discover ─────────────────────────────────────────────────
+
+
+class TestDiscover:
+    def test_discover_returns_candidates(self, monkeypatch):
+        from pymat.vis import _client
+
+        mock_results = [
+            {"id": "Metal032", "source": "ambientcg", "category": "metal", "score": 0.1},
+            {"id": "Metal012", "source": "ambientcg", "category": "metal", "score": 0.3},
+        ]
+        monkeypatch.setattr(_client, "search", lambda **kw: mock_results)
+
+        v = Vis()
+        candidates = v.discover(category="metal")
+        assert len(candidates) == 2
+        assert candidates[0]["id"] == "ambientcg/Metal032"
+        assert v.source_id is None  # not set without auto_set
+
+    def test_discover_auto_set(self, monkeypatch):
+        from pymat.vis import _client
+
+        mock_results = [
+            {"id": "Metal032", "source": "ambientcg", "category": "metal", "score": 0.1},
+        ]
+        monkeypatch.setattr(_client, "search", lambda **kw: mock_results)
+
+        v = Vis()
+        v.discover(category="metal", auto_set=True)
+        assert v.source_id == "ambientcg/Metal032"
+
+    def test_discover_no_results(self, monkeypatch):
+        from pymat.vis import _client
+
+        monkeypatch.setattr(_client, "search", lambda **kw: [])
+
+        v = Vis()
+        candidates = v.discover(category="exotic")
+        assert candidates == []
+        assert v.source_id is None
+
+
 # ── Material.vis wiring ──────────────────────────────────────
 
 

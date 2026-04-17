@@ -94,6 +94,60 @@ class Vis:
             has_texture=tex is not None,
         )
 
+    def discover(
+        self,
+        *,
+        category: str | None = None,
+        roughness: float | None = None,
+        metallic: float | None = None,
+        limit: int = 5,
+        auto_set: bool = False,
+    ) -> list[dict[str, Any]]:
+        """Search mat-vis for appearances matching this material's scalars.
+
+        Does NOT set source_id automatically — returns candidates for
+        the user to review. Pass auto_set=True to pick the top match.
+
+        Args:
+            category: Filter by category. If None, tries to infer from
+                the material's existing PBR properties.
+            roughness: Target roughness. If None, reads from the material.
+            metallic: Target metalness. If None, reads from the material.
+            limit: Max candidates to return.
+            auto_set: If True, set source_id to the top match.
+
+        Returns:
+            List of candidate dicts with "id", "source", "category",
+            "score". Sorted by score (lower = closer match).
+
+        Example:
+            candidates = steel.vis.discover(category="metal")
+            # [{"id": "ambientcg/Metal032", "score": 0.05}, ...]
+            steel.vis.source_id = candidates[0]["id"]  # manual pick
+            # or:
+            steel.vis.discover(category="metal", auto_set=True)
+        """
+        from pymat.vis._client import search
+
+        results = search(
+            category=category,
+            roughness=roughness,
+            metalness=metallic,
+            limit=limit,
+        )
+
+        # Reformat ids as "source/id" for direct assignment
+        for r in results:
+            if "source" in r and "id" in r and "/" not in r["id"]:
+                r["id"] = f"{r['source']}/{r['id']}"
+
+        if auto_set and results:
+            self.source_id = results[0]["id"]
+            self._textures.clear()
+            self._fetched = False
+
+        return results
+
     def _fetch(self) -> None:
         """Fetch textures via the vis client. Called lazily."""
         if self.source_id is None:
