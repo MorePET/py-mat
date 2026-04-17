@@ -18,7 +18,6 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
-from io import BytesIO
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
@@ -27,30 +26,26 @@ from pymat import load_all
 
 log = logging.getLogger("catalog")
 
-THUMB_SIZE = (128, 128)
+THUMB_TIER = "128"  # mat-vis hosts 128/256/512 thumbnail tiers
 CATEGORIES_ORDER = [
     "metals", "scintillators", "ceramics", "plastics",
     "electronics", "liquids", "gases",
 ]
 
 
-def _make_thumbnail(png_bytes: bytes, size: tuple[int, int] = THUMB_SIZE) -> bytes:
-    """Resize a PNG to a thumbnail. Returns PNG bytes."""
-    try:
-        from PIL import Image
-    except ImportError:
-        log.warning("Pillow not installed — skipping thumbnail")
-        return b""
+def _fetch_thumbnail(source: str, material_id: str) -> bytes:
+    """Fetch a thumbnail PNG from mat-vis's thumbnail tier.
 
+    mat-vis hosts 128/256/512 tiers as pre-baked small textures —
+    no Pillow resize needed, just fetch the color channel at the
+    thumbnail tier.
+    """
     try:
-        img = Image.open(BytesIO(png_bytes))
-        img.load()  # force full decode before resize
-        img.thumbnail(size, Image.LANCZOS)
-        out = BytesIO()
-        img.save(out, format="PNG")
-        return out.getvalue()
+        from pymat import vis
+        textures = vis.fetch(source, material_id, tier=THUMB_TIER)
+        return textures.get("color", b"")
     except Exception as exc:
-        log.debug("thumbnail resize failed: %s", exc)
+        log.debug("thumbnail fetch failed for %s/%s: %s", source, material_id, exc)
         return b""
 
 
@@ -231,33 +226,28 @@ def generate(output_dir: Path, skip_thumbnails: bool = False) -> None:
         if mats_in_cat:
             categories[category] = mats_in_cat
 
-    # Fetch thumbnails
+    # Fetch thumbnails from mat-vis's thumbnail tier (128px, pre-baked)
     thumb_count = 0
     if not skip_thumbnails:
-        try:
-            from pymat import vis
-            for category, mats in categories.items():
-                thumb_dir = output_dir / category / "thumbs"
-                thumb_dir.mkdir(parents=True, exist_ok=True)
-                for mat, key in mats:
-                    if not mat.vis.source_id:
-                        continue
-                    thumb_path = thumb_dir / f"{key}.png"
-                    if thumb_path.exists():
-                        thumb_count += 1
-                        continue
-                    try:
-                        textures = mat.vis.textures
-                        if "color" in textures:
-                            thumb_bytes = _make_thumbnail(textures["color"])
-                            if thumb_bytes:
-                                thumb_path.write_bytes(thumb_bytes)
-                                thumb_count += 1
-                                log.info("thumbnail: %s", key)
-                    except Exception:
-                        log.debug("thumbnail failed: %s", key, exc_info=True)
-        except Exception:
-            log.warning("mat-vis not available — skipping thumbnails")
+        for category, mats in categories.items():
+            thumb_dir = output_dir / category / "thumbs"
+            thumb_dir.mkdir(parents=True, exist_ok=True)
+            for mat, key in mats:
+                if not mat.vis.source_id:
+                    continue
+                thumb_path = thumb_dir / f"{key}.png"
+                if thumb_path.exists():
+                    thumb_count += 1
+                    continue
+                parts = mat.vis.source_id.split("/", 1)
+                if len(parts) != 2:
+                    continue
+                source, material_id = parts
+                thumb_bytes = _fetch_thumbnail(source, material_id)
+                if thumb_bytes:
+                    thumb_path.write_bytes(thumb_bytes)
+                    thumb_count += 1
+                    log.info("thumbnail: %s", key)
 
     has_thumbnails = thumb_count > 0
 
