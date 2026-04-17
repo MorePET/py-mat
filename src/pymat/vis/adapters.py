@@ -42,7 +42,12 @@ def _extract_scalars(material: Material) -> dict[str, Any]:
 
 
 def _extract_textures(material: Material) -> dict[str, bytes]:
-    """Extract texture bytes from Material.vis (if available)."""
+    """Extract texture bytes from Material.vis.
+
+    Only reads from .vis (the correct namespace for visual data).
+    Legacy pbr.*_map fields are NOT merged here — those are handled
+    by ocp_vscode's existing is_pymat path until deprecated.
+    """
     if material.vis.source_id is None:
         return {}
     return material.vis.textures
