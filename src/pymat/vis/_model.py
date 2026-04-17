@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 
 @dataclass
@@ -181,6 +181,33 @@ class Vis:
         self._fetched = True
 
     _PBR_SCALAR_FIELDS = ("roughness", "metallic", "base_color", "ior", "transmission", "clearcoat", "emissive")
+
+    _PBR_DEFAULTS: ClassVar[dict[str, Any]] = {
+        "roughness": 0.5,
+        "metallic": 0.0,
+        "base_color": (0.8, 0.8, 0.8, 1.0),
+        "ior": 1.5,
+        "transmission": 0.0,
+        "clearcoat": 0.0,
+        "emissive": (0, 0, 0),
+    }
+
+    def get(self, field: str, default: Any = None) -> Any:
+        """Get a PBR scalar with fallback to default.
+
+        Returns the field value if set (not None), otherwise the
+        default. If no default provided, uses _PBR_DEFAULTS.
+
+        Usage:
+            vis.get("roughness")       # → 0.3 if set, 0.5 if None
+            vis.get("roughness", 0.0)  # → 0.3 if set, 0.0 if None
+        """
+        val = getattr(self, field, None)
+        if val is not None:
+            return val
+        if default is not None:
+            return default
+        return self._PBR_DEFAULTS.get(field)
 
     @classmethod
     def from_toml(cls, vis_data: dict[str, Any]) -> Vis:

@@ -124,20 +124,18 @@ class _MaterialInternal:
 
     def __post_init__(self):
         """Apply convenience parameters and property groups to properties object."""
-        # Apply color if provided
+        # Apply color → vis.base_color (3.0: vis is the canonical home)
         if self.color is not None:
             if len(self.color) == 3:
-                # RGB provided, add full opacity
-                self.properties.pbr.base_color = (*self.color, 1.0)
+                self.vis.base_color = (*self.color, 1.0)
             elif len(self.color) == 4:
-                # RGBA provided
-                self.properties.pbr.base_color = self.color
+                self.vis.base_color = self.color
             else:
                 raise ValueError(
                     f"color must be RGB (3 values) or RGBA (4 values), got {len(self.color)}"
                 )
 
-        # Apply property groups
+        # Apply property groups (non-PBR)
         if self.mechanical:
             for key, value in self.mechanical.items():
                 if hasattr(self.properties.mechanical, key):
@@ -158,8 +156,12 @@ class _MaterialInternal:
                 if hasattr(self.properties.optical, key):
                     setattr(self.properties.optical, key, value)
 
+        # Apply pbr={} kwarg → vis (3.0: vis owns PBR scalars)
         if self.pbr:
             for key, value in self.pbr.items():
+                if key in self.vis._PBR_SCALAR_FIELDS:
+                    setattr(self.vis, key, value)
+                # Also sync to properties.pbr for backward compat
                 if hasattr(self.properties.pbr, key):
                     setattr(self.properties.pbr, key, value)
 
@@ -178,22 +180,26 @@ class _MaterialInternal:
                 if hasattr(self.properties.sourcing, key):
                     setattr(self.properties.sourcing, key, value)
 
-        # Apply PBR defaults from optical properties (DRY principle)
-        # Allow physics properties to drive rendering defaults, but preserve explicit overrides
+        # Optical → vis derivations (3.0: target vis, not properties.pbr)
+        if self.vis.ior is None and self.properties.optical.refractive_index is not None:
+            self.vis.ior = self.properties.optical.refractive_index
 
-        # If ior wasn't explicitly set (still at default 1.5) and optical.refractive_index exists,
-        # use optical.refractive_index as the PBR ior
-        if self.properties.pbr.ior == 1.5 and self.properties.optical.refractive_index is not None:
-            self.properties.pbr.ior = self.properties.optical.refractive_index
+        if self.vis.transmission is None and self.properties.optical.transparency is not None:
+            self.vis.transmission = self.properties.optical.transparency / 100.0
 
-        # If transmission wasn't explicitly set (still at default 0.0) and
-        # optical.transparency exists, convert transparency (0-100%) to
-        # transmission (0-1)
-        if (
-            self.properties.pbr.transmission == 0.0
-            and self.properties.optical.transparency is not None
-        ):
-            self.properties.pbr.transmission = self.properties.optical.transparency / 100.0
+        # Sync vis → properties.pbr for backward compat (ocp_vscode reads properties.pbr)
+        self._sync_vis_to_pbr()
+
+    def _sync_vis_to_pbr(self):
+        """Sync vis scalars → properties.pbr for backward compat."""
+        vis = self._vis
+        if vis is None:
+            return
+        pbr = self.properties.pbr
+        for field in ("roughness", "metallic", "base_color", "ior", "transmission", "clearcoat", "emissive"):
+            val = getattr(vis, field, None)
+            if val is not None and hasattr(pbr, field):
+                setattr(pbr, field, val)
 
     # =========================================================================
     # Visual representation (mat-vis)
