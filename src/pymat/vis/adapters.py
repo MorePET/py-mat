@@ -25,18 +25,22 @@ if TYPE_CHECKING:
 
 
 def _extract_scalars(material: Material) -> dict[str, Any]:
-    """Extract PBR scalars from Material.properties.pbr as a plain dict."""
+    """Extract PBR scalars — vis wins, properties.pbr as fallback.
+
+    Reads from material.vis first (the canonical source in 3.0),
+    falls back to material.properties.pbr (legacy, backward compat).
+    Maps py-mat "metallic" → mat-vis "metalness".
+    """
+    vis = material.vis
     pbr = material.properties.pbr
-    # Map py-mat field names → mat-vis field names
-    # See docs/specs/field-name-mapping.md: py-mat "metallic" → mat-vis "metalness"
     scalars: dict[str, Any] = {
-        "metalness": pbr.metallic,
-        "roughness": pbr.roughness,
-        "base_color": pbr.base_color,
-        "ior": pbr.ior,
-        "transmission": pbr.transmission,
-        "clearcoat": pbr.clearcoat,
-        "emissive": pbr.emissive,
+        "metalness": vis.metallic if vis.metallic is not None else pbr.metallic,
+        "roughness": vis.roughness if vis.roughness is not None else pbr.roughness,
+        "base_color": vis.base_color if vis.base_color is not None else pbr.base_color,
+        "ior": vis.ior if vis.ior is not None else pbr.ior,
+        "transmission": vis.transmission if vis.transmission is not None else pbr.transmission,
+        "clearcoat": vis.clearcoat if vis.clearcoat is not None else pbr.clearcoat,
+        "emissive": vis.emissive if vis.emissive is not None else pbr.emissive,
     }
     return scalars
 

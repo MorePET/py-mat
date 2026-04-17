@@ -23,13 +23,11 @@ specific_heat_unit = "J/(kg*K)"
 thermal_expansion_value = 16e-6
 thermal_expansion_unit = "1/K"
 
-[stainless.pbr]
+[stainless.vis]
 base_color = [0.75, 0.75, 0.77, 1.0]
 metallic = 1.0
 roughness = 0.3
 transmission = 0.0
-
-[stainless.vis]
 default = "brushed"
 
 [stainless.vis.finishes]

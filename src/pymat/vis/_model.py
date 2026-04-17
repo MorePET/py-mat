@@ -41,6 +41,19 @@ class Vis:
     source_id: str | None = None
     tier: str = "1k"
     finishes: dict[str, str] = field(default_factory=dict)
+
+    # PBR scalars — can be set from [vis] section in TOML.
+    # When set here, these take precedence over properties.pbr values.
+    # In 3.0, properties.pbr will be removed and these become the
+    # single source for rendering scalars.
+    roughness: float | None = None
+    metallic: float | None = None
+    base_color: tuple | None = None
+    ior: float | None = None
+    transmission: float | None = None
+    clearcoat: float | None = None
+    emissive: tuple | None = None
+
     _finish: str | None = None
     _textures: dict[str, bytes] = field(default_factory=dict, repr=False)
     _fetched: bool = False
@@ -167,13 +180,22 @@ class Vis:
         self._textures = fetch(source, material_id, tier=self.tier)
         self._fetched = True
 
+    _PBR_SCALAR_FIELDS = ("roughness", "metallic", "base_color", "ior", "transmission", "clearcoat", "emissive")
+
     @classmethod
     def from_toml(cls, vis_data: dict[str, Any]) -> Vis:
         """Construct from a TOML [vis] section.
 
-        Expected TOML structure:
+        Accepts PBR scalars alongside finishes/source_id. When PBR
+        scalars are present in [vis], they become the canonical source
+        and are synced back to properties.pbr for backward compat.
+
+        TOML structure:
             [material.vis]
             default = "brushed"
+            roughness = 0.3
+            metallic = 1.0
+            base_color = [0.75, 0.75, 0.77, 1.0]
 
             [material.vis.finishes]
             brushed = "ambientcg/Metal_Brushed_001"
@@ -188,12 +210,21 @@ class Vis:
             source_id = finishes[default_finish]
             finish = default_finish
         elif finishes:
-            # No default specified — use first finish
             finish = next(iter(finishes))
             source_id = finishes[finish]
+
+        # Extract PBR scalars from [vis] section
+        scalars = {}
+        for field in cls._PBR_SCALAR_FIELDS:
+            if field in vis_data:
+                val = vis_data[field]
+                if isinstance(val, list):
+                    val = tuple(val)
+                scalars[field] = val
 
         return cls(
             source_id=source_id,
             finishes=finishes,
             _finish=finish,
+            **scalars,
         )
