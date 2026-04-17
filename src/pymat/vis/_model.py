@@ -140,7 +140,7 @@ class Vis:
             # or:
             steel.vis.discover(category="metal", auto_set=True)
         """
-        from pymat.vis._client import search
+        from mat_vis_client import search
 
         results = search(
             category=category,
@@ -175,7 +175,7 @@ class Vis:
             )
         source, material_id = parts
 
-        from pymat.vis._client import fetch
+        from mat_vis_client import fetch
 
         self._textures = fetch(source, material_id, tier=self.tier)
         self._fetched = True

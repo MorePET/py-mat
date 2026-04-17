@@ -3,9 +3,9 @@ Output adapters — thin wrappers that map Material to mat-vis's
 generic adapter functions.
 
 The actual format logic (Three.js field names, glTF schema,
-MaterialX XML) lives in _vendor_adapters.py (shipped by mat-vis).
-These wrappers extract scalars + textures from a Material and
-pass them through.
+MaterialX XML) lives in mat_vis_client.adapters (installed from
+mat-vis-client package). These wrappers extract scalars + textures
+from a Material and pass them through.
 
     from pymat.vis.adapters import to_threejs, to_gltf, export_mtlx
     result = to_threejs(material)
@@ -16,9 +16,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from pymat.vis._vendor_adapters import export_mtlx as _export_mtlx
-from pymat.vis._vendor_adapters import to_gltf as _to_gltf
-from pymat.vis._vendor_adapters import to_threejs as _to_threejs
+from mat_vis_client.adapters import export_mtlx as _export_mtlx
+from mat_vis_client.adapters import to_gltf as _to_gltf
+from mat_vis_client.adapters import to_threejs as _to_threejs
 
 if TYPE_CHECKING:
     from pymat.core import _MaterialInternal as Material

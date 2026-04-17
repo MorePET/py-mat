@@ -117,7 +117,7 @@ class TestTextures:
             called["material_id"] = material_id
             return {"color": b"\x89PNG_mock"}
 
-        monkeypatch.setattr("pymat.vis._client.fetch", mock_fetch)
+        monkeypatch.setattr("mat_vis_client.fetch", mock_fetch)
 
         v = Vis(source_id="ambientcg/Metal032")
         textures = v.textures
@@ -166,7 +166,7 @@ class TestResolvedChannel:
 
 class TestDiscover:
     def test_discover_returns_candidates(self, monkeypatch):
-        from pymat.vis import _client
+        import mat_vis_client as _client
 
         mock_results = [
             {"id": "Metal032", "source": "ambientcg", "category": "metal", "score": 0.1},
@@ -181,7 +181,7 @@ class TestDiscover:
         assert v.source_id is None  # not set without auto_set
 
     def test_discover_auto_set(self, monkeypatch):
-        from pymat.vis import _client
+        import mat_vis_client as _client
 
         mock_results = [
             {"id": "Metal032", "source": "ambientcg", "category": "metal", "score": 0.1},
@@ -193,7 +193,7 @@ class TestDiscover:
         assert v.source_id == "ambientcg/Metal032"
 
     def test_discover_no_results(self, monkeypatch):
-        from pymat.vis import _client
+        import mat_vis_client as _client
 
         monkeypatch.setattr(_client, "search", lambda **kw: [])
 
@@ -267,7 +267,7 @@ class TestVisModuleApi:
     def test_search_with_mock(self, monkeypatch):
         """Search against a mock client (no network)."""
         from pymat import vis
-        from pymat.vis import _client
+        import mat_vis_client as _client
 
         mock_results = [
             {"id": "Metal001", "source": "ambientcg", "category": "metal", "roughness": 0.3, "metalness": 1.0},
@@ -289,7 +289,7 @@ class TestVisModuleApi:
 
     def test_rowmap_entry_missing_material_raises(self, monkeypatch):
         from pymat import vis
-        from pymat.vis import _client
+        import mat_vis_client as _client
 
         class MockClient:
             def __init__(self, **kw): pass
