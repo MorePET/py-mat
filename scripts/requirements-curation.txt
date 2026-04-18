@@ -1,0 +1,8 @@
+# Curation-time dependencies — NOT runtime deps of mat.
+#
+# Install with: pip install -r scripts/requirements-curation.txt
+# Used by:
+#   scripts/enrich_from_wikidata.py  — Wikidata SPARQL cross-checks
+#   scripts/enrich_vis.py            — mat-vis index tag matching (uses pymat.vis)
+
+requests>=2.28
