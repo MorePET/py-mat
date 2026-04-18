@@ -1,5 +1,7 @@
 # Plastic Scintillator
 
+![Plastic Scintillator](thumbs/plastic_scint.png)
+
 ## Identity
 
 | Field | Value |
@@ -19,3 +21,11 @@
 | Metallic | 0.0 |
 | Roughness | 0.4 |
 | Transmission | 0.85 |
+
+## Visual (mat-vis)
+
+| Field | Value |
+|---|---|
+| Source ID | `ambientcg/Plastic010` |
+| Finish | clear |
+| Available Finishes | clear |

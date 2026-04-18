@@ -13,7 +13,7 @@
 | [Ultem (PEI)](ultem.md) | ![](thumbs/ultem.png) | 1.27 g/cm³ | 90 MPa | 340 °C | 0.22 W/m·K |
 | [PTFE (Teflon)](ptfe.md) | ![](thumbs/ptfe.png) | 2.15 g/cm³ | 20 MPa | 327 °C | 0.24 W/m·K |
 | [PTFE Reflector Tape](ptfe-reflector.md) | — | 2.15 g/cm³ | 20 MPa | 327 °C | 0.24 W/m·K |
-| [ESR (3M Vikuiti)](esr.md) | — | 1.0 g/cm³ | — | — | — |
+| [ESR (3M Vikuiti)](esr.md) | ![](thumbs/esr.png) | 1.0 g/cm³ | — | — | — |
 | [Nylon 6](nylon.md) | ![](thumbs/nylon.png) | 1.13 g/cm³ | 45 MPa | 215 °C | — |
 | [PLA (Polylactic Acid)](pla.md) | ![](thumbs/pla.png) | 1.25 g/cm³ | 50 MPa | 160 °C | — |
 | [ABS (Acrylonitrile Butadiene Styrene)](abs.md) | ![](thumbs/abs.png) | 1.05 g/cm³ | 40 MPa | 225 °C | — |

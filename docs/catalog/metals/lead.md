@@ -1,5 +1,7 @@
 # Lead
 
+![Lead](thumbs/lead.png)
+
 ## Identity
 
 | Field | Value |
@@ -28,3 +30,11 @@
 | Base Color | `(0.3, 0.3, 0.33, 1.0)` |
 | Metallic | 1.0 |
 | Roughness | 0.5 |
+
+## Visual (mat-vis)
+
+| Field | Value |
+|---|---|
+| Source ID | `ambientcg/Metal030` |
+| Finish | dull |
+| Available Finishes | dull, oxidized |

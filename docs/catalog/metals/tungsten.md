@@ -1,5 +1,7 @@
 # Tungsten
 
+![Tungsten](thumbs/tungsten.png)
+
 ## Identity
 
 | Field | Value |
@@ -28,3 +30,11 @@
 | Base Color | `(0.2, 0.2, 0.22, 1.0)` |
 | Metallic | 1.0 |
 | Roughness | 0.4 |
+
+## Visual (mat-vis)
+
+| Field | Value |
+|---|---|
+| Source ID | `ambientcg/Metal014` |
+| Finish | polished |
+| Available Finishes | polished, raw |

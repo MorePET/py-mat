@@ -1,5 +1,7 @@
 # Copper (PCB)
 
+![Copper (PCB)](thumbs/copper_pcb.png)
+
 ## Identity
 
 | Field | Value |
@@ -18,3 +20,11 @@
 | Base Color | `(0.72, 0.45, 0.2, 1.0)` |
 | Metallic | 1.0 |
 | Roughness | 0.35 |
+
+## Visual (mat-vis)
+
+| Field | Value |
+|---|---|
+| Source ID | `ambientcg/Metal043A` |
+| Finish | clean |
+| Available Finishes | clean, oxidized |

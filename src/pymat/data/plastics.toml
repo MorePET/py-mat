@@ -275,6 +275,11 @@ transmission = 0.0
 metallic = 0.0
 roughness = 0.1
 
+# ESR is a specular-reflector film — roughness stays low (scalars dominate).
+# The finish is mostly a semantic tag so it appears in the catalog.
+[esr.vis.finishes]
+reflective = "ambientcg/Plastic010"
+
 [esr.compliance]
 radiation_resistant = true
 

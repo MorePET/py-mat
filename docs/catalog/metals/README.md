@@ -16,10 +16,10 @@
 | [Aluminum 2024](aluminum-a2024.md) | — | 2.78 g/cm³ | — | — | 69 GPa | 660 °C |
 | [Copper](copper.md) | ![](thumbs/copper.png) | 8.96 g/cm³ | 40 MPa | 200 MPa | 110 GPa | 1085 °C |
 | [OFHC Copper (Oxygen-Free High Conductivity)](copper-OFHC.md) | — | 8.94 g/cm³ | 40 MPa | 200 MPa | 110 GPa | 1085 °C |
-| [Tungsten](tungsten.md) | — | 19.3 g/cm³ | — | — | 411 GPa | 3422 °C |
+| [Tungsten](tungsten.md) | ![](thumbs/tungsten.png) | 19.3 g/cm³ | — | — | 411 GPa | 3422 °C |
 | [Tungsten 99.95%](tungsten-pure.md) | — | 19.3 g/cm³ | — | — | 411 GPa | 3422 °C |
 | [Tungsten Heavy Alloy (90% W)](tungsten-W90.md) | — | 17.0 g/cm³ | — | — | 411 GPa | 3422 °C |
-| [Lead](lead.md) | — | 11.34 g/cm³ | 12 MPa | — | 16 GPa | 327 °C |
+| [Lead](lead.md) | ![](thumbs/lead.png) | 11.34 g/cm³ | 12 MPa | — | 16 GPa | 327 °C |
 | [Titanium](titanium.md) | ![](thumbs/titanium.png) | 4.51 g/cm³ | 880 MPa | 950 MPa | 103 GPa | 1668 °C |
 | [Ti-6Al-4V (Grade 5)](titanium-grade5.md) | — | 4.43 g/cm³ | 880 MPa | 950 MPa | 103 GPa | 1668 °C |
 | [Brass (Cu-Zn)](brass.md) | ![](thumbs/brass.png) | 8.5 g/cm³ | 200 MPa | — | 97 GPa | 900 °C |

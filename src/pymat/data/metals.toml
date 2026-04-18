@@ -335,6 +335,10 @@ metallic = 1.0
 roughness = 0.4
 transmission = 0.0
 
+[tungsten.vis.finishes]
+polished = "ambientcg/Metal014"
+raw = "ambientcg/Metal030"
+
 [tungsten.pure]
 name = "Tungsten 99.95%"
 grade = "pure"
@@ -381,6 +385,10 @@ base_color = [0.3, 0.3, 0.33, 1.0]
 metallic = 1.0
 roughness = 0.5
 transmission = 0.0
+
+[lead.vis.finishes]
+dull = "ambientcg/Metal030"
+oxidized = "ambientcg/Metal031"
 
 
 # ============================================================================

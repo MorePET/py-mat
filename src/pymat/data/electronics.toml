@@ -139,6 +139,10 @@ metallic = 1.0
 roughness = 0.35
 transmission = 0.0
 
+[copper_pcb.vis.finishes]
+clean = "ambientcg/Metal043A"
+oxidized = "ambientcg/Metal043B"
+
 # 1 oz Copper (35 µm)
 [copper_pcb.oz1]
 name = "1 oz Copper (35 µm)"
@@ -181,6 +185,10 @@ base_color = [0.7, 0.7, 0.7, 1.0]
 metallic = 1.0
 roughness = 0.4
 transmission = 0.0
+
+[solder.vis.finishes]
+matte = "ambientcg/Metal030"
+reflowed = "ambientcg/Metal031"
 
 # Sn63Pb37 (traditional, leaded)
 [solder.Sn63Pb37]

@@ -1,5 +1,7 @@
 # Solder
 
+![Solder](thumbs/solder.png)
+
 ## Identity
 
 | Field | Value |
@@ -18,3 +20,11 @@
 | Base Color | `(0.7, 0.7, 0.7, 1.0)` |
 | Metallic | 1.0 |
 | Roughness | 0.4 |
+
+## Visual (mat-vis)
+
+| Field | Value |
+|---|---|
+| Source ID | `ambientcg/Metal030` |
+| Finish | matte |
+| Available Finishes | matte, reflowed |
