@@ -107,12 +107,68 @@ PBR rendering. To find matching textures:
 
 ```python
 from pymat import vis
-vis.search(category="metal", roughness=0.3)
+vis.search(category="metal", tags=["brushed", "silver"])
 ```
 
-Add the match to the `[vis]` section of the TOML. If you're
-unsure, leave it out — the `enrich_vis.py` script proposes
-matches automatically.
+Prefer searching by **tags** (brushed, silver, oak, concrete, etc.)
+over category alone — tags encode the actual appearance and give
+far better matches than category, which only narrows the pool.
+
+Add the match to a `[<material>.vis.finishes]` block in the TOML:
+
+```toml
+[stainless.vis.finishes]
+brushed = "ambientcg/Metal012"     # first finish becomes the default
+polished = "ambientcg/Metal049A"
+dirty = "ambientcg/Metal049B"
+```
+
+If you're unsure which texture to pick, `scripts/enrich_vis.py`
+walks every material, tag-matches against the live mat-vis index,
+and prints TOML blocks you can paste directly.
+
+## Curation tools
+
+Curation-time utilities live in `scripts/` and are **not** runtime
+deps of mat. Install their shared dependencies with:
+
+```bash
+pip install -r scripts/requirements-curation.txt
+```
+
+| Script | Purpose |
+|---|---|
+| `scripts/enrich_vis.py` | Propose `[vis.finishes]` blocks for unmapped materials via tag-matching against the mat-vis index |
+| `scripts/enrich_from_wikidata.py` | Cross-check density + melting point of base metals against Wikidata (CC0, no auth) |
+| `scripts/generate_catalog.py` | Regenerate `docs/catalog/` with per-material pages and 128px thumbnails |
+
+### Curation workflow
+
+1. Add or edit a material in the appropriate `src/pymat/data/*.toml` file.
+2. For visual mapping, run `python scripts/enrich_vis.py` to get a
+   proposed `[vis.finishes]` block. Paste it into the TOML — adjust
+   the finish names to match physical reality (e.g. `brushed`,
+   `polished`, `oxidized`) rather than the script's generic default.
+3. For metals, run `python scripts/enrich_from_wikidata.py` to
+   cross-check density and melting point. Resolve any DIFF rows
+   with a literature source before merging.
+4. Run `python scripts/generate_catalog.py` to regenerate the
+   catalog (the CI also does this on push to `dev`).
+5. Run `pytest tests/` and commit.
+
+### Provenance
+
+When a value comes from an external source, note it inline:
+
+```toml
+# density: Wikidata Q663 (aluminium), 2.7 g/cm³ — CC0
+density_value = 2.7
+density_unit = "g/cm^3"
+```
+
+This keeps the source visible next to the value and survives TOML
+reformatting. Don't fabricate provenance — if you measured it or
+took it from a datasheet, say so.
 
 [request]: https://github.com/MorePET/mat/issues/new?template=material-request.yml
 [correction]: https://github.com/MorePET/mat/issues/new?template=material-correction.yml
