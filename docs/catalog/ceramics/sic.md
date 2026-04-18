@@ -1,6 +1,6 @@
 # Silicon Carbide
 
-![Silicon Carbide](thumbs/sic.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/sic_cube_dark.png"><img src="previews/sic_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

@@ -1,6 +1,6 @@
 # Delrin (POM)
 
-![Delrin (POM)](thumbs/delrin.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/delrin_cube_dark.png"><img src="previews/delrin_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

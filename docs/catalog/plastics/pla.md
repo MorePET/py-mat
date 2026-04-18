@@ -1,6 +1,6 @@
 # PLA (Polylactic Acid)
 
-![PLA (Polylactic Acid)](thumbs/pla.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/pla_cube_dark.png"><img src="previews/pla_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

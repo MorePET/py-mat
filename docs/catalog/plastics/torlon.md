@@ -1,6 +1,6 @@
 # Torlon (PAI)
 
-![Torlon (PAI)](thumbs/torlon.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/torlon_cube_dark.png"><img src="previews/torlon_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

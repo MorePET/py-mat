@@ -32,6 +32,37 @@ CATEGORIES_ORDER = [
     "electronics", "liquids", "gases",
 ]
 
+# Shape per category — cube reads as "solid", sphere reads as "fluid".
+# Must match scripts/generate_previews.py so preview-path lookups line up.
+_SHAPE_BY_CATEGORY = {
+    "metals": "cube", "plastics": "cube", "ceramics": "cube",
+    "electronics": "cube", "scintillators": "cube",
+    "liquids": "sphere", "gases": "sphere",
+}
+
+
+def _preview_paths(category: str, key: str) -> tuple[str, str] | None:
+    """Return (light_path, dark_path) for the rendered PBR preview, or
+    None if no preview has been rendered yet. Paths are relative to the
+    category index (i.e. the caller's README.md location)."""
+    shape = _SHAPE_BY_CATEGORY.get(category, "cube")
+    light = Path(f"previews/{key}_{shape}_light.png")
+    dark = Path(f"previews/{key}_{shape}_dark.png")
+    return (str(light), str(dark))
+
+
+def _preview_picture_tag(preview_paths: tuple[str, str] | None) -> str | None:
+    """Emit a GitHub-theme-aware <picture> tag. Caller checks file existence."""
+    if preview_paths is None:
+        return None
+    light, dark = preview_paths
+    return (
+        f'<picture>'
+        f'<source media="(prefers-color-scheme: dark)" srcset="{dark}">'
+        f'<img src="{light}" width="200" alt="preview">'
+        f'</picture>'
+    )
+
 
 def _fetch_thumbnail(source: str, material_id: str) -> bytes:
     """Fetch a thumbnail PNG from mat-vis's thumbnail tier.
@@ -62,11 +93,20 @@ def _format_value(key: str, value, unit: str | None = None) -> str:
     return formatted
 
 
-def _material_page(mat, thumb_path: str | None, category: str) -> str:
+def _material_page(mat, thumb_path: str | None, category: str,
+                   key: str, catalog_dir: Path) -> str:
     """Generate markdown for a single material detail page."""
     lines = [f"# {mat.name}", ""]
 
-    if thumb_path:
+    # Prefer the rendered PBR preview (theme-aware) over the flat thumb
+    preview = _preview_paths(category, key)
+    category_dir = catalog_dir / category
+    if preview and (category_dir / preview[0]).exists() and (category_dir / preview[1]).exists():
+        tag = _preview_picture_tag(preview)
+        if tag:
+            lines.append(tag)
+            lines.append("")
+    elif thumb_path:
         lines.append(f"![{mat.name}]({thumb_path})")
         lines.append("")
 
@@ -248,7 +288,8 @@ _CATEGORY_COLUMNS: dict[str, list[tuple[str, callable]]] = {
 }
 
 
-def _category_index(category: str, materials: list, has_thumbnails: bool) -> str:
+def _category_index(category: str, materials: list, has_thumbnails: bool,
+                    catalog_dir: Path) -> str:
     """Generate markdown index for a category — columns tuned per audience."""
     lines = [f"# {category.title()}", ""]
     lines.append(f"{len(materials)} materials. Click a name for full properties.")
@@ -264,11 +305,17 @@ def _category_index(category: str, materials: list, has_thumbnails: bool) -> str
     lines.append("| " + " | ".join(header) + " |")
     lines.append("|" + "|".join(["---"] * len(header)) + "|")
 
-    # Rows
+    category_dir = catalog_dir / category
+
     for mat, key in materials:
         row = [f"[{mat.name}]({key}.md)"]
         if has_thumbnails:
-            if (THUMBS_EXIST := (mat.vis.source_id is not None)):
+            # Prefer the rendered PBR preview if both theme variants exist,
+            # otherwise fall back to the flat thumbnail, otherwise em-dash.
+            preview = _preview_paths(category, key)
+            if preview and (category_dir / preview[0]).exists() and (category_dir / preview[1]).exists():
+                row.append(_preview_picture_tag(preview))
+            elif mat.vis.source_id is not None:
                 row.append(f"![]({'thumbs/' + key + '.png'})")
             else:
                 row.append("—")
@@ -345,12 +392,14 @@ def generate(output_dir: Path, skip_thumbnails: bool = False) -> None:
         cat_dir.mkdir(parents=True, exist_ok=True)
 
         # Category index
-        (cat_dir / "README.md").write_text(_category_index(category, mats, has_thumbnails))
+        (cat_dir / "README.md").write_text(
+            _category_index(category, mats, has_thumbnails, output_dir)
+        )
 
         # Per-material pages
         for mat, key in mats:
             thumb_rel = f"thumbs/{key}.png" if (cat_dir / "thumbs" / f"{key}.png").exists() else None
-            page = _material_page(mat, thumb_rel, category)
+            page = _material_page(mat, thumb_rel, category, key, output_dir)
             (cat_dir / f"{key}.md").write_text(page)
 
     # Root index

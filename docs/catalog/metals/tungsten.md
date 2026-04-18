@@ -1,6 +1,6 @@
 # Tungsten
 
-![Tungsten](thumbs/tungsten.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/tungsten_cube_dark.png"><img src="previews/tungsten_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

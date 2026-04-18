@@ -1,6 +1,6 @@
 # ABS (Acrylonitrile Butadiene Styrene)
 
-![ABS (Acrylonitrile Butadiene Styrene)](thumbs/abs.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/abs_cube_dark.png"><img src="previews/abs_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

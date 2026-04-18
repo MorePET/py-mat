@@ -1,6 +1,6 @@
 # TPU (Thermoplastic Polyurethane)
 
-![TPU (Thermoplastic Polyurethane)](thumbs/tpu.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/tpu_cube_dark.png"><img src="previews/tpu_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

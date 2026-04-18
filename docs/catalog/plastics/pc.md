@@ -1,6 +1,6 @@
 # Polycarbonate
 
-![Polycarbonate](thumbs/pc.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/pc_cube_dark.png"><img src="previews/pc_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

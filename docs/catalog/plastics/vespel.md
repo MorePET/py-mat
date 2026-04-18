@@ -1,6 +1,6 @@
 # Vespel (Polyimide)
 
-![Vespel (Polyimide)](thumbs/vespel.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/vespel_cube_dark.png"><img src="previews/vespel_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

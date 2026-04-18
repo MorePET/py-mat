@@ -1,6 +1,6 @@
 # Copper (PCB)
 
-![Copper (PCB)](thumbs/copper_pcb.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/copper_pcb_cube_dark.png"><img src="previews/copper_pcb_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

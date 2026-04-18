@@ -1,6 +1,6 @@
 # Shapal
 
-![Shapal](thumbs/shapal.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/shapal_cube_dark.png"><img src="previews/shapal_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

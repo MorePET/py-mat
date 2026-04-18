@@ -1,6 +1,6 @@
 # Nylon 6
 
-![Nylon 6](thumbs/nylon.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/nylon_cube_dark.png"><img src="previews/nylon_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

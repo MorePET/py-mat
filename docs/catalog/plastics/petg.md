@@ -1,6 +1,6 @@
 # PETG
 
-![PETG](thumbs/petg.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/petg_cube_dark.png"><img src="previews/petg_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

@@ -1,6 +1,6 @@
 # Copper
 
-![Copper](thumbs/copper.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/copper_cube_dark.png"><img src="previews/copper_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

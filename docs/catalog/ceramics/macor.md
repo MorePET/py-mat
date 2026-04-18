@@ -1,6 +1,6 @@
 # Macor
 
-![Macor](thumbs/macor.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/macor_cube_dark.png"><img src="previews/macor_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

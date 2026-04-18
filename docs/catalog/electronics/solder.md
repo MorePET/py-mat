@@ -1,6 +1,6 @@
 # Solder
 
-![Solder](thumbs/solder.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/solder_cube_dark.png"><img src="previews/solder_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

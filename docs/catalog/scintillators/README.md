@@ -14,6 +14,6 @@
 | [CsI(Na)](csi-Na.md) | — | 4.51 g/cm³ | 1.95 |
 | [LaBr3:Ce](labr3.md) | — | 5.29 g/cm³ | 1.9 |
 | [PWO](pwo.md) | — | 8.28 g/cm³ | 2.26 |
-| [Plastic Scintillator](plastic_scint.md) | ![](thumbs/plastic_scint.png) | 1.032 g/cm³ | — |
+| [Plastic Scintillator](plastic_scint.md) | <picture><source media="(prefers-color-scheme: dark)" srcset="previews/plastic_scint_cube_dark.png"><img src="previews/plastic_scint_cube_light.png" width="200" alt="preview"></picture> | 1.032 g/cm³ | — |
 | [BC-400 Plastic Scintillator](plastic_scint-BC400.md) | — | 1.032 g/cm³ | — |
 | [EJ-200 Plastic Scintillator](plastic_scint-EJ200.md) | — | 1.032 g/cm³ | — |

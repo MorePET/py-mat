@@ -24,16 +24,26 @@ if TYPE_CHECKING:
     from pymat.core import _MaterialInternal as Material
 
 
+def _rgba_to_hex(rgba: list[float] | tuple[float, ...] | None) -> str | None:
+    """Convert [r, g, b, a?] in 0-1 range to '#RRGGBB'. Alpha dropped."""
+    if rgba is None:
+        return None
+    r, g, b = (int(round(max(0.0, min(1.0, c)) * 255)) for c in rgba[:3])
+    return f"#{r:02x}{g:02x}{b:02x}"
+
+
 def _extract_scalars(material: Material) -> dict[str, Any]:
     """Extract PBR scalars from material.vis with defaults.
 
-    Maps py-mat "metallic" → mat-vis "metalness".
+    Maps py-mat "metallic" → mat-vis "metalness" and our RGBA
+    base_color list → mat-vis's color_hex string (its adapters
+    only know how to emit color from the hex form).
     """
     vis = material.vis
     return {
         "metalness": vis.get("metallic"),
         "roughness": vis.get("roughness"),
-        "base_color": vis.get("base_color"),
+        "color_hex": _rgba_to_hex(vis.get("base_color")),
         "ior": vis.get("ior"),
         "transmission": vis.get("transmission"),
         "clearcoat": vis.get("clearcoat"),

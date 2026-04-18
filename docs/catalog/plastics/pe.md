@@ -1,6 +1,6 @@
 # Polyethylene
 
-![Polyethylene](thumbs/pe.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/pe_cube_dark.png"><img src="previews/pe_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

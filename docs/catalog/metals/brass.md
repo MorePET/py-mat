@@ -1,6 +1,6 @@
 # Brass (Cu-Zn)
 
-![Brass (Cu-Zn)](thumbs/brass.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/brass_cube_dark.png"><img src="previews/brass_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

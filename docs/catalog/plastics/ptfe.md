@@ -1,6 +1,6 @@
 # PTFE (Teflon)
 
-![PTFE (Teflon)](thumbs/ptfe.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/ptfe_cube_dark.png"><img src="previews/ptfe_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

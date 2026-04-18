@@ -1,6 +1,6 @@
 # ESR (3M Vikuiti)
 
-![ESR (3M Vikuiti)](thumbs/esr.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/esr_cube_dark.png"><img src="previews/esr_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

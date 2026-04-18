@@ -1,6 +1,6 @@
 # Alumina
 
-![Alumina](thumbs/alumina.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/alumina_cube_dark.png"><img src="previews/alumina_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

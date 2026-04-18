@@ -1,6 +1,6 @@
 # Zirconia
 
-![Zirconia](thumbs/zirconia.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/zirconia_cube_dark.png"><img src="previews/zirconia_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

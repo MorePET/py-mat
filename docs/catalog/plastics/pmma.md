@@ -1,6 +1,6 @@
 # PMMA (Acrylic)
 
-![PMMA (Acrylic)](thumbs/pmma.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/pmma_cube_dark.png"><img src="previews/pmma_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

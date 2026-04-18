@@ -1,6 +1,6 @@
 # Ultem (PEI)
 
-![Ultem (PEI)](thumbs/ultem.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/ultem_cube_dark.png"><img src="previews/ultem_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

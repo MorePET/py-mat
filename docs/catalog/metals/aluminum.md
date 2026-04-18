@@ -1,6 +1,6 @@
 # Aluminum
 
-![Aluminum](thumbs/aluminum.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/aluminum_cube_dark.png"><img src="previews/aluminum_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 

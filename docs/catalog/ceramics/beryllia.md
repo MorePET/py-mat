@@ -1,6 +1,6 @@
 # Beryllia
 
-![Beryllia](thumbs/beryllia.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="previews/beryllia_cube_dark.png"><img src="previews/beryllia_cube_light.png" width="200" alt="preview"></picture>
 
 ## Identity
 
