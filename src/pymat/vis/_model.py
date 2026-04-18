@@ -19,7 +19,7 @@ class ResolvedChannel:
     """Result of resolving a channel across texture + scalar sources."""
 
     texture: bytes | None = None  # PNG bytes if texture map available
-    scalar: float | None = None  # scalar fallback from properties.pbr
+    scalar: float | None = None  # scalar fallback (e.g. the vis.roughness value)
     has_texture: bool = False
 
 
@@ -42,10 +42,10 @@ class Vis:
     tier: str = "1k"
     finishes: dict[str, str] = field(default_factory=dict)
 
-    # PBR scalars — can be set from [vis] section in TOML.
-    # When set here, these take precedence over properties.pbr values.
-    # In 3.0, properties.pbr will be removed and these become the
-    # single source for rendering scalars.
+    # PBR scalars — the canonical home in 3.0. Loaded from the [vis]
+    # section of a TOML material, or derived from physics properties
+    # (ior from optical.refractive_index, transmission from optical
+    # .transparency / 100) in Material.__post_init__.
     roughness: float | None = None
     metallic: float | None = None
     base_color: tuple | None = None

@@ -6,7 +6,8 @@ Organized by physical/engineering domain:
 - ThermalProperties: temperature-related properties
 - ElectricalProperties: electrical conductivity and dielectric behavior
 - OpticalProperties: light interaction and scintillator-specific properties
-- PBRProperties: physically-based rendering for visualization
+- (PBR scalars — roughness, metallic, base_color, textures — live on
+  Material.vis, not here. See docs/migration/v2-to-v3.md.)
 - ManufacturingProperties: machinability, printability, weldability
 - ComplianceProperties: regulatory and material suitability
 """

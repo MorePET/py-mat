@@ -129,29 +129,51 @@ def generate_examples_section(examples: List[Tuple[str, str]]) -> str:
     return content.strip()
 
 
-def generate_readme(template_path: Path, test_file_path: Path, output_path: Path):
-    """Generate README.md from template and extracted examples."""
-    # Read template
-    with open(template_path, "r") as f:
-        template = f.read()
-
-    # Parse test file
+def render_readme(template_path: Path, test_file_path: Path) -> str:
+    """Render the README text from the template + extracted test examples."""
+    template = template_path.read_text()
     examples = parse_test_file(test_file_path)
-
-    # Generate examples section
     examples_content = generate_examples_section(examples)
+    return template.replace("{{EXAMPLES_COMPREHENSIVE}}", examples_content)
 
-    # Replace placeholder in template
-    readme_content = template.replace("{{EXAMPLES_COMPREHENSIVE}}", examples_content)
 
-    # Write README
-    with open(output_path, "w") as f:
-        f.write(readme_content)
-
+def generate_readme(template_path: Path, test_file_path: Path, output_path: Path):
+    """Write the rendered README to disk."""
+    content = render_readme(template_path, test_file_path)
+    output_path.write_text(content)
+    examples = parse_test_file(test_file_path)
     print(f"Generated {output_path} with {len(examples)} examples")
 
 
+def check_readme(template_path: Path, test_file_path: Path, output_path: Path) -> int:
+    """Exit non-zero if README.md on disk differs from regenerated output."""
+    import sys
+
+    rendered = render_readme(template_path, test_file_path)
+    existing = output_path.read_text() if output_path.exists() else ""
+    if existing == rendered:
+        examples = parse_test_file(test_file_path)
+        print(f"README.md matches regenerated output ({len(examples)} examples)")
+        return 0
+    print(
+        "README.md is out of date. Regenerate with:\n"
+        "    python scripts/generate_readme.py",
+        file=sys.stderr,
+    )
+    return 1
+
+
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Fail non-zero if README.md differs from regenerated output.",
+    )
+    args = parser.parse_args()
+
     project_root = Path(__file__).parent.parent
     test_file = project_root / "tests" / "test_readme_examples.py"
     template_file = project_root / "docs" / "README_TEMPLATE.md"
@@ -164,5 +186,8 @@ if __name__ == "__main__":
     if not template_file.exists():
         print(f"Error: {template_file} not found")
         exit(1)
+
+    if args.check:
+        exit(check_readme(template_file, test_file, output_file))
 
     generate_readme(template_file, test_file, output_file)

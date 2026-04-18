@@ -193,7 +193,6 @@ def __dir__() -> list[str]:
         "ThermalProperties",
         "ElectricalProperties",
         "OpticalProperties",
-        "PBRProperties",
         "ManufacturingProperties",
         "ComplianceProperties",
         "SourcingProperties",
