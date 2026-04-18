@@ -117,7 +117,9 @@ class TestTextures:
             called["material_id"] = material_id
             return {"color": b"\x89PNG_mock"}
 
-        monkeypatch.setattr("mat_vis_client.fetch", mock_fetch)
+        # _model.py imports fetch from pymat.vis (our wrapper), not from
+        # mat_vis_client directly — 0.2.0+ removed the module-level fetch.
+        monkeypatch.setattr("pymat.vis.fetch", mock_fetch)
 
         v = Vis(source_id="ambientcg/Metal032")
         textures = v.textures

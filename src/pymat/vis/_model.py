@@ -175,7 +175,10 @@ class Vis:
             )
         source, material_id = parts
 
-        from mat_vis_client import fetch
+        # Import from pymat.vis (our wrapper) rather than mat-vis-client
+        # directly. mat-vis-client 0.2.0+ removed the module-level `fetch`
+        # in favor of the explicit-client style (MatVisClient().fetch_all_textures).
+        from pymat.vis import fetch
 
         self._textures = fetch(source, material_id, tier=self.tier)
         self._fetched = True

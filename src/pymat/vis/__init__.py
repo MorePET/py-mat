@@ -18,7 +18,6 @@ Material.vis wires into this module for lazy texture loading.
 import mat_vis_client
 from mat_vis_client import (
     MatVisClient,
-    fetch,
     get_manifest,
     prefetch,
     rowmap_entry,
@@ -31,6 +30,20 @@ from mat_vis_client import (
 from mat_vis_client import adapters  # noqa: F401
 
 from typing import Any
+
+
+def fetch(source: str, material_id: str, *, tier: str = "1k",
+          tag: str | None = None) -> dict[str, bytes]:
+    """Fetch all texture channels for a material from mat-vis.
+
+    Thin wrapper around MatVisClient.fetch_all_textures so we don't
+    depend on a module-level `fetch` function in mat-vis-client (it
+    was removed upstream after 2026.4.x in favor of explicit-client
+    style — see mat-vis __init__.py docstring).
+    """
+    from mat_vis_client import _get_client
+    client = MatVisClient(tag=tag) if tag else _get_client()
+    return client.fetch_all_textures(source, material_id, tier=tier)
 
 
 def search(
