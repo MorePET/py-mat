@@ -190,8 +190,10 @@ def _build_properties_from_dict(
             pbr_data["base_color"] = tuple(pbr_data["base_color"])
         if "emissive" in pbr_data:
             pbr_data["emissive"] = tuple(pbr_data["emissive"])
-        # Route to properties.pbr for backward compat
-        update_properties(props.pbr, pbr_data, "pbr")
+        # Route to properties._pbr for backward compat — bypasses the
+        # public `.pbr` deprecation warning since this is the library
+        # itself loading the legacy TOML section.
+        update_properties(props._pbr, pbr_data, "pbr")
     if "manufacturing" in data:
         update_properties(props.manufacturing, data["manufacturing"], "manufacturing")
     if "compliance" in data:

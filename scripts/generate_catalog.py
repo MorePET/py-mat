@@ -161,19 +161,21 @@ def _material_page(mat, thumb_path: str | None, category: str,
             lines.append(f"| Specific Heat | {therm.specific_heat} J/(kg·K) |")
         lines.append("")
 
-    # PBR
-    pbr = mat.properties.pbr
+    # PBR — read from vis (the 3.0 target) with fallback to defaults
     lines.append("## PBR (Rendering)")
     lines.append("")
     lines.append("| Property | Value |")
     lines.append("|---|---|")
-    lines.append(f"| Base Color | `{pbr.base_color}` |")
-    lines.append(f"| Metallic | {pbr.metallic} |")
-    lines.append(f"| Roughness | {pbr.roughness} |")
-    if pbr.ior != 1.5:
-        lines.append(f"| IOR | {pbr.ior} |")
-    if pbr.transmission > 0:
-        lines.append(f"| Transmission | {pbr.transmission} |")
+    vis = mat.vis
+    lines.append(f"| Base Color | `{vis.get('base_color', (0.8, 0.8, 0.8, 1.0))}` |")
+    lines.append(f"| Metallic | {vis.get('metallic', 0.0)} |")
+    lines.append(f"| Roughness | {vis.get('roughness', 0.5)} |")
+    ior = vis.get("ior", 1.5)
+    if ior != 1.5:
+        lines.append(f"| IOR | {ior} |")
+    transmission = vis.get("transmission", 0.0) or 0.0
+    if transmission > 0:
+        lines.append(f"| Transmission | {transmission} |")
     lines.append("")
 
     # Vis

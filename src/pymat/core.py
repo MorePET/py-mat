@@ -169,9 +169,10 @@ class _MaterialInternal:
             for key, value in self.pbr.items():
                 if key in self.vis._PBR_SCALAR_FIELDS:
                     setattr(self.vis, key, value)
-                # Also sync to properties.pbr for backward compat
-                if hasattr(self.properties.pbr, key):
-                    setattr(self.properties.pbr, key, value)
+                # Also sync to properties._pbr for backward compat
+                # (use the private field to skip the deprecation warning)
+                if hasattr(self.properties._pbr, key):
+                    setattr(self.properties._pbr, key, value)
 
         if self.manufacturing:
             for key, value in self.manufacturing.items():
@@ -199,11 +200,15 @@ class _MaterialInternal:
         self._sync_vis_to_pbr()
 
     def _sync_vis_to_pbr(self):
-        """Sync vis scalars → properties.pbr for backward compat."""
+        """Sync vis scalars → properties._pbr for backward compat.
+
+        Uses the private `_pbr` field directly so we don't trip our own
+        deprecation warning on every Material construction.
+        """
         vis = self._vis
         if vis is None:
             return
-        pbr = self.properties.pbr
+        pbr = self.properties._pbr
         for field in ("roughness", "metallic", "base_color", "ior", "transmission", "clearcoat", "emissive"):
             val = getattr(vis, field, None)
             if val is not None and hasattr(pbr, field):
@@ -293,7 +298,7 @@ class _MaterialInternal:
             ("thermal", inherited_props.thermal),
             ("electrical", inherited_props.electrical),
             ("optical", inherited_props.optical),
-            ("pbr", inherited_props.pbr),
+            ("pbr", inherited_props._pbr),
             ("manufacturing", inherited_props.manufacturing),
             ("compliance", inherited_props.compliance),
             ("sourcing", inherited_props.sourcing),
@@ -402,10 +407,13 @@ class _MaterialInternal:
         # Check for build123d Shape characteristics: has volume and color attributes
         try:
             if hasattr(obj, "volume") and hasattr(obj, "color"):
-                # Set color from PBR with alpha derived from transmission
-                # Alpha = 1 - transmission (transmission=1 → fully transparent, alpha=0)
-                color = self.properties.pbr.base_color
-                transmission = self.properties.pbr.transmission
+                # Set color from vis scalars with alpha derived from
+                # transmission. 2.3.0 reads from .vis (not .properties._pbr)
+                # to match the 3.0 direction. Children inheriting from a
+                # parent may have vis.base_color=None — fall back to the
+                # _pbr default (0.8, 0.8, 0.8, 1.0) in that case.
+                color = self.vis.base_color or self.properties._pbr.base_color
+                transmission = self.vis.transmission or 0.0
                 alpha = 1.0 - transmission
                 obj.color = (*color[:3], alpha)
 

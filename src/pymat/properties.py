@@ -458,10 +458,44 @@ class AllProperties:
     thermal: ThermalProperties = field(default_factory=ThermalProperties)
     electrical: ElectricalProperties = field(default_factory=ElectricalProperties)
     optical: OpticalProperties = field(default_factory=OpticalProperties)
-    pbr: PBRProperties = field(default_factory=PBRProperties)
+    # Real storage for PBR scalars — 2.3.0 renamed this from `pbr` to
+    # `_pbr` so the public `pbr` accessor below can emit a deprecation
+    # warning. Internal callers (core sync, factories, loader) reach
+    # through `_pbr` directly to stay silent. See issue #40.
+    _pbr: PBRProperties = field(default_factory=PBRProperties, repr=False, compare=False)
     manufacturing: ManufacturingProperties = field(default_factory=ManufacturingProperties)
     compliance: ComplianceProperties = field(default_factory=ComplianceProperties)
     sourcing: SourcingProperties = field(default_factory=SourcingProperties)
 
     # Extra user properties
     custom: Dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def pbr(self) -> PBRProperties:
+        """DEPRECATED — use ``material.vis`` instead.
+
+        PBR scalars moved to ``Material.vis`` in 2.2.0. ``.properties.pbr``
+        will be removed in 3.0; this 2.3.0 release surfaces the migration
+        via a ``DeprecationWarning`` on every access.
+
+            # Before (deprecated)
+            material.properties.pbr.roughness
+
+            # After
+            material.vis.roughness
+        """
+        import warnings
+
+        warnings.warn(
+            "material.properties.pbr is deprecated in 2.3 and will be removed "
+            "in 3.0 — use material.vis for PBR scalars and textures "
+            "(e.g. material.vis.roughness, material.vis.base_color, "
+            "material.vis.textures). See issue #40.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._pbr
+
+    @pbr.setter
+    def pbr(self, value: PBRProperties) -> None:
+        self._pbr = value

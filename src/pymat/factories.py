@@ -84,11 +84,11 @@ def water(temperature_c: float = 20.0, name: Optional[str] = None) -> Material:
     props.optical.refractive_index = refractive_index
 
     # PBR - water appearance
-    props.pbr.base_color = (0.7, 0.85, 0.95, 0.3)
-    props.pbr.metallic = 0.0
-    props.pbr.roughness = 0.0
-    props.pbr.transmission = 0.95
-    props.pbr.ior = refractive_index
+    props._pbr.base_color = (0.7, 0.85, 0.95, 0.3)
+    props._pbr.metallic = 0.0
+    props._pbr.roughness = 0.0
+    props._pbr.transmission = 0.95
+    props._pbr.ior = refractive_index
 
     mat_name = name or f"Water @ {temperature_c}°C"
 
@@ -141,10 +141,10 @@ def air(
     props.optical.refractive_index = 1.000293  # At STP
 
     # Air is essentially invisible
-    props.pbr.base_color = (0.9, 0.95, 1.0, 0.02)
-    props.pbr.metallic = 0.0
-    props.pbr.roughness = 0.0
-    props.pbr.transmission = 0.99
+    props._pbr.base_color = (0.9, 0.95, 1.0, 0.02)
+    props._pbr.metallic = 0.0
+    props._pbr.roughness = 0.0
+    props._pbr.transmission = 0.99
 
     mat_name = name or f"Air @ {temperature_c}°C, {pressure_atm} atm"
 
@@ -194,11 +194,11 @@ def saline(
     props.optical.refractive_index = 1.333 + 0.0017 * concentration_pct
 
     # Slightly different appearance than pure water
-    props.pbr.base_color = (0.75, 0.85, 0.9, 0.35)
-    props.pbr.metallic = 0.0
-    props.pbr.roughness = 0.0
-    props.pbr.transmission = 0.9
-    props.pbr.ior = props.optical.refractive_index
+    props._pbr.base_color = (0.75, 0.85, 0.9, 0.35)
+    props._pbr.metallic = 0.0
+    props._pbr.roughness = 0.0
+    props._pbr.transmission = 0.9
+    props._pbr.ior = props.optical.refractive_index
 
     mat_name = name or f"Saline {concentration_pct}% @ {temperature_c}°C"
 
