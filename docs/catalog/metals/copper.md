@@ -1,5 +1,7 @@
 # Copper
 
+![Copper](thumbs/copper.png)
+
 ## Identity
 
 | Field | Value |
@@ -30,3 +32,11 @@
 | Base Color | `(0.72, 0.45, 0.2, 1.0)` |
 | Metallic | 1.0 |
 | Roughness | 0.3 |
+
+## Visual (mat-vis)
+
+| Field | Value |
+|---|---|
+| Source ID | `ambientcg/Metal043A` |
+| Finish | polished |
+| Available Finishes | polished, oxidized, aged |

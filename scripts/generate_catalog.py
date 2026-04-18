@@ -171,30 +171,110 @@ def _material_page(mat, thumb_path: str | None, category: str) -> str:
     return "\n".join(lines)
 
 
+def _fmt_density(mat) -> str:
+    d = mat.properties.mechanical.density
+    return f"{d} g/cm³" if d else "—"
+
+
+def _fmt_yield(mat) -> str:
+    y = mat.properties.mechanical.yield_strength
+    return f"{y} MPa" if y else "—"
+
+
+def _fmt_tensile(mat) -> str:
+    t = mat.properties.mechanical.tensile_strength
+    return f"{t} MPa" if t else "—"
+
+
+def _fmt_modulus(mat) -> str:
+    e = mat.properties.mechanical.youngs_modulus
+    return f"{e} GPa" if e else "—"
+
+
+def _fmt_melting(mat) -> str:
+    mp = mat.properties.thermal.melting_point
+    return f"{mp} °C" if mp is not None else "—"
+
+
+def _fmt_k(mat) -> str:
+    k = mat.properties.thermal.thermal_conductivity
+    return f"{k} W/m·K" if k else "—"
+
+
+def _fmt_ior(mat) -> str:
+    n = mat.properties.optical.refractive_index
+    return f"{n}" if n else "—"
+
+
+# Per-category columns chosen by audience
+# Metals: mechanical + thermal (engineering primary)
+# Plastics: density + thermal (operating temp matters)
+# Scintillators: density + optical (physics primary)
+# Gases/liquids: density + thermal
+# Default: density + mechanical
+_CATEGORY_COLUMNS: dict[str, list[tuple[str, callable]]] = {
+    "metals": [
+        ("Density", _fmt_density),
+        ("Yield", _fmt_yield),
+        ("Tensile", _fmt_tensile),
+        ("E", _fmt_modulus),
+        ("T_melt", _fmt_melting),
+    ],
+    "plastics": [
+        ("Density", _fmt_density),
+        ("Yield", _fmt_yield),
+        ("T_melt", _fmt_melting),
+        ("k", _fmt_k),
+    ],
+    "scintillators": [
+        ("Density", _fmt_density),
+        ("n (IOR)", _fmt_ior),
+    ],
+    "ceramics": [
+        ("Density", _fmt_density),
+        ("E", _fmt_modulus),
+        ("T_melt", _fmt_melting),
+    ],
+    "electronics": [
+        ("Density", _fmt_density),
+    ],
+    "liquids": [
+        ("Density", _fmt_density),
+        ("n (IOR)", _fmt_ior),
+    ],
+    "gases": [
+        ("Density", _fmt_density),
+    ],
+}
+
+
 def _category_index(category: str, materials: list, has_thumbnails: bool) -> str:
-    """Generate markdown index for a category."""
+    """Generate markdown index for a category — columns tuned per audience."""
     lines = [f"# {category.title()}", ""]
+    lines.append(f"{len(materials)} materials. Click a name for full properties.")
+    lines.append("")
 
+    cols = _CATEGORY_COLUMNS.get(category, [("Density", _fmt_density)])
+
+    # Header
+    header = ["Material"]
     if has_thumbnails:
-        lines.append("| Material | Thumbnail | Density | Roughness | Metallic |")
-        lines.append("|---|---|---|---|---|")
-    else:
-        lines.append("| Material | Density | Roughness | Metallic |")
-        lines.append("|---|---|---|---|")
+        header.append("Preview")
+    header.extend(c[0] for c in cols)
+    lines.append("| " + " | ".join(header) + " |")
+    lines.append("|" + "|".join(["---"] * len(header)) + "|")
 
+    # Rows
     for mat, key in materials:
-        mech = mat.properties.mechanical
-        pbr = mat.properties.pbr
-        density = f"{mech.density} g/cm³" if mech.density else "—"
-        link = f"[{mat.name}]({key}.md)"
-
-        if has_thumbnails and mat.vis.source_id:
-            thumb = f"![thumb](thumbs/{key}.png)"
-            lines.append(f"| {link} | {thumb} | {density} | {pbr.roughness} | {pbr.metallic} |")
-        elif has_thumbnails:
-            lines.append(f"| {link} | — | {density} | {pbr.roughness} | {pbr.metallic} |")
-        else:
-            lines.append(f"| {link} | {density} | {pbr.roughness} | {pbr.metallic} |")
+        row = [f"[{mat.name}]({key}.md)"]
+        if has_thumbnails:
+            if (THUMBS_EXIST := (mat.vis.source_id is not None)):
+                row.append(f"![]({'thumbs/' + key + '.png'})")
+            else:
+                row.append("—")
+        for _, fmt in cols:
+            row.append(fmt(mat))
+        lines.append("| " + " | ".join(row) + " |")
 
     lines.append("")
     return "\n".join(lines)

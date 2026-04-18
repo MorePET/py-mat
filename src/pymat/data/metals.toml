@@ -31,8 +31,9 @@ transmission = 0.0
 default = "brushed"
 
 [stainless.vis.finishes]
-brushed = "ambientcg/Metal032"
-polished = "ambientcg/Metal012"
+brushed = "ambientcg/Metal012"
+polished = "ambientcg/Metal049A"
+dirty = "ambientcg/Metal049B"
 
 # Stainless Steel 304
 [stainless.s304]
@@ -146,6 +147,11 @@ base_color = [0.88, 0.88, 0.88, 1.0]
 metallic = 1.0
 roughness = 0.4
 transmission = 0.0
+default = "smooth"
+
+[aluminum.vis.finishes]
+smooth = "ambientcg/Metal049A"
+machined = "ambientcg/Metal055A"
 
 # Aluminum 6061-T6
 [aluminum.a6061]
@@ -279,6 +285,12 @@ base_color = [0.72, 0.45, 0.2, 1.0]
 metallic = 1.0
 roughness = 0.3
 transmission = 0.0
+default = "polished"
+
+[copper.vis.finishes]
+polished = "ambientcg/Metal043A"
+oxidized = "ambientcg/Metal043B"
+aged = "ambientcg/Metal026"
 
 [copper.OFHC]
 name = "OFHC Copper (Oxygen-Free High Conductivity)"
@@ -400,6 +412,10 @@ base_color = [0.6, 0.6, 0.6, 1.0]
 metallic = 1.0
 roughness = 0.3
 transmission = 0.0
+default = "smooth"
+
+[titanium.vis.finishes]
+smooth = "ambientcg/Metal049A"
 
 
 # ============================================================================
@@ -427,6 +443,11 @@ base_color = [0.88, 0.78, 0.5, 1.0]
 metallic = 1.0
 roughness = 0.25
 transmission = 0.0
+default = "polished"
+
+[brass.vis.finishes]
+polished = "ambientcg/Metal008"
+oxidized = "ambientcg/Metal035"
 
 
 # ============================================================================

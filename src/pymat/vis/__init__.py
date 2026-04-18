@@ -36,12 +36,20 @@ from typing import Any
 def search(
     *,
     category: str | None = None,
+    tags: list[str] | None = None,
     roughness: float | None = None,
     metalness: float | None = None,
     source: str | None = None,
     limit: int = 20,
 ) -> list[dict[str, Any]]:
-    """Search the mat-vis index by category and scalar similarity.
+    """Search the mat-vis index by category, tags, and scalar similarity.
+
+    Args:
+        category: filter by canonical category (metal, wood, stone, ...)
+        tags: require ALL these tags to be present in the entry's tags list
+        roughness / metalness: score by scalar distance (if set in index)
+        source: limit to one source
+        limit: max results
 
     Does NOT filter by tier — search is for finding materials,
     tier is a fetch-time concern.
@@ -58,6 +66,8 @@ def search(
     if metalness is not None:
         metalness_range = (max(0.0, metalness - 0.2), min(1.0, metalness + 0.2))
 
+    required_tags = set(t.lower() for t in (tags or []))
+
     # Search all sources, no tier filter
     sources = [source] if source else client.sources()
     results: list[dict] = []
@@ -65,6 +75,9 @@ def search(
         try:
             for entry in client.index(src):
                 if category and entry.get("category") != category:
+                    continue
+                entry_tags = set(t.lower() for t in entry.get("tags", []))
+                if required_tags and not required_tags.issubset(entry_tags):
                     continue
                 if roughness_range and not (
                     entry.get("roughness") is not None

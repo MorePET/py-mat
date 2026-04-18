@@ -33,9 +33,9 @@
 
 | Field | Value |
 |---|---|
-| Source ID | `ambientcg/Metal032` |
+| Source ID | `ambientcg/Metal012` |
 | Finish | brushed |
-| Available Finishes | brushed, polished |
+| Available Finishes | brushed, polished, dirty |
 
 ## Composition
 

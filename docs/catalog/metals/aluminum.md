@@ -1,5 +1,7 @@
 # Aluminum
 
+![Aluminum](thumbs/aluminum.png)
+
 ## Identity
 
 | Field | Value |
@@ -29,3 +31,11 @@
 | Base Color | `(0.88, 0.88, 0.88, 1.0)` |
 | Metallic | 1.0 |
 | Roughness | 0.4 |
+
+## Visual (mat-vis)
+
+| Field | Value |
+|---|---|
+| Source ID | `ambientcg/Metal049A` |
+| Finish | smooth |
+| Available Finishes | smooth, machined |

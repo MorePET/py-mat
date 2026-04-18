@@ -1,5 +1,7 @@
 # Brass (Cu-Zn)
 
+![Brass (Cu-Zn)](thumbs/brass.png)
+
 ## Identity
 
 | Field | Value |
@@ -26,6 +28,14 @@
 | Base Color | `(0.88, 0.78, 0.5, 1.0)` |
 | Metallic | 1.0 |
 | Roughness | 0.25 |
+
+## Visual (mat-vis)
+
+| Field | Value |
+|---|---|
+| Source ID | `ambientcg/Metal008` |
+| Finish | polished |
+| Available Finishes | polished, oxidized |
 
 ## Composition
 

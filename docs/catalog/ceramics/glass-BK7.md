@@ -29,5 +29,5 @@
 | Base Color | `(0.9, 0.93, 0.95, 0.85)` |
 | Metallic | 0.0 |
 | Roughness | 0.1 |
-| IOR | 1.52 |
+| IOR | 1.517 |
 | Transmission | 0.95 |
