@@ -302,3 +302,81 @@ class TestVisModuleApi:
 
         with pytest.raises(KeyError, match="NotExist"):
             vis.rowmap_entry("ambientcg", "NotExist")
+
+    def test_search_filters_and_scores(self, monkeypatch):
+        """Exercises tag-subset, roughness-range, metalness-range, scoring."""
+        from pymat import vis
+        import mat_vis_client as _client
+
+        rows = [
+            # matches all filters (brushed + silver tags, rough 0.3, met 1.0)
+            {"id": "A", "source": "ambientcg", "category": "metal",
+             "tags": ["brushed", "silver", "steel"], "roughness": 0.3, "metalness": 1.0},
+            # wrong tags (missing brushed) → filtered out
+            {"id": "B", "source": "ambientcg", "category": "metal",
+             "tags": ["silver"], "roughness": 0.3, "metalness": 1.0},
+            # roughness out of range → filtered out
+            {"id": "C", "source": "ambientcg", "category": "metal",
+             "tags": ["brushed", "silver"], "roughness": 0.9, "metalness": 1.0},
+            # metalness out of range → filtered out
+            {"id": "D", "source": "ambientcg", "category": "metal",
+             "tags": ["brushed", "silver"], "roughness": 0.3, "metalness": 0.0},
+            # wrong category → filtered out
+            {"id": "E", "source": "ambientcg", "category": "wood",
+             "tags": ["brushed", "silver"], "roughness": 0.3, "metalness": 1.0},
+            # matches but scores higher (roughness distance > A's)
+            {"id": "F", "source": "ambientcg", "category": "metal",
+             "tags": ["brushed", "silver"], "roughness": 0.45, "metalness": 1.0},
+        ]
+
+        class MockClient:
+            def __init__(self, **kw): pass
+            @property
+            def manifest(self): return {"release_tag": "mock", "tiers": {}}
+            def sources(self, tier="1k"): return ["ambientcg"]
+            def index(self, source): return rows
+
+        monkeypatch.setattr(_client, "_client", MockClient())
+
+        results = vis.search(
+            category="metal",
+            tags=["brushed", "silver"],
+            roughness=0.3,
+            metalness=1.0,
+        )
+        ids = [r["id"] for r in results]
+        assert ids[0] == "A"  # perfect-score entry sorts first
+        assert "F" in ids      # matches filters, ranks lower
+        assert "B" not in ids  # missing brushed tag
+        assert "C" not in ids  # roughness out of ±0.2 range
+        assert "D" not in ids  # metalness out of ±0.2 range
+        assert "E" not in ids  # wrong category
+
+    def test_search_source_iteration_swallows_index_errors(self, monkeypatch):
+        """A broken source is skipped instead of failing the whole query."""
+        from pymat import vis
+        import mat_vis_client as _client
+
+        class MockClient:
+            def __init__(self, **kw): pass
+            @property
+            def manifest(self): return {"release_tag": "mock", "tiers": {}}
+            def sources(self, tier="1k"): return ["ambientcg", "broken"]
+            def index(self, source):
+                if source == "broken":
+                    raise RuntimeError("source index missing")
+                return [{"id": "ok", "source": "ambientcg", "category": "metal"}]
+
+        monkeypatch.setattr(_client, "_client", MockClient())
+
+        results = vis.search(category="metal")
+        assert [r["id"] for r in results] == ["ok"]
+
+    def test_client_factory(self, monkeypatch):
+        """vis.client() returns the lazy-initialized shared client."""
+        from pymat import vis
+        import mat_vis_client as _client
+
+        sentinel = object()
+        monkeypatch.setattr(_client, "_client", sentinel)
+        assert vis.client() is sentinel
