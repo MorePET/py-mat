@@ -36,6 +36,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `CONTRIBUTING.md` — added a Curation tools table (enrich_vis, enrich_from_wikidata, generate_catalog), a step-by-step curation workflow, and an inline-comment provenance convention (`# density: Wikidata Q663, CC0`) so source attribution survives TOML reformatting.
 * `tests/test_e2e_vis.py::test_toml_material_with_vis_mapping` loosened — no longer pins the polished finish to a specific ambientcg id; just verifies the id changes and stays within ambientcg/Metal*.
 
+## [3.0.0](https://github.com/MorePET/mat/compare/v2.1.1...v3.0.0) (2026-04-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* 3.0 vis cutover — `properties.pbr` removed, `.vis` canonical, mat-vis-client 0.4.x ([#52](https://github.com/MorePET/mat/issues/52))
+
+### Added
+
+* 3.0 vis cutover — `properties.pbr` removed, `.vis` canonical, mat-vis-client 0.4.x ([#52](https://github.com/MorePET/mat/issues/52)) ([49b5dff](https://github.com/MorePET/mat/commit/49b5dff0f5ca139e8e7f1dec82587d4ddf146c45))
+
 ## [2.1.1](https://github.com/MorePET/mat/compare/v2.1.0...v2.1.1) (2026-04-18)
 
 ### Fixed
