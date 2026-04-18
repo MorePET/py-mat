@@ -1337,7 +1337,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "build123d", marker = "python_full_version < '3.13' and extra == 'dev'", specifier = ">=0.7.0" },
-    { name = "mat-vis-client", specifier = ">=0.3.1" },
+    { name = "mat-vis-client", specifier = ">=0.4.0" },
     { name = "periodictable", specifier = ">=1.6.0" },
     { name = "pint", specifier = ">=0.20" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0.0" },
