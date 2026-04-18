@@ -1,6 +1,6 @@
 name: Update catalog
 
-on:
+on:  # yamllint disable-line rule:truthy
   push:
     branches: [dev]
     paths: ["src/pymat/data/**"]

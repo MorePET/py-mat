@@ -10,7 +10,6 @@ Material.vis returns a Vis instance. It holds:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Any, ClassVar
 
 
@@ -68,9 +67,7 @@ class Vis:
         """Switch to a named finish. Clears cached textures."""
         if name not in self.finishes:
             available = list(self.finishes.keys())
-            raise ValueError(
-                f"Unknown finish '{name}'. Available: {available}"
-            )
+            raise ValueError(f"Unknown finish '{name}'. Available: {available}")
         self._finish = name
         self.source_id = self.finishes[name]
         self._textures.clear()
@@ -170,8 +167,7 @@ class Vis:
         parts = self.source_id.split("/", 1)
         if len(parts) != 2:
             raise ValueError(
-                f"Invalid source_id '{self.source_id}'. "
-                f"Expected 'source/material_id' format."
+                f"Invalid source_id '{self.source_id}'. Expected 'source/material_id' format."
             )
         source, material_id = parts
 
@@ -183,7 +179,15 @@ class Vis:
         self._textures = fetch(source, material_id, tier=self.tier)
         self._fetched = True
 
-    _PBR_SCALAR_FIELDS = ("roughness", "metallic", "base_color", "ior", "transmission", "clearcoat", "emissive")
+    _PBR_SCALAR_FIELDS = (
+        "roughness",
+        "metallic",
+        "base_color",
+        "ior",
+        "transmission",
+        "clearcoat",
+        "emissive",
+    )
 
     _PBR_DEFAULTS: ClassVar[dict[str, Any]] = {
         "roughness": 0.5,
@@ -245,12 +249,12 @@ class Vis:
 
         # Extract PBR scalars from [vis] section
         scalars = {}
-        for field in cls._PBR_SCALAR_FIELDS:
-            if field in vis_data:
-                val = vis_data[field]
+        for fname in cls._PBR_SCALAR_FIELDS:
+            if fname in vis_data:
+                val = vis_data[fname]
                 if isinstance(val, list):
                     val = tuple(val)
-                scalars[field] = val
+                scalars[fname] = val
 
         return cls(
             source_id=source_id,

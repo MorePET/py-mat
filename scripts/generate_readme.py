@@ -156,8 +156,7 @@ def check_readme(template_path: Path, test_file_path: Path, output_path: Path) -
         print(f"README.md matches regenerated output ({len(examples)} examples)")
         return 0
     print(
-        "README.md is out of date. Regenerate with:\n"
-        "    python scripts/generate_readme.py",
+        "README.md is out of date. Regenerate with:\n    python scripts/generate_readme.py",
         file=sys.stderr,
     )
     return 1

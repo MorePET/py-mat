@@ -43,8 +43,11 @@ def _skip_on_upstream_outage():
         # mat-vis-client logs "HTTP Error 5xx" and returns empty dicts;
         # the test-side assertion is "no textures fetched for X" — if
         # that's the shape we see, treat it as an upstream outage.
-        if ("No textures for" in msg or "No textures fetched" in msg
-                or "No texture maps in to_threejs output" in msg):
+        if (
+            "No textures for" in msg
+            or "No textures fetched" in msg
+            or "No texture maps in to_threejs output" in msg
+        ):
             pytest.skip(f"mat-vis CDN likely flaky (no textures returned): {msg}")
         raise
 

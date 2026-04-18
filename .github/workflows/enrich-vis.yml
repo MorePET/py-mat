@@ -1,6 +1,6 @@
 name: Propose vis mappings
 
-on:
+on:  # yamllint disable-line rule:truthy
   repository_dispatch:
     types: [mat-vis-release]
   workflow_dispatch:

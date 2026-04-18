@@ -20,7 +20,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from pymat import load_all, vis
 
-
 # Per-material tag heuristics — richer than category-only matching
 # Each tuple: (category, required_tags_to_try_in_order)
 # Multiple tag sets are tried; first non-empty result wins.
@@ -169,13 +168,15 @@ def propose_mappings(limit_per_material: int = 3) -> list[dict]:
             if "source" in c and "id" in c and "/" not in c["id"]:
                 c["id"] = f"{c['source']}/{c['id']}"
 
-        proposals.append({
-            "material_key": path,
-            "material_name": mat.name,
-            "category": category,
-            "tags_matched": tags_used,
-            "candidates": candidates,
-        })
+        proposals.append(
+            {
+                "material_key": path,
+                "material_name": mat.name,
+                "category": category,
+                "tags_matched": tags_used,
+                "candidates": candidates,
+            }
+        )
         base_has_vis.add(base)
 
     return proposals

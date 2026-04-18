@@ -39,12 +39,24 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "src" / "pymat" / "data"
 # Anything else (other than child material keys + known leaf keys)
 # is a typo or a drift signal.
 _KNOWN_GROUPS = {
-    "mechanical", "thermal", "electrical", "optical",
-    "manufacturing", "compliance", "sourcing", "vis", "custom",
+    "mechanical",
+    "thermal",
+    "electrical",
+    "optical",
+    "manufacturing",
+    "compliance",
+    "sourcing",
+    "vis",
+    "custom",
 }
 _KNOWN_LEAF_KEYS = {
-    "name", "formula", "composition",
-    "grade", "temper", "treatment", "vendor",
+    "name",
+    "formula",
+    "composition",
+    "grade",
+    "temper",
+    "treatment",
+    "vendor",
 }
 
 _SOURCE_ID_RE = re.compile(r"^[a-z0-9_-]+/[A-Za-z0-9_.-]+$")
@@ -127,7 +139,8 @@ class TestMaterialInvariants:
     def test_density_is_nonnegative_if_set(self, all_materials):
         """Density may be exactly 0.0 (vacuum) but never negative."""
         negatives = {
-            k: m.density for k, m in all_materials.items()
+            k: m.density
+            for k, m in all_materials.items()
             if m.density is not None and m.density < 0
         }
         assert not negatives, f"Materials with negative density: {negatives}"

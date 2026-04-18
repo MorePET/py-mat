@@ -15,25 +15,23 @@ Powered by mat-vis-client (installed separately or from git).
 Material.vis wires into this module for lazy texture loading.
 """
 
-import mat_vis_client
+from typing import Any
+
+# Re-export the full adapters module so new adapters (e.g. to_ktx2)
+# are available as soon as mat-vis-client ships them
 from mat_vis_client import (
     MatVisClient,
+    adapters,  # noqa: F401
     get_manifest,
     prefetch,
     rowmap_entry,
     seed_indexes,
-    search as _upstream_search,
 )
 
-# Re-export the full adapters module so new adapters (e.g. to_ktx2)
-# are available as soon as mat-vis-client ships them
-from mat_vis_client import adapters  # noqa: F401
 
-from typing import Any
-
-
-def fetch(source: str, material_id: str, *, tier: str = "1k",
-          tag: str | None = None) -> dict[str, bytes]:
+def fetch(
+    source: str, material_id: str, *, tier: str = "1k", tag: str | None = None
+) -> dict[str, bytes]:
     """Fetch all texture channels for a material from mat-vis.
 
     Thin wrapper around MatVisClient.fetch_all_textures so we don't
@@ -42,6 +40,7 @@ def fetch(source: str, material_id: str, *, tier: str = "1k",
     style — see mat-vis __init__.py docstring).
     """
     from mat_vis_client import _get_client
+
     client = MatVisClient(tag=tag) if tag else _get_client()
     return client.fetch_all_textures(source, material_id, tier=tier)
 

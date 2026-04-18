@@ -2,10 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
-import pytest
-
 
 class TestCatalogGenerator:
     def test_generates_root_index(self, tmp_path):

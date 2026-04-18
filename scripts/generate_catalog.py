@@ -28,16 +28,25 @@ log = logging.getLogger("catalog")
 
 THUMB_TIER = "128"  # mat-vis hosts 128/256/512 thumbnail tiers
 CATEGORIES_ORDER = [
-    "metals", "scintillators", "ceramics", "plastics",
-    "electronics", "liquids", "gases",
+    "metals",
+    "scintillators",
+    "ceramics",
+    "plastics",
+    "electronics",
+    "liquids",
+    "gases",
 ]
 
 # Shape per category — cube reads as "solid", sphere reads as "fluid".
 # Must match scripts/generate_previews.py so preview-path lookups line up.
 _SHAPE_BY_CATEGORY = {
-    "metals": "cube", "plastics": "cube", "ceramics": "cube",
-    "electronics": "cube", "scintillators": "cube",
-    "liquids": "sphere", "gases": "sphere",
+    "metals": "cube",
+    "plastics": "cube",
+    "ceramics": "cube",
+    "electronics": "cube",
+    "scintillators": "cube",
+    "liquids": "sphere",
+    "gases": "sphere",
 }
 
 
@@ -57,10 +66,10 @@ def _preview_picture_tag(preview_paths: tuple[str, str] | None) -> str | None:
         return None
     light, dark = preview_paths
     return (
-        f'<picture>'
+        f"<picture>"
         f'<source media="(prefers-color-scheme: dark)" srcset="{dark}">'
         f'<img src="{light}" width="200" alt="preview">'
-        f'</picture>'
+        f"</picture>"
     )
 
 
@@ -73,6 +82,7 @@ def _fetch_thumbnail(source: str, material_id: str) -> bytes:
     """
     try:
         from pymat import vis
+
         textures = vis.fetch(source, material_id, tier=THUMB_TIER)
         return textures.get("color", b"")
     except Exception as exc:
@@ -93,8 +103,7 @@ def _format_value(key: str, value, unit: str | None = None) -> str:
     return formatted
 
 
-def _material_page(mat, thumb_path: str | None, category: str,
-                   key: str, catalog_dir: Path) -> str:
+def _material_page(mat, thumb_path: str | None, category: str, key: str, catalog_dir: Path) -> str:
     """Generate markdown for a single material detail page."""
     lines = [f"# {mat.name}", ""]
 
@@ -113,8 +122,8 @@ def _material_page(mat, thumb_path: str | None, category: str,
     # Identity
     lines.append("## Identity")
     lines.append("")
-    lines.append(f"| Field | Value |")
-    lines.append(f"|---|---|")
+    lines.append("| Field | Value |")
+    lines.append("|---|---|")
     if mat.formula:
         lines.append(f"| Formula | `{mat.formula}` |")
     if mat.grade:
@@ -182,8 +191,8 @@ def _material_page(mat, thumb_path: str | None, category: str,
     if mat.vis.source_id:
         lines.append("## Visual (mat-vis)")
         lines.append("")
-        lines.append(f"| Field | Value |")
-        lines.append(f"|---|---|")
+        lines.append("| Field | Value |")
+        lines.append("|---|---|")
         lines.append(f"| Source ID | `{mat.vis.source_id}` |")
         if mat.vis.finish:
             lines.append(f"| Finish | {mat.vis.finish} |")
@@ -290,8 +299,7 @@ _CATEGORY_COLUMNS: dict[str, list[tuple[str, callable]]] = {
 }
 
 
-def _category_index(category: str, materials: list, has_thumbnails: bool,
-                    catalog_dir: Path) -> str:
+def _category_index(category: str, materials: list, has_thumbnails: bool, catalog_dir: Path) -> str:
     """Generate markdown index for a category — columns tuned per audience."""
     lines = [f"# {category.title()}", ""]
     lines.append(f"{len(materials)} materials. Click a name for full properties.")
@@ -315,7 +323,11 @@ def _category_index(category: str, materials: list, has_thumbnails: bool,
             # Prefer the rendered PBR preview if both theme variants exist,
             # otherwise fall back to the flat thumbnail, otherwise em-dash.
             preview = _preview_paths(category, key)
-            if preview and (category_dir / preview[0]).exists() and (category_dir / preview[1]).exists():
+            if (
+                preview
+                and (category_dir / preview[0]).exists()
+                and (category_dir / preview[1]).exists()
+            ):
                 row.append(_preview_picture_tag(preview))
             elif mat.vis.source_id is not None:
                 row.append(f"![]({'thumbs/' + key + '.png'})")
@@ -349,6 +361,7 @@ def generate(output_dir: Path, skip_thumbnails: bool = False) -> None:
 
     # Group by category (from the TOML key hierarchy)
     from pymat import _CATEGORY_BASES
+
     categories: dict[str, list] = {}
 
     for category, base_keys in _CATEGORY_BASES.items():
@@ -400,7 +413,9 @@ def generate(output_dir: Path, skip_thumbnails: bool = False) -> None:
 
         # Per-material pages
         for mat, key in mats:
-            thumb_rel = f"thumbs/{key}.png" if (cat_dir / "thumbs" / f"{key}.png").exists() else None
+            thumb_rel = (
+                f"thumbs/{key}.png" if (cat_dir / "thumbs" / f"{key}.png").exists() else None
+            )
             page = _material_page(mat, thumb_rel, category, key, output_dir)
             (cat_dir / f"{key}.md").write_text(page)
 
@@ -408,7 +423,9 @@ def generate(output_dir: Path, skip_thumbnails: bool = False) -> None:
     (output_dir / "README.md").write_text(_root_index(categories))
 
     total_mats = sum(len(m) for m in categories.values())
-    print(f"Catalog: {total_mats} materials, {len(categories)} categories, {thumb_count} thumbnails")
+    print(
+        f"Catalog: {total_mats} materials, {len(categories)} categories, {thumb_count} thumbnails"
+    )
     print(f"Output: {output_dir}")
 
 

@@ -20,7 +20,6 @@ import http.server
 import json
 import os
 import threading
-import time
 from pathlib import Path
 
 import pytest
@@ -44,6 +43,7 @@ def file_server():
 
     # Copy render HTML to output dir
     import shutil
+
     shutil.copy(RENDER_HTML, OUTPUT_DIR / "index.html")
 
     port = 8765
@@ -98,6 +98,7 @@ class TestHeadlessRender:
     def test_steel_cube(self, file_server, browser):
         """Metallic steel cube with PBR scalars."""
         from build123d import Box, export_gltf
+
         from pymat import Material
 
         shape = Box(10, 10, 10)
@@ -120,6 +121,7 @@ class TestHeadlessRender:
     def test_red_sphere(self, file_server, browser):
         """Red dielectric sphere."""
         from build123d import Sphere, export_gltf
+
         from pymat import Material
 
         shape = Sphere(8)
@@ -141,6 +143,7 @@ class TestHeadlessRender:
     def test_gold_cylinder(self, file_server, browser):
         """Gold metallic cylinder."""
         from build123d import Cylinder, export_gltf
+
         from pymat import Material
 
         shape = Cylinder(5, 15)
@@ -162,6 +165,7 @@ class TestHeadlessRender:
     def test_glass_transmission(self, file_server, browser):
         """Transparent glass sphere."""
         from build123d import Sphere, export_gltf
+
         from pymat import Material
 
         shape = Sphere(10)
@@ -184,7 +188,8 @@ class TestHeadlessRender:
 
     def test_multi_material_assembly(self, file_server, browser):
         """Assembly with different materials per part."""
-        from build123d import Box, Cylinder, Pos, Compound, export_gltf
+        from build123d import Box, Compound, Cylinder, Pos, export_gltf
+
         from pymat import Material
 
         base = Box(20, 20, 3)
@@ -250,8 +255,14 @@ class TestAdapterOutput:
         has_map = any(k in d for k in ("map", "normalMap", "roughnessMap", "metalnessMap"))
 
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        summary = {k: (v[:60] + "..." if isinstance(v, str) and len(v) > 60 else v) for k, v in d.items()}
-        (OUTPUT_DIR / "metal_textured_threejs.json").write_text(json.dumps(summary, indent=2, default=str))
+        summary = {
+            k: (v[:60] + "..." if isinstance(v, str) and len(v) > 60 else v) for k, v in d.items()
+        }
+        (OUTPUT_DIR / "metal_textured_threejs.json").write_text(
+            json.dumps(summary, indent=2, default=str)
+        )
 
         if has_map:
-            assert d[next(k for k in ("map", "normalMap") if k in d)].startswith("data:image/png;base64,")
+            assert d[next(k for k in ("map", "normalMap") if k in d)].startswith(
+                "data:image/png;base64,"
+            )

@@ -40,21 +40,21 @@ SPARQL_URL = "https://query.wikidata.org/sparql"
 # here — cross-check the base polymer/element instead.
 WIKIDATA_QIDS: dict[str, str] = {
     # Metals & alloys
-    "aluminum": "Q663",      # aluminium (element)
-    "copper": "Q753",        # copper (element)
-    "titanium": "Q669",      # titanium (element)
-    "tungsten": "Q731",      # tungsten (element)
-    "lead": "Q708",          # lead (element)
-    "brass": "Q39782",       # brass (alloy)
+    "aluminum": "Q663",  # aluminium (element)
+    "copper": "Q753",  # copper (element)
+    "titanium": "Q669",  # titanium (element)
+    "tungsten": "Q731",  # tungsten (element)
+    "lead": "Q708",  # lead (element)
+    "brass": "Q39782",  # brass (alloy)
     "stainless": "Q172736",  # stainless steel (alloy)
     # Plastics (polymer Q-IDs — coverage on Wikidata varies)
-    "peek": "Q145387",       # polyether ether ketone
-    "pc": "Q62246",          # polycarbonate
-    "pmma": "Q146123",       # poly(methyl methacrylate)
-    "ptfe": "Q143252",       # polytetrafluoroethylene
-    "pla": "Q413769",        # polylactic acid
-    "nylon": "Q109454",      # nylon 6
-    "delrin": "Q146139",     # polyoxymethylene
+    "peek": "Q145387",  # polyether ether ketone
+    "pc": "Q62246",  # polycarbonate
+    "pmma": "Q146123",  # poly(methyl methacrylate)
+    "ptfe": "Q143252",  # polytetrafluoroethylene
+    "pla": "Q413769",  # polylactic acid
+    "nylon": "Q109454",  # nylon 6
+    "delrin": "Q146139",  # polyoxymethylene
 }
 
 # Wikidata unit Q-IDs we understand. Anything else → mark as "unknown unit".
@@ -138,7 +138,7 @@ def _fmt_delta(ours: float | None, theirs: float | None, tol: float) -> str:
     diff = abs(ours - theirs)
     rel = diff / max(abs(ours), abs(theirs), 1e-9)
     marker = "OK" if rel <= tol else "DIFF"
-    return f"{marker}  ours={ours:.4g} wd={theirs:.4g} Δ={diff:.4g} ({rel*100:.1f}%)"
+    return f"{marker}  ours={ours:.4g} wd={theirs:.4g} Δ={diff:.4g} ({rel * 100:.1f}%)"
 
 
 def compare(key_filter: str | None = None) -> int:

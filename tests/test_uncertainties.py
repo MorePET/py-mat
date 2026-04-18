@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from uncertainties import UFloat, ufloat
 
-from pymat.loader import _parse_value, _parse_composition
+from pymat.loader import _parse_composition, _parse_value
 
 
 class TestParseValue:
@@ -54,11 +54,13 @@ class TestParseComposition:
         assert isinstance(comp["Fe"], float)
 
     def test_mixed_dict(self):
-        comp = _parse_composition({
-            "Fe": 0.68,
-            "Si": {"min": 0.2, "max": 0.6},
-            "Cr": {"nominal": 0.18, "stddev": 0.02},
-        })
+        comp = _parse_composition(
+            {
+                "Fe": 0.68,
+                "Si": {"min": 0.2, "max": 0.6},
+                "Cr": {"nominal": 0.18, "stddev": 0.02},
+            }
+        )
         assert isinstance(comp["Fe"], float)
         assert isinstance(comp["Si"], UFloat)
         assert isinstance(comp["Cr"], UFloat)

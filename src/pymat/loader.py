@@ -177,8 +177,8 @@ def _build_properties_from_dict(
         update_properties(props.optical, data["optical"], "optical")
     if "pbr" in data:
         raise ValueError(
-            f"TOML [pbr] section is no longer supported in 3.0. "
-            f"Move PBR scalars to [vis]. See docs/migration/v2-to-v3.md."
+            "TOML [pbr] section is no longer supported in 3.0. "
+            "Move PBR scalars to [vis]. See docs/migration/v2-to-v3.md."
         )
     if "manufacturing" in data:
         update_properties(props.manufacturing, data["manufacturing"], "manufacturing")
