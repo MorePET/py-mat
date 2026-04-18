@@ -40,6 +40,10 @@ transmission = 0.0
 metallic = 0.0
 roughness = 0.5
 
+[peek.vis.finishes]
+natural = "ambientcg/Plastic004"
+dark = "ambientcg/Plastic003"
+
 [peek.manufacturing]
 printable_fdm = true
 print_nozzle_temp_value = 360
@@ -132,6 +136,10 @@ transmission = 0.0
 metallic = 0.0
 roughness = 0.6
 
+[delrin.vis.finishes]
+white = "ambientcg/Plastic010"
+black = "ambientcg/Plastic006"
+
 [delrin.manufacturing]
 machinability = 80
 printable_fdm = true
@@ -174,6 +182,9 @@ transmission = 0.0
 metallic = 0.0
 roughness = 0.5
 
+[ultem.vis.finishes]
+amber = "ambientcg/Plastic003"
+
 [ultem.manufacturing]
 printable_fdm = true
 print_nozzle_temp_value = 340
@@ -214,6 +225,9 @@ base_color = [0.95, 0.95, 0.95, 1.0]
 transmission = 0.0
 metallic = 0.0
 roughness = 0.3
+
+[ptfe.vis.finishes]
+white = "ambientcg/Plastic010"
 
 [ptfe.compliance]
 food_safe = true
@@ -293,6 +307,10 @@ transmission = 0.0
 metallic = 0.0
 roughness = 0.6
 
+[nylon.vis.finishes]
+natural = "ambientcg/Plastic013A"
+white = "ambientcg/Plastic010"
+
 [nylon.manufacturing]
 printable_fdm = true
 print_nozzle_temp_value = 240
@@ -329,6 +347,13 @@ transmission = 0.0
 metallic = 0.0
 roughness = 0.6
 
+[pla.vis.finishes]
+white = "ambientcg/Plastic010"
+black = "ambientcg/Plastic006"
+red = "ambientcg/Plastic007"
+blue = "ambientcg/Plastic008"
+green = "ambientcg/Plastic009"
+
 [pla.manufacturing]
 printable_fdm = true
 printable_sla = false
@@ -361,6 +386,11 @@ transmission = 0.0
 metallic = 0.0
 roughness = 0.6
 
+[abs.vis.finishes]
+black = "ambientcg/Plastic006"
+white = "ambientcg/Plastic010"
+red = "ambientcg/Plastic007"
+
 [abs.manufacturing]
 printable_fdm = true
 print_nozzle_temp_value = 240
@@ -390,6 +420,10 @@ transmission = 0.0
 metallic = 0.0
 roughness = 0.5
 
+[petg.vis.finishes]
+clear = "ambientcg/Plastic005"
+black = "ambientcg/Plastic006"
+
 [petg.manufacturing]
 printable_fdm = true
 print_nozzle_temp_value = 235
@@ -410,6 +444,10 @@ base_color = [0.6, 0.6, 0.6, 0.8]
 transmission = 0.0
 metallic = 0.0
 roughness = 0.7
+
+[tpu.vis.finishes]
+black = "ambientcg/Plastic006"
+white = "ambientcg/Plastic010"
 
 [tpu.manufacturing]
 printable_fdm = true
@@ -442,6 +480,9 @@ transmission = 0.0
 metallic = 0.0
 roughness = 0.5
 
+[vespel.vis.finishes]
+dark = "ambientcg/Plastic003"
+
 
 [torlon]
 name = "Torlon (PAI)"
@@ -464,6 +505,9 @@ transmission = 0.0
 metallic = 0.0
 roughness = 0.5
 
+[torlon.vis.finishes]
+amber = "ambientcg/Plastic004"
+
 
 [pctfe]
 name = "PCTFE (Polychlorotrifluoroethylene)"
@@ -483,6 +527,9 @@ base_color = [0.9, 0.9, 0.95, 1.0]
 transmission = 0.0
 metallic = 0.0
 roughness = 0.4
+
+[pctfe.vis.finishes]
+white = "ambientcg/Plastic010"
 
 
 # ============================================================================
@@ -529,6 +576,10 @@ roughness = 0.1
 transmission = 0.9
 ior = 1.49
 
+# pmma is transparent — finishes are secondary, PBR scalars dominate
+[pmma.vis.finishes]
+clear = "ambientcg/Plastic005"
+
 [pmma.manufacturing]
 machinability = 90
 printable_fdm = false
@@ -573,6 +624,10 @@ base_color = [0.9, 0.9, 0.88, 1.0]
 transmission = 0.0
 metallic = 0.0
 roughness = 0.6
+
+[pe.vis.finishes]
+natural = "ambientcg/Plastic013A"
+white = "ambientcg/Plastic010"
 
 [pe.compliance]
 food_safe = true
@@ -685,6 +740,9 @@ metallic = 0.0
 roughness = 0.15
 transmission = 0.85
 ior = 1.58
+
+[pc.vis.finishes]
+clear = "ambientcg/Plastic005"
 
 [pc.manufacturing]
 machinability = 85

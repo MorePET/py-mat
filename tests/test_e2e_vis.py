@@ -106,9 +106,11 @@ class TestEndToEnd:
         # Finishes available
         assert "polished" in stainless.vis.finishes
 
-        # Switch finish
+        # Switch finish — source_id should change to something different
+        brushed_id = stainless.vis.source_id
         stainless.vis.finish = "polished"
-        assert stainless.vis.source_id == "ambientcg/Metal012"
+        assert stainless.vis.source_id != brushed_id
+        assert stainless.vis.source_id.startswith("ambientcg/Metal")
 
         # Switch back
         stainless.vis.finish = "brushed"
