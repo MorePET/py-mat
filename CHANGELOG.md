@@ -5,6 +5,133 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2026-04-19
+
+Adopts `mat-vis-client` 0.5.0 (closes [#73](https://github.com/MorePET/mat/issues/73); upstream: [mat-vis#85](https://github.com/MorePET/mat-vis/issues/85)). Also folds in the visual-regression pixel-diff framework ([#41](https://github.com/MorePET/mat/issues/41)) and infrastructure hygiene.
+
+### Breaking
+
+* **`mat-vis-client` floor raised to `>=0.5.0`.** 0.4.x is no longer supported. See [docs/migration/v2-to-v3.md](docs/migration/v2-to-v3.md#31--32-mat-vis-client-05-adoption) for the cheat sheet. The single user-visible surface change is `material.vis.mtlx.xml` → `material.vis.mtlx.xml()` (property → method, to match the JS/Rust reference clients and make the network cost explicit).
+
+### Changed
+
+* **Migrated internal `_get_client` → `get_client`** ([mat-vis#84](https://github.com/MorePET/mat-vis/issues/84)). The public accessor lands in 0.5.0; py-mat no longer reaches past the underscore. A try/except fallback keeps 0.4.x importable during the floor transition, now moot with the pin bump.
+* **Test flake-guard `_skip_on_upstream_outage` catches typed `MatVisError` subclasses** (`HTTPFetchError`, `NetworkError`) alongside raw `urllib.error.HTTPError`. Two new tests pin the typed paths.
+* **Docstrings refreshed** for `.mtlx.xml()` in `core.py` + `_model.py` (class + property docs). py-mat code never called `.xml` directly — the change only bites downstream consumers who copied the old form.
+
+### Added
+
+* **`tests/_visual_compare.py`** — PIL-based RMS pixel-diff comparator with a `MAT_VIS_UPDATE_BASELINES=1` regeneration mode. Closes the last two checkboxes on [#41](https://github.com/MorePET/mat/issues/41) (baselines + tolerance threshold). Absent baseline → soft-skip with a clear regen instruction; framework is usable without a pre-generation ritual.
+* **`tests/test_visual_compare.py`** — 12 unit tests for the comparator (within/beyond tolerance, size mismatch, missing-baseline skip, update-mode write, per-test tolerance override). Runs without Playwright.
+* **`.github/workflows/visual-regression.yml`** — adds `update_baselines` `workflow_dispatch` input that flips the env so the run produces fresh baselines in the artifact instead of comparing.
+* **`tests/baselines/README.md`** — documents regeneration workflow (local + CI-artifact path) and tolerance rationale.
+
+### Fixed
+
+* **e2e tests soft-skip when the mat-vis index returns empty**. `test_search_and_fetch` + `test_discover_finds_candidates` used to hard-assert `len(results) > 0`, which fires when a fresh CI runner has no seeded indexes. They now `pytest.skip` with a clear reason; the follow-on fetch/PNG assertions stay hard.
+
+### Internal
+
+* `.gitignore` excludes `.claude/` (Claude Code session state) and `examples/output/` (ad-hoc script output).
+
+### Migration
+
+See [docs/migration/v2-to-v3.md § 3.1 → 3.2](docs/migration/v2-to-v3.md#31--32-mat-vis-client-05-adoption).
+
+## [3.1.2] - 2026-04-19
+
+Post-3.1 audit follow-ups ([milestone 1](https://github.com/MorePET/mat/milestone/1)).
+Three parallel agents reviewed the 3.1 + 3.1.1 surface from different angles
+(DX, API good-practice checklist, adversarial); this release addresses the
+13 issues they filed.
+
+### Fixed
+
+* **Dropped the misleading `from mat_vis_client import adapters` re-export** (#59). `pymat.vis.adapters` now unambiguously resolves to the local submodule (Material-accepting signatures). A regression test pins `adapters.__name__ == "pymat.vis.adapters"` and the one-param signature.
+* **Renamed `Vis.get(field, default)` → `Vis.get(name, default)`** (#60) to stop shadowing `dataclasses.field` imported at module scope. Signature test pins the rename.
+* **`vis.source = vis.source` no longer clears the texture cache** (#64). `__setattr__` now short-circuits when the incoming value equals the current one — `vis.finish = vis.finish` is also a cache-safe no-op now.
+* **`dataclasses.replace(vis, source="new")` no longer inherits stale cache** (#63). Added `__post_init__` that zeros `_textures` + `_fetched`; pickle round-trip still preserves cache because pickle goes through `__dict__.update`, not `__init__`.
+* **`Vis.has_mapping` now requires `tier is not None`** (#67). An explicit `vis.tier = None` un-maps the Vis so delegates fail at the gate rather than downstream in the client.
+
+### Added
+
+* **`Vis._identity_args()` helper** (#65) returning `(source, material_id, tier)`. `.mtlx`, `.channels`, `.materialize`, and `_fetch` all route through it — consistent call-site shape so adding new delegates doesn't drift.
+* **`Vis.set_identity(*, source=, material_id=, tier=)`** (#69) — atomic multi-field identity update with a single cache invalidation. `Material(vis={"source": ..., "material_id": ...})` constructor path routes identity through this so the material is never observed in a half-assigned state.
+* **Round-trip tests** (#63): `copy.deepcopy`, `pickle.dumps/loads`, `dataclasses.replace(vis, ...)`. Pins the current correct-by-construction behavior so a future refactor can't silently regress any of them.
+* **Thread-safety race reproducer test** (#72). Deterministically exhibits the documented two-thread double-fetch race by gating the mock client with `threading.Event`s. Pins the docstring claim — any future "look, we fixed it" removal of the warning needs to make this test go RED first.
+* **`_fetched` equality test pinned independently of `_textures`** (#62), using `object.__setattr__` to bypass the invalidation hook. Guards against a future `field(compare=False)` regression on one field without the other.
+* **`Vis.__post_init__`** zeros the lazy texture cache after every `@dataclass` construction. See #63 above for rationale.
+
+### Changed
+
+* **`Vis.discover()` is now an intentional ADR-0002 exception**, called out in a new section of the ADR. It's a tag-aware convenience wrapper (renames `metallic → metalness`, widens scalars to ranges, optionally mutates via `auto_set`) — translation layer behavior Principle 2 otherwise rejects, kept for ergonomics. Any *second* wrapper on `Vis` re-triggers the ADR conversation.
+* **`Vis.source_id` is no longer described as "deprecated"** (#68). It's a read-only convenience property (joined `"source/material_id"`) useful for logs + CLI output. The setter raising `AttributeError` remains the breaking signal for write attempts.
+* **`.channels` docstring clarifies the cache asymmetry with `.textures`** (#70). `.channels` reads from the client's in-memory rowmap (cheap, shared across instances); `.textures` caches per-instance because the payload is large PNG bytes.
+* **Cross-referenced docstrings** (#71) so readers landing on either `pymat.vis.client()` (module function) or `material.vis.client` (property) find the other. Same singleton, two entry points.
+* **Strengthened two weak tests** from the 3.1.1 red/green pass. `test_init_does_not_trip_invalidation` (#61) replaced with two tests that actually exercise the guard's invariant. Previous form passed even when the guard was deleted.
+
+### Internal
+
+* Filed [mat-vis#84](https://github.com/MorePET/mat-vis/issues/84) asking for `mat_vis_client._get_client` → `get_client` rename. Until that lands, py-mat reaches into the underscore symbol from six property bodies.
+
+## [3.1.1] - 2026-04-19
+
+### Fixed
+
+* **Identity mutation now invalidates the lazy texture cache.** Assigning `vis.source`, `vis.material_id`, or `vis.tier` after a fetch populated `_textures` silently left the old bytes in place — only `.finish = ...` cleared the cache. Now any identity-field assignment triggers cache invalidation via `Vis.__setattr__`. Guarded against the dataclass `__init__` so construction doesn't trip the clear.
+* **`Vis` equality no longer depends on cache state or `_finish` label.** Two `Vis` objects with the same identity + scalars now compare equal regardless of whether one has been lazy-fetched. Fixed by adding `field(compare=False, repr=False)` to `_textures`, `_fetched`, and `_finish`.
+* `pymat.vis.adapters._extract_textures` — use `.has_mapping` instead of `source_id is None` (the string-concatenating convenience property; `has_mapping` is the clearer intent).
+* Stale docstrings: `Vis` class docstring no longer claims `.source` is a MtlxSource (it's `.mtlx`); `_MaterialInternal.vis` docstring updated for the 3.1 two-field identity; `CONTRIBUTING.md` TOML template no longer shows the 3.0 `[pbr]` section or slashed-string finishes (new contributors copying it would produce TOMLs that raise on load).
+
+### Added
+
+* **`pymat.vis.to_threejs` / `to_gltf` / `export_mtlx` re-exported at top level.** Consumer `from pymat.vis import to_threejs` now works — previously they had to reach for `pymat.vis.adapters.to_threejs`, which was a dead-end in tab completion. `Vis.__doc__` now points at `pymat.vis.to_threejs(material)` as the main cross-tool handoff.
+* **`FinishEntry` TypedDict** — types `Vis.finishes` as `dict[str, FinishEntry]` for `mypy`-friendly consumer code.
+* `ResolvedChannel.has_texture` is now a derived `@property` (from `texture is not None`), removing the chance of representing the nonsense state `has_texture=True, texture=None`.
+* Docstrings on `.textures`, `.channels`, `.mtlx` call out that first access performs network IO (blocking). Class-level note on thread-safety: `Vis` is not thread-safe per-instance; the shared `MatVisClient` is read-safe.
+* New test classes `TestIdentityInvalidation` (5 cases) and `TestVisEquality` (2 cases) pin the bug-fix invariants with red/green coverage.
+
+### Changed
+
+* `Vis.base_color` typed as `tuple[float, float, float, float] | None` (was bare `tuple`); `Vis.emissive` typed as `tuple[float, float, float] | None`. No runtime change — just honest type hints for consumers.
+* `Vis` class docstring expanded with a Thread safety section and a pointer to `pymat.vis.to_threejs`.
+
+### Upstream
+
+* Filed [mat-vis#84](https://github.com/MorePET/mat-vis/issues/84) asking for `mat_vis_client._get_client` → `get_client` rename. py-mat reaches into the underscore symbol from six property bodies; a public rename tightens the ADR-0002 "client exposed, not wrapped" contract.
+
+## [3.1.0] - 2026-04-18
+
+### Breaking
+
+* **`Vis.source_id: str` split into `Vis.source: str` + `Vis.material_id: str`.** Matches `mat-vis-client`'s `(source, material_id, tier)` positional-arg shape end-to-end — no more `.split("/")` at every delegation site. `source_id` remains as a **read-only** convenience property returning `f"{source}/{material_id}"`; **assignment raises `AttributeError`**. Codified in [ADR-0002](docs/decisions/0002-vis-owns-identity-client-exposed.md).
+* **TOML `[<material>.vis.finishes]` values are now inline tables.** The 3.0 slashed-string form (`brushed = "ambientcg/Metal012"`) raises `ValueError` on load. The 3.1 form:
+
+  ```toml
+    [stainless.vis.finishes]
+    brushed = { source = "ambientcg", id = "Metal012" }
+    polished = { source = "ambientcg", id = "Metal049A" }
+    ```
+
+  One-shot migrator ships at `scripts/migrate_toml_finishes.py`. Bundled TOMLs have been migrated. No deprecation cycle — consistent with the 3.0 PBR→vis stance.
+* `Vis.finishes` value type changed from `dict[str, str]` (slashed) to `dict[str, dict[str, str]]` (`{"source": ..., "id": ...}`).
+
+### Added
+
+* **ADR-0002** — *`Material.vis` owns identity + scalars; `mat-vis-client` is exposed, not wrapped.* Codifies three principles (identity/scalars on `Vis`; client exposed not wrapped; material-keyed delegation sugar only), the ownership test for future API questions, and the rationale for the two-field split above.
+* **Delegation sugar properties on `Vis`** — thin delegates that pre-fill `(source, material_id, tier)` from the material's identity:
+  * `material.vis.mtlx` → `MtlxSource` (lazy MaterialX accessor; `.xml`, `.export(path)`, `.original`)
+  * `material.vis.client` → the shared `MatVisClient` singleton (escape hatch for tier enumeration, cache management, discovery)
+  * `material.vis.channels` → texture channel names for this material at this tier
+  * `material.vis.materialize(out)` → PNG dump to disk
+* `Vis.has_mapping` property — replaces `if vis.source_id is not None:` sniffs.
+* `scripts/migrate_toml_finishes.py` — idempotent line-oriented rewriter for `[vis.finishes]` blocks. Supports `--check` and `--diff`.
+
+### Changed
+
+* `scripts/enrich_vis.py` — now emits 3.1 inline-table finish syntax. Also fixes a pre-existing bug where it wrote `default = "..."` inside `[vis.finishes]` (which collides with `[vis].default` semantics, per the design-review that informed ADR-0002).
+* `tests/test_toml_integrity.py::test_vis_finishes_use_valid_source_ids` → `test_vis_finishes_have_valid_shape`. The single over-permissive slashed-string regex is replaced with two per-field regexes (`_SOURCE_RE` lowercase-dashed, `_MATERIAL_ID_RE` allows uppercase + dots) — catches malformed fields that the old combined regex couldn't distinguish.
+
 ## [3.0.0](https://github.com/MorePET/mat/compare/v2.1.1...v3.0.0) - 2026-04-18
 
 ### Breaking

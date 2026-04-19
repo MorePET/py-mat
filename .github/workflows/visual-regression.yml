@@ -23,9 +23,17 @@ on:  # yamllint disable-line rule:truthy
       - 'src/pymat/vis/**'
       - 'src/pymat/adapters.py'
       - 'tests/test_visual_regression.py'
+      - 'tests/_visual_compare.py'
       - 'tests/visual_render.html'
+      - 'tests/baselines/**'
       - '.github/workflows/visual-regression.yml'
   workflow_dispatch:
+    inputs:
+      update_baselines:
+        description: 'Regenerate committed baselines from this run (checked = write; unchecked = compare)'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -55,6 +63,13 @@ jobs:
       - name: Run visual regression tests
         env:
           MAT_VIS_SKIP_VISUAL: '0'
+          # When workflow_dispatch with update_baselines=true, this
+          # env var flips assert_matches_baseline() to write mode —
+          # the run produces fresh baselines instead of comparing.
+          # Download the `visual-regression-screenshots` artifact,
+          # copy the image files to tests/baselines/, commit.
+          MAT_VIS_UPDATE_BASELINES: >-
+            ${{ github.event.inputs.update_baselines == 'true' && '1' || '0' }}
         run: uv run pytest tests/test_visual_regression.py -v -s
 
       - name: Upload rendered screenshots

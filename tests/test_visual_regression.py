@@ -118,6 +118,10 @@ class TestHeadlessRender:
         assert size > 5000, f"Screenshot too small ({size} bytes) — likely blank"
         print(f"steel_cube: {size} bytes")
 
+        from tests._visual_compare import assert_matches_baseline
+
+        assert_matches_baseline(screenshot, "steel_cube")
+
     def test_red_sphere(self, file_server, browser):
         """Red dielectric sphere."""
         from build123d import Sphere, export_gltf
@@ -140,6 +144,10 @@ class TestHeadlessRender:
         assert size > 5000, f"Screenshot too small ({size} bytes)"
         print(f"red_sphere: {size} bytes")
 
+        from tests._visual_compare import assert_matches_baseline
+
+        assert_matches_baseline(screenshot, "red_sphere")
+
     def test_gold_cylinder(self, file_server, browser):
         """Gold metallic cylinder."""
         from build123d import Cylinder, export_gltf
@@ -161,6 +169,10 @@ class TestHeadlessRender:
         size = screenshot.stat().st_size
         assert size > 5000
         print(f"gold_cylinder: {size} bytes")
+
+        from tests._visual_compare import assert_matches_baseline
+
+        assert_matches_baseline(screenshot, "gold_cylinder")
 
     def test_glass_transmission(self, file_server, browser):
         """Transparent glass sphere."""
@@ -249,7 +261,8 @@ class TestAdapterOutput:
         m = Material(name="Textured Metal")
         m.vis.metallic = 1.0
         m.vis.roughness = 0.3
-        m.vis.source_id = f"{results[0]['source']}/{results[0]['id']}"
+        m.vis.source = results[0]["source"]
+        m.vis.material_id = results[0]["id"]
 
         d = to_threejs(m)
         has_map = any(k in d for k in ("map", "normalMap", "roughnessMap", "metalnessMap"))
