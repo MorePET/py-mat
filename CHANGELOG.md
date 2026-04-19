@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0](https://github.com/MorePET/mat/compare/v3.0.0...v4.0.0) (2026-04-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* 3.1 — Vis identity split + inline-table finishes + ADR-0002
+
+### Added
+
+* 3.1 — Vis identity split + inline-table finishes + ADR-0002 ([24d060e](https://github.com/MorePET/mat/commit/24d060e8e258b4eb3b24f6ff894df0da4622d954))
+* 3.1.1 — audit corrections, cache invalidation on identity change, adapter re-exports ([aa3f956](https://github.com/MorePET/mat/commit/aa3f95681afca7592b0c453327d73fc3328d76f0))
+* 3.1.2 — milestone 1 audit follow-ups (13 issues closed) ([6a70509](https://github.com/MorePET/mat/commit/6a70509fc0e18739e560a3f32c44255f7f9f20f3))
+* 3.2 prep — mat-vis-client 0.5 API adoption (blocked on PyPI publish) ([52bde58](https://github.com/MorePET/mat/commit/52bde5856add4705440b0c6dd4a20e415a40b8e4))
+* pixel-diff baselines for visual regression (closes [#41](https://github.com/MorePET/mat/issues/41)'s last two checkboxes) ([b6f6cce](https://github.com/MorePET/mat/commit/b6f6cce1904e580b95f7afa99012e3d0535d12c9))
+
+
+### Fixed
+
+* **test:** stale Vis.source_id usage in visual regression test ([2e41c7b](https://github.com/MorePET/mat/commit/2e41c7b7bab221ebb13c1727664cc12ddbb98196))
+
+
+### Documentation
+
+* sync README with 3.1 visual-properties shape ([d917e6a](https://github.com/MorePET/mat/commit/d917e6a61a450803e70a38f140e54743995f91fe))
+
 ## [3.2.0] - 2026-04-19
 
 Adopts `mat-vis-client` 0.5.0 (closes [#73](https://github.com/MorePET/mat/issues/73); upstream: [mat-vis#85](https://github.com/MorePET/mat-vis/issues/85)). Also folds in the visual-regression pixel-diff framework ([#41](https://github.com/MorePET/mat/issues/41)) and infrastructure hygiene.
