@@ -5,25 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] — 3.2 prep (blocked on mat-vis-client 0.5 PyPI publish)
+## [3.2.0] - 2026-04-19
 
-Tracking [issue #73](https://github.com/MorePET/mat/issues/73). Upstream:
-[mat-vis#85](https://github.com/MorePET/mat-vis/issues/85).
+Adopts `mat-vis-client` 0.5.0 (closes [#73](https://github.com/MorePET/mat/issues/73); upstream: [mat-vis#85](https://github.com/MorePET/mat-vis/issues/85)). Also folds in the visual-regression pixel-diff framework ([#41](https://github.com/MorePET/mat/issues/41)) and infrastructure hygiene.
+
+### Breaking
+
+* **`mat-vis-client` floor raised to `>=0.5.0`.** 0.4.x is no longer supported. See [docs/migration/v2-to-v3.md](docs/migration/v2-to-v3.md#31--32-mat-vis-client-05-adoption) for the cheat sheet. The single user-visible surface change is `material.vis.mtlx.xml` → `material.vis.mtlx.xml()` (property → method, to match the JS/Rust reference clients and make the network cost explicit).
 
 ### Changed
 
-* **Migrated internal `_get_client` imports to the public `get_client`** ([mat-vis#84](https://github.com/MorePET/mat-vis/issues/84) landed in mat-vis-client 0.5). Falls back to `_get_client` on `mat-vis-client <0.5` so the floor stays at `>=0.4.0` for now. No user-visible surface change.
-* **Test flake-guard `_skip_on_upstream_outage` now catches typed `MatVisError` subclasses** (`HTTPFetchError`, `NetworkError`) alongside raw `urllib.error.HTTPError`. Two new tests cover the typed paths when `mat-vis-client >=0.5` is installed.
-* **Docstrings updated: `material.vis.mtlx.xml` → `material.vis.mtlx.xml()`** in `core.py`, `_model.py` (class doc + property doc). Py-mat code never called `.xml` — the change is user-facing only for consumers who copied from these docs.
+* **Migrated internal `_get_client` → `get_client`** ([mat-vis#84](https://github.com/MorePET/mat-vis/issues/84)). The public accessor lands in 0.5.0; py-mat no longer reaches past the underscore. A try/except fallback keeps 0.4.x importable during the floor transition, now moot with the pin bump.
+* **Test flake-guard `_skip_on_upstream_outage` catches typed `MatVisError` subclasses** (`HTTPFetchError`, `NetworkError`) alongside raw `urllib.error.HTTPError`. Two new tests pin the typed paths.
+* **Docstrings refreshed** for `.mtlx.xml()` in `core.py` + `_model.py` (class + property docs). py-mat code never called `.xml` directly — the change only bites downstream consumers who copied the old form.
+
+### Added
+
+* **`tests/_visual_compare.py`** — PIL-based RMS pixel-diff comparator with a `MAT_VIS_UPDATE_BASELINES=1` regeneration mode. Closes the last two checkboxes on [#41](https://github.com/MorePET/mat/issues/41) (baselines + tolerance threshold). Absent baseline → soft-skip with a clear regen instruction; framework is usable without a pre-generation ritual.
+* **`tests/test_visual_compare.py`** — 12 unit tests for the comparator (within/beyond tolerance, size mismatch, missing-baseline skip, update-mode write, per-test tolerance override). Runs without Playwright.
+* **`.github/workflows/visual-regression.yml`** — adds `update_baselines` `workflow_dispatch` input that flips the env so the run produces fresh baselines in the artifact instead of comparing.
+* **`tests/baselines/README.md`** — documents regeneration workflow (local + CI-artifact path) and tolerance rationale.
+
+### Fixed
+
+* **e2e tests soft-skip when the mat-vis index returns empty**. `test_search_and_fetch` + `test_discover_finds_candidates` used to hard-assert `len(results) > 0`, which fires when a fresh CI runner has no seeded indexes. They now `pytest.skip` with a clear reason; the follow-on fetch/PNG assertions stay hard.
+
+### Internal
+
+* `.gitignore` excludes `.claude/` (Claude Code session state) and `examples/output/` (ad-hoc script output).
 
 ### Migration
 
-* Added `docs/migration/v2-to-v3.md` section "3.1 → 3.2: mat-vis-client 0.5 adoption" with rename cheat sheet + rationale for why `.xml` became a method.
-
-### Pending (blocks release)
-
-* `mat-vis-client` floor bump `>=0.4.0` → `>=0.5.0` in `pyproject.toml` — deferred until 0.5.0 is on PyPI.
-* `__version__` bump 3.1.2 → 3.2.0 — deferred to the PyPI-publish PR.
+See [docs/migration/v2-to-v3.md § 3.1 → 3.2](docs/migration/v2-to-v3.md#31--32-mat-vis-client-05-adoption).
 
 ## [3.1.2] - 2026-04-19
 
