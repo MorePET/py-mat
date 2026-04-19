@@ -258,7 +258,8 @@ class TestAdapterOutput:
         m = Material(name="Textured Metal")
         m.vis.metallic = 1.0
         m.vis.roughness = 0.3
-        m.vis.source_id = f"{results[0]['source']}/{results[0]['id']}"
+        m.vis.source = results[0]["source"]
+        m.vis.material_id = results[0]["id"]
 
         d = to_threejs(m)
         has_map = any(k in d for k in ("map", "normalMap", "roughnessMap", "metalnessMap"))
