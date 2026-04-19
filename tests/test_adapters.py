@@ -185,10 +185,107 @@ class TestAdapterPolymorphism:
     def test_export_mtlx_vis_accepts_name_kwarg(self):
         m = _make_material(with_vis=True)
         with tempfile.TemporaryDirectory() as tmp:
-            # Via Vis + explicit name
+            # Via Vis + explicit name — filename stem must match.
             mtlx_path = export_mtlx(m.vis, Path(tmp), name="Stem")
             assert mtlx_path.exists()
-            assert "Stem" in mtlx_path.stem or mtlx_path.stem == "Stem"
+            assert mtlx_path.stem == "Stem", (
+                f"expected stem 'Stem', got {mtlx_path.stem!r}"
+            )
+
+    def test_export_mtlx_vis_without_name_falls_back(self):
+        """A standalone Vis with no name= kwarg must not crash; the
+        default stem is whatever the adapter picks (currently 'material')."""
+        from pymat.vis._model import Vis
+
+        # Construct a Vis fully detached from any Material — this is
+        # the path a downstream like mat-vis-client might hit if they
+        # adopted the same sugar independently.
+        vis = Vis(source=None, material_id=None)  # no mapping → no textures
+        with tempfile.TemporaryDirectory() as tmp:
+            mtlx_path = export_mtlx(vis, Path(tmp))
+            assert mtlx_path.exists()
+            assert mtlx_path.stem != "", "empty stem would break filesystem writes"
+
+    def test_resolve_vis_duck_typing_invariant(self):
+        """``_resolve_vis_and_name`` distinguishes Material-vs-Vis via
+        ``hasattr(obj, "vis")``. If Vis ever grows a ``.vis`` attribute
+        (self-reference, alias, anything), the helper would recurse and
+        misclassify. Pin that invariant here."""
+        from pymat.vis._model import Vis
+
+        vis = Vis(source="ambientcg", material_id="Metal032")
+        assert not hasattr(vis, "vis"), (
+            "Vis must not have a .vis attribute — would break the "
+            "Material-vs-Vis duck-typing in adapter._resolve_vis_and_name. "
+            "If this test starts failing, the helper needs an "
+            "isinstance check instead of hasattr."
+        )
+
+    def test_adapter_name_is_keyword_only(self):
+        """``to_gltf(obj, name=...)`` must be keyword-only. Positional
+        call should be a TypeError — prevents a downstream relying on
+        positional ordering that could silently shift on a future
+        signature change."""
+        import pytest
+
+        from pymat.vis._model import Vis
+
+        vis = Vis()
+        with pytest.raises(TypeError):
+            to_gltf(vis, "positional_name")  # type: ignore[misc]
+
+
+class TestAdapterOnDetachedVis:
+    """Full-path tests that construct a Vis without any Material,
+    verifying every adapter still works on the raw payload object.
+    This is the contract downstreams (including a hypothetical
+    mat-vis-client VisAsset) can rely on."""
+
+    def _detached_vis_with_scalars(self):
+        from pymat.vis._model import Vis
+
+        v = Vis()
+        v.metallic = 1.0
+        v.roughness = 0.25
+        v.base_color = (0.9, 0.9, 0.9, 1.0)
+        v.ior = 1.5
+        v.transmission = 0.0
+        return v
+
+    def test_to_threejs_on_detached_vis(self):
+        v = self._detached_vis_with_scalars()
+        d = to_threejs(v)
+        assert d["metalness"] == 1.0
+        assert d["roughness"] == 0.25
+        assert "ior" in d  # ior scalar routed through
+
+    def test_to_gltf_on_detached_vis_empty_name(self):
+        v = self._detached_vis_with_scalars()
+        d = to_gltf(v)
+        assert d["pbrMetallicRoughness"]["metallicFactor"] == 1.0
+        assert d["name"] == ""  # no owning Material, no name kwarg
+
+    def test_to_gltf_on_detached_vis_with_name(self):
+        v = self._detached_vis_with_scalars()
+        d = to_gltf(v, name="Hand-rolled")
+        assert d["name"] == "Hand-rolled"
+
+    def test_vis_method_on_detached_vis(self):
+        """The method form must also work on a detached Vis — covers
+        the common case of ``Vis().to_gltf(name='...')`` in downstream
+        code that constructs Vis without a py-mat Material."""
+        v = self._detached_vis_with_scalars()
+        assert v.to_gltf(name="X") == to_gltf(v, name="X")
+        assert v.to_threejs() == to_threejs(v)
+
+    def test_method_call_surface_present(self):
+        """``m.vis.<TAB>`` must surface the three adapter methods —
+        that's the whole point of this sugar."""
+        v = self._detached_vis_with_scalars()
+        for name in ("to_threejs", "to_gltf", "export_mtlx"):
+            attr = getattr(v, name, None)
+            assert attr is not None, f"Vis.{name} missing"
+            assert callable(attr), f"Vis.{name} not callable"
 
 
 class TestVisAdapterMethods:
