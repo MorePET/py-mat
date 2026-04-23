@@ -1,19 +1,19 @@
 ---
 type: issue
-state: open
+state: closed
 created: 2026-04-20T17:41:59Z
-updated: 2026-04-20T18:05:16Z
+updated: 2026-04-22T14:29:41Z
 author: bernhard-42
 author_url: https://github.com/bernhard-42
 url: https://github.com/MorePET/mat/issues/97
-comments: 1
+comments: 2
 labels: none
 assignees: none
 milestone: none
 projects: none
 parent: none
 children: none
-synced: 2026-04-21T04:41:34.660Z
+synced: 2026-04-23T04:44:01.550Z
 ---
 
 # [Issue 97]: [[FEATURE] Provide interolate_color for non PBR object colors in CAD](https://github.com/MorePET/mat/issues/97)
@@ -92,4 +92,12 @@ Added
 _Posted on April 20, 2026 at 06:05 PM_
 
 fixed the PIL code example
+
+---
+
+# [Comment #2]() by [bernhard-42]()
+
+_Posted on April 22, 2026 at 02:29 PM_
+
+No worries, I use the one from threejs-materials
 
