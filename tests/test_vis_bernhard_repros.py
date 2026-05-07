@@ -190,10 +190,6 @@ def _install_scalar_only_fake_client(monkeypatch):
     return fake, _NotStaged
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="mat#222: Vis defaults tier='1k' even for scalar-only sources",
-)
 class TestIssue222ScalarOnlySources:
     """Bernhard's mat-vis#313 + #311 'Support physicallybased.info'.
 

@@ -225,7 +225,7 @@ class Vis:
     # positional-arg signature (ADR-0002).
     source: str | None = None
     material_id: str | None = None
-    tier: str = "1k"
+    tier: str | None = "1k"
     finishes: dict[str, FinishEntry] = field(default_factory=dict)
 
     # PBR scalars — the canonical home in 3.0+. Loaded from the [vis]
@@ -268,6 +268,59 @@ class Vis:
         """
         super().__setattr__("_textures", {})
         super().__setattr__("_fetched", False)
+        self._auto_resolve_tier_from_manifest()
+
+    def _auto_resolve_tier_from_manifest(self) -> None:
+        """Reconcile ``tier`` against the source's manifest tier list.
+
+        The dataclass default of ``"1k"`` matches the textured-source
+        majority (gpuopen / ambientcg / polyhaven) but is wrong for
+        scalar-only sources like ``physicallybased`` which only ship
+        a ``"scalar"`` tier. Without this resolution, the call
+        ``Vis(source="physicallybased", material_id="Aluminum")`` lands
+        with ``tier="1k"`` and the next ``.textures`` access raises
+        ``MaterialNotStagedError`` deep inside mat-vis-client without
+        the user ever asking for ``"1k"``. Closes #222 / mat-vis #313.
+
+        Resolution policy:
+
+        - If source / material_id aren't both set: skip (incomplete identity).
+        - If the configured ``tier`` IS in the source's manifest tier list:
+          keep it (user's choice respected).
+        - Else if a single canonical fallback exists (currently ``"scalar"``
+          for sources whose tier list contains it): silently swap to it.
+        - Else: leave ``tier`` alone — fetch will raise with the offending
+          input echoed (better than guessing wrong).
+
+        Permissive on errors: if the client / manifest is unreachable
+        (offline, corrupted cache, future-version migration), skip — same
+        policy as ``_validate_tier``. Worse to break offline workflows than
+        to leave a tier mismatch unresolved; the lazy-fetch path will still
+        surface the issue at ``.textures`` access time.
+        """
+        if self.source is None or self.material_id is None:
+            return
+        try:
+            from mat_vis_client import get_client
+
+            manifest = get_client().manifest
+        except Exception:
+            return
+
+        source_entry = (manifest.get("sources") or {}).get(self.source)
+        if not source_entry:
+            return  # Unknown source — let fetch surface the error
+        available_tiers = list((source_entry.get("tiers") or {}).keys())
+        if not available_tiers:
+            return
+        if self.tier in available_tiers:
+            return  # User's tier choice is valid for this source
+        # Tier mismatch — fall back to a canonical option if there's a
+        # clear winner. ``"scalar"`` is the canonical scalar-only tier;
+        # if it's the only one available, use it. Otherwise, leave
+        # alone (better an explicit error at fetch than a silent guess).
+        if "scalar" in available_tiers:
+            super().__setattr__("tier", "scalar")
 
     # ── Cache invalidation on identity mutation ──────────────────
 
@@ -692,12 +745,29 @@ class Vis:
     # ── Internals ────────────────────────────────────────────────
 
     def _fetch(self) -> None:
-        """Fetch textures via the vis client. Called lazily."""
+        """Fetch textures via the vis client. Called lazily.
+
+        Scalar-only sources (currently ``physicallybased``, identified
+        by ``tier == "scalar"``) ship no texture maps — only authored
+        PBR scalars in their catalog entry. The ``fetch_all_textures``
+        path raises ``MaterialNotStagedError`` for them; we short-
+        circuit with an empty texture dict instead. The scalars are
+        already on the ``Vis`` (loaded from TOML or set explicitly);
+        downstream adapters fall back to ``Vis._PBR_DEFAULTS`` for
+        anything still ``None``. Closes #222 / mat-vis #313.
+        """
         if not self.has_mapping:
             return
 
         # Thin delegate — matches the ADR-0002 principle.
         src, mid, tier = self._identity_args()
+        if tier == "scalar":
+            # No texture fetch for scalar-only sources. Mark fetched so
+            # the lazy property doesn't keep re-trying every access.
+            super().__setattr__("_textures", {})
+            super().__setattr__("_fetched", True)
+            return
+
         textures = self.client.fetch_all_textures(src, mid, tier=tier)
         # Write via super() so we don't trip the identity-invalidation
         # guard (`_textures` and `_fetched` aren't identity fields, so
