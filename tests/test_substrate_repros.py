@@ -157,29 +157,28 @@ class TestMatVis311_MaterialNames:
 
 
 class TestMatVis313_PhysicallybasedAccess:
-    """Constructing a ``Vis`` against the ``physicallybased`` source
-    and calling ``to_threejs()`` raises ``MaterialNotStagedError`` —
-    the source is exposed as a valid choice but materials aren't
-    actually accessible through the same path the textured sources
-    use. physicallybased is scalar-only (no textures), so the path
-    needs to dispatch to a scalar-only fetch when there's no texture
-    tier to pull.
+    """``Vis(source='physicallybased', material_id='Aluminum').to_threejs()``
+    must not raise. mat-vis #313 was the upstream symptom (substrate
+    path treated physicallybased like a textured source); py-mat #222
+    closed the consumer-facing manifestation by auto-resolving
+    ``tier`` to ``"scalar"`` when the source's manifest only ships a
+    scalar tier, then short-circuiting the texture fetch in
+    ``Vis._fetch``.
+
+    The test passes today thanks to the py-mat-side handling. The
+    upstream issue stays open until mat-vis ships a release that
+    unbreaks the substrate path natively — but consumers don't see
+    that bug anymore because we route around it.
     """
 
-    @pytest.mark.xfail(
-        reason=(
-            "mat-vis #313: Vis('physicallybased', 'Aluminum').to_threejs() "
-            "raises MaterialNotStagedError because the substrate path "
-            "treats physicallybased like a textured source. Will flip to "
-            "passing when the scalar-only path is wired through to_threejs."
-        ),
-        strict=True,
-    )
     def test_physicallybased_aluminum_to_threejs(self):
         from pymat.vis import Vis
 
         with _skip_on_upstream_outage():
             v = Vis(source="physicallybased", material_id="Aluminum")
+            # Auto-resolution should land tier on "scalar" without the
+            # caller asking — the whole point of #222's fix.
+            assert v.tier == "scalar", f"tier auto-resolution failed: {v.tier!r}"
             out = v.to_threejs()
 
         # Just assert it doesn't raise + returns a usable dict — the
