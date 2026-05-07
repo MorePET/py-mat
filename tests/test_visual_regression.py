@@ -279,3 +279,196 @@ class TestAdapterOutput:
             assert d[next(k for k in ("map", "normalMap") if k in d)].startswith(
                 "data:image/png;base64,"
             )
+
+
+# ────────────────────────────────────────────────────────────────────
+# Bernhard's mat-vis #285 multi-material grid
+# https://github.com/MorePET/mat-vis/issues/285
+# ────────────────────────────────────────────────────────────────────
+
+
+# 25-material grid mirroring the repro Bernhard posted in mat-vis #285.
+# Format: (label, source, material_id) — texture_scale and overrides
+# from his code are not represented because they're per-instance render
+# state on the build123d side, not Vis attributes (see py-mat #93 / the
+# texture_scale discussion in build123d#1270).
+#
+# The grid is intentionally heterogeneous: textured materials (bricks,
+# leather, wood, fabric, tiles, plates) test the texture-bytes
+# pipeline; metallic + scalar-only entries (chrome, gold, glass, red
+# wine, plastics) test the scalar-baking pipeline that #285 is about.
+# A regression that flips multiple metals back to default-grey-plastic
+# (the failure Bernhard documented) shows up immediately on the
+# uploaded artifact.
+BERNHARD_285_GRID: list[tuple[str, str, str]] = [
+    # row 0 — paint, oxidized, chrome, glass
+    ("car_red", "gpuopen", "Car Paint"),
+    ("car_green", "gpuopen", "Car Paint"),
+    ("bronze", "gpuopen", "Bronze Oxydized"),
+    ("chrome", "gpuopen", "Chrome"),
+    ("glass", "gpuopen", "Glass"),
+    # row 1 — transparent / scalar-heavy / brushed metals
+    ("red_wine", "gpuopen", "Red Wine"),
+    ("gold", "gpuopen", "Gold"),
+    ("carbon_coat", "gpuopen", "Carbon biColor Coat"),
+    ("acryl", "physicallybased", "Plastic (Acrylic)"),
+    ("steel", "gpuopen", "Stainless Steel Brushed"),
+    # row 2 — flat alu, textured masonry/leather, patterned alu
+    ("alu", "gpuopen", "Aluminum Brushed"),
+    ("bricks", "gpuopen", "TH: Large Red Bricks"),
+    ("leather", "gpuopen", "TH: Brown Fabric Leather"),
+    ("alu_corr", "gpuopen", "Aluminum Corrugated"),
+    ("alu_hexagon", "gpuopen", "Aluminum Hexagon"),
+    # row 3 — perforated, wood, tiles, ambientcg metal
+    ("perforated", "gpuopen", "Perforated Metal"),
+    ("wood", "gpuopen", "Ivory Walnut Solid Wood"),
+    ("tiles", "gpuopen", "Iberian Blue Ceramic Tiles"),
+    ("tiles2", "gpuopen", "Tiles Black Long Variative"),
+    ("brass_scratched", "ambientcg", "Metal 007"),
+    # row 4 — fabric, ambientcg metal plates, gpuopen flooring, polyhaven
+    ("carbon", "ambientcg", "Fabric 004"),
+    ("plates", "ambientcg", "Metal Plates 006"),
+    ("floor", "gpuopen", "Adelie Brown Luxury Flooring"),
+    ("plank", "polyhaven", "Plank Flooring 03"),
+    ("rock_wall", "polyhaven", "Rock Wall 16"),
+]
+
+
+@pytest.mark.skipif(SKIP_VISUAL, reason="MAT_VIS_SKIP_VISUAL=1 (default)")
+class TestBernhardMatVis285Grid:
+    """Renders Bernhard's exact 25-material grid from mat-vis #285's
+    repro snippet, parametrized by tier. The artifact (PNG per tier)
+    is the canonical visual checkpoint for **mat-vis #285** — every
+    release-please PR's reviewer checklist requires inspecting these
+    against the threejs-materials reference (Image 2 in the upstream
+    issue).
+
+    The visual failure mode #285 documents: most metals render as
+    flat default-grey plastic because the gpuopen baker emits
+    ``metalness=0.0``, ``roughness=0.5``, ``color=0xCCCCCC``,
+    ``ior=1.5``, ``transmission=0.0`` for materials whose authored
+    .mtlx scalars never made it into the rowmap. Textured paths still
+    work (image bytes are forwarded); scalar paths regress.
+
+    Strict ``xfail`` until upstream fix (PR mat-vis#294 merged but
+    pending re-bake + ``mat-vis-client`` 0.7.0 release). When that
+    ships and py-mat picks it up via ``>=mat-vis-client``, this test
+    flips to passing — the strict marker prompts dropping the xfail.
+
+    Per-material behavior: any single material that 404s (cache miss,
+    name drift) is logged but does not fail the test — the artifact
+    is still useful with N-1 materials. Total fetch failure (network
+    outage) is skipped via the standard mat-vis 5xx-on-skip pattern.
+    """
+
+    GRID_COLS = 5
+    GRID_SPACING = 30.0  # mm — matches Bernhard's `Pos(i*30, j*30, 0)` layout
+
+    @pytest.mark.parametrize("tier", ["1k", "512", "256"])
+    @pytest.mark.xfail(
+        reason=(
+            "mat-vis #285: gpuopen baker drops authored .mtlx scalars; "
+            "most metals render as flat grey plastic. Upstream baker fix "
+            "merged in mat-vis#294 (2026-05-06) — pending re-bake + "
+            "mat-vis-client 0.7.0 release. Flips green when py-mat picks "
+            "up the new dep version. Visual artifact for the failure "
+            "mode: tests/visual_output/bernhard_285_grid_{tier}.png."
+        ),
+        strict=True,
+    )
+    def test_bernhard_grid_at_tier(self, file_server, browser, tier: str) -> None:
+        from build123d import Compound, Pos, Sphere, export_gltf
+
+        from pymat import Material
+        from pymat.vis import Vis, to_threejs
+
+        # Build the grid: Bernhard's `create_shader_ball` becomes a
+        # plain Sphere here (the visual point is the *materials* on
+        # them, not the geometry).
+        spheres: list = []
+        skipped: list[str] = []
+        scalar_summary: list[dict] = []
+
+        for idx, (label, source, material_id) in enumerate(BERNHARD_285_GRID):
+            row = idx // self.GRID_COLS
+            col = idx % self.GRID_COLS
+            sb = Pos(col * self.GRID_SPACING, row * self.GRID_SPACING, 0) * Sphere(7)
+
+            try:
+                vis = Vis(source=source, material_id=material_id, tier=tier)
+                m = Material(name=f"sb_{label}")
+                m.vis.source = source
+                m.vis.material_id = material_id
+                m.vis.tier = tier
+                # Snapshot the scalars before the export to detect the
+                # default-grey regression up-front (cheaper than only
+                # eyeballing the final PNG).
+                scalar_summary.append({"label": label, "scalars": to_threejs(vis)})
+                sb.material = m
+                spheres.append(sb)
+            except Exception as exc:
+                # Don't bail — log + continue. A few 404s yield a still-
+                # useful artifact; total failure is caught below.
+                skipped.append(f"{label} ({source}/{material_id}) tier={tier}: {exc}")
+
+        if not spheres:
+            pytest.skip(
+                "no materials in BERNHARD_285_GRID resolved at tier="
+                f"{tier} (cache miss / network) — {len(skipped)} skipped"
+            )
+
+        # Compose + export
+        scene = Compound(children=spheres)
+        glb = OUTPUT_DIR / f"bernhard_285_grid_{tier}.glb"
+        export_gltf(scene, str(glb))
+        assert glb.exists()
+        glb_size = glb.stat().st_size
+        assert glb_size > 50_000, (
+            f"glTF too small ({glb_size} bytes) at tier={tier} — "
+            "textures probably did not inline"
+        )
+
+        # Render
+        screenshot = _render_and_screenshot(
+            browser, file_server, glb, f"bernhard_285_grid_{tier}"
+        )
+        assert screenshot.exists()
+        png_size = screenshot.stat().st_size
+        assert png_size > 5_000, (
+            f"screenshot too small ({png_size} bytes) — likely blank"
+        )
+
+        # Persist scalar summary alongside the PNG so reviewers can
+        # cross-reference what each ball reports for metalness /
+        # roughness / color without poking the live substrate.
+        (OUTPUT_DIR / f"bernhard_285_grid_{tier}.scalars.json").write_text(
+            json.dumps(
+                {"tier": tier, "rendered": len(spheres), "skipped": skipped, "items": scalar_summary},
+                indent=2,
+                default=str,
+            )
+        )
+
+        # The actual #285 assertion: at least 5 of the rendered
+        # materials must have NON-default scalars. The default-grey
+        # fingerprint is metalness=0.0 + roughness=0.5 + color in
+        # {0xCCCCCC, "#cccccc"}. If everything matches that, the
+        # baker has regressed.
+        DEFAULT_GREY_INTS = {0xCCCCCC}
+        DEFAULT_GREY_HEX = {"#cccccc", "#CCCCCC"}
+        non_default = 0
+        for entry in scalar_summary:
+            sc = entry["scalars"]
+            if (
+                sc.get("metalness") not in (0.0, None)
+                or sc.get("roughness") not in (0.5, None)
+                or (sc.get("color") not in DEFAULT_GREY_INTS and sc.get("color") not in DEFAULT_GREY_HEX)
+            ):
+                non_default += 1
+
+        assert non_default >= 5, (
+            f"only {non_default}/{len(scalar_summary)} materials at tier={tier} "
+            "have non-default scalars — gpuopen baker regression. "
+            f"See artifact: bernhard_285_grid_{tier}.png + .scalars.json. "
+            f"Skipped (404 / cache): {len(skipped)}."
+        )
