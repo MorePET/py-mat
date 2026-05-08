@@ -693,21 +693,30 @@ class Vis:
     # it directly.
 
     def _catalog_scalars(self) -> dict[str, Any]:
-        """Catalog-authored PBR scalars via ``client.asset(...).scalars``.
+        """Catalog-authored PBR scalars from mat-vis. ADR-0002 Principle 3
+        thin delegate.
 
-        ADR-0002 Principle 3 thin delegate. Returns ``{}`` for no-
-        identity Vis. The underlying ``_scalars_for`` is silent on
-        failure (missing index / unknown material → ``{}``) so we
-        don't need to wrap exceptions; the AttributeError fallback
-        only matters for legacy test mocks lacking ``.asset()``.
+        Preferred path: ``client.asset(source, material_id, tier).scalars``
+        (mat-vis-client 0.7+ / mat-vis #93). Falls back to the legacy
+        ``client._scalars_for(source, material_id)`` for 0.6.x. Both
+        return the same shape; ``asset(...).scalars`` is the public
+        contract going forward.
+
+        Returns ``{}`` for no-identity Vis or when the client lacks
+        both surfaces (e.g. test mocks that only stub ``fetch_all_textures``).
         Lazy / no HTTP fetch — the catalog index is loaded once.
         """
         if not self.has_mapping:
             return {}
-        try:
-            return self.client.asset(*self._identity_args()).scalars
-        except AttributeError:
-            return {}
+        client = self.client
+        if hasattr(client, "asset"):
+            try:
+                return client.asset(*self._identity_args()).scalars
+            except AttributeError:
+                pass  # asset() exists but returned object lacks .scalars (test mocks)
+        if hasattr(client, "_scalars_for"):
+            return client._scalars_for(self.source, self.material_id)
+        return {}
 
     def _explicit_scalars(self) -> dict[str, Any]:
         """Caller-supplied PBR overrides only — None fields dropped.

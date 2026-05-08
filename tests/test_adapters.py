@@ -161,6 +161,44 @@ class TestExportMtlx:
             assert len(pngs) == 0  # no textures
 
 
+class TestMaterialRenderShortcuts:
+    """``Material.to_threejs() / .to_gltf() / .export_mtlx()`` —
+    direct rendering sugar so callers don't have to learn the ``.vis``
+    namespace for the common case. Each delegates to ``self.vis.to_X``
+    with material name auto-filled where appropriate."""
+
+    def test_material_to_threejs_matches_vis_path(self):
+        m = _make_material()
+        assert m.to_threejs() == m.vis.to_threejs()
+
+    def test_material_to_threejs_matches_module_function(self):
+        m = _make_material()
+        assert m.to_threejs() == to_threejs(m)
+
+    def test_material_to_gltf_auto_fills_name(self):
+        m = _make_material()
+        d = m.to_gltf()
+        assert d["name"] == "Test Steel"
+
+    def test_material_to_gltf_matches_module_function(self):
+        m = _make_material()
+        assert m.to_gltf() == to_gltf(m)
+
+    def test_material_export_mtlx_uses_material_name(self):
+        m = _make_material(with_vis=True)
+        with tempfile.TemporaryDirectory() as tmp:
+            mtlx_path = m.export_mtlx(Path(tmp))
+            assert mtlx_path.exists()
+            assert mtlx_path.stem == "Test_Steel"  # spaces → underscores
+
+    def test_material_export_mtlx_matches_module_function(self):
+        m = _make_material(with_vis=True)
+        with tempfile.TemporaryDirectory() as tmp_a, tempfile.TemporaryDirectory() as tmp_b:
+            via_method = m.export_mtlx(Path(tmp_a))
+            via_function = export_mtlx(m, Path(tmp_b))
+            assert via_method.name == via_function.name
+
+
 class TestAdapterPolymorphism:
     """Adapters accept either a Material or a Vis — same output.
 

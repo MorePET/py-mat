@@ -530,6 +530,32 @@ class _MaterialInternal:
         return new
 
     # =========================================================================
+    # Rendering shortcuts (delegate to self.vis with material name auto-fill)
+    # =========================================================================
+
+    def to_threejs(self) -> dict:
+        """Render as a Three.js ``MeshPhysicalMaterial`` parameter dict.
+
+        Sugar for ``self.vis.to_threejs()``. Equivalent to
+        ``pymat.vis.to_threejs(self)`` but stays on the Material
+        surface so callers don't have to learn the ``.vis`` namespace
+        for the common "render this material" case.
+        """
+        return self.vis.to_threejs()
+
+    def to_gltf(self) -> dict:
+        """Render as a glTF 2.0 material dict; ``name`` field auto-
+        filled from ``self.name``.
+        """
+        return self.vis.to_gltf(name=self.name)
+
+    def export_mtlx(self, output_dir):
+        """Export as a MaterialX ``.mtlx`` file + PNG textures on disk.
+        Filename stem is ``self.name``.
+        """
+        return self.vis.export_mtlx(output_dir, name=self.name)
+
+    # =========================================================================
     # Information & Inspection
     # =========================================================================
 
