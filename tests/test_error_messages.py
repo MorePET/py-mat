@@ -554,11 +554,11 @@ class TestThreejsColorEncoding:
 
     @pytest.mark.xfail(
         reason=(
-            "Pending mat-vis #298: color encoding is currently 'int' (the "
-            "Three.js wire format). Will flip to '#RRGGBB' string once "
-            "mat-vis-client 0.7.x ships color_format='hex' as the default. "
-            "py-materials consumes mat-vis-client>=0.6.3 so the dep bump is "
-            "additive."
+            "Pending mat-vis-client 0.7.x release: HEAD ships "
+            "color_format='hex' as the default but PyPI is still on "
+            "0.6.x (int format). The dispatch refactor's color-hex "
+            "path is verified against mat-vis dev — flips to passing "
+            "when py-materials bumps mat-vis-client>=0.7.0."
         ),
         strict=True,
     )
