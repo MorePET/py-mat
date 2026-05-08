@@ -1,19 +1,19 @@
 ---
 type: issue
-state: open
+state: closed
 created: 2026-05-04T12:33:30Z
-updated: 2026-05-04T12:33:30Z
+updated: 2026-05-07T08:48:50Z
 author: gerchowl
 author_url: https://github.com/gerchowl
 url: https://github.com/MorePET/mat/issues/106
-comments: 0
+comments: 1
 labels: none
 assignees: none
 milestone: none
 projects: none
 parent: none
 children: none
-synced: 2026-05-05T04:54:34.522Z
+synced: 2026-05-08T04:48:06.783Z
 ---
 
 # [Issue 106]: [examples + Vis docstring teach the unsafe mutation pattern](https://github.com/MorePET/mat/issues/106)
@@ -36,3 +36,11 @@ Users learn idioms from the class docstring and the example file, not the CHANGE
 - Add to \`pymat/vis/__init__.py\` module docstring: one sentence on registry-singleton semantics + override.
 
 Closes the gap. Block on #109 (Material.copy / with_vis) before finalizing the example, since today \`m.vis = ...\` still mutates the Material singleton.
+---
+
+# [Comment #1]() by [gerchowl]()
+
+_Posted on May 7, 2026 at 08:48 AM_
+
+Fixed in [py-materials 3.6.0](https://github.com/MorePET/mat/releases/tag/v3.6.0) / [3.7.0](https://github.com/MorePET/mat/releases/tag/v3.7.0). `Vis.override` docstring (in `src/pymat/vis/_model.py`) explicitly teaches the safe-derive pattern (`steel.with_vis(steel.vis.override(...))`), warns against direct mutation of the registry singleton, and notes that `finishes` is deep-copied. Examples in `examples/` use the safe pattern throughout.
+

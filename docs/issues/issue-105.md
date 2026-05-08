@@ -1,19 +1,19 @@
 ---
 type: issue
-state: open
+state: closed
 created: 2026-05-04T12:33:09Z
-updated: 2026-05-04T12:33:09Z
+updated: 2026-05-07T08:48:48Z
 author: gerchowl
 author_url: https://github.com/gerchowl
 url: https://github.com/MorePET/mat/issues/105
-comments: 0
+comments: 1
 labels: none
 assignees: none
 milestone: none
 projects: none
 parent: none
 children: none
-synced: 2026-05-05T04:54:34.878Z
+synced: 2026-05-08T04:48:07.283Z
 ---
 
 # [Issue 105]: [test: missing override coverage (adapter, tier, finishes=, None reset, TOML round-trip)](https://github.com/MorePET/mat/issues/105)
@@ -31,3 +31,11 @@ Plus loose assertions to tighten:
 - \`TestRegistryMutationHazardFixed\` couples to TOML having a \`polished\` finish with different \`material_id\` — breaks if TOML changes. Move to a fixture-built Vis.
 
 Block #103 + #104 fixes on these tests landing first (TDD).
+---
+
+# [Comment #1]() by [gerchowl]()
+
+_Posted on May 7, 2026 at 08:48 AM_
+
+Substantively addressed across [3.7.0](https://github.com/MorePET/mat/releases/tag/v3.7.0), [3.8.0](https://github.com/MorePET/mat/releases/tag/v3.8.0), and [3.11.0](https://github.com/MorePET/mat/pull/80) (in flight). `tests/test_vis_override.py` now pins: tier-only change preserves `_finish`, finishes= deep-copy, adapter pass-through, None reset, identity invalidation. 3.11.0 adds `tests/test_consumer_journey.py` and `tests/test_public_api_surface.py` covering the override surface from the consumer perspective. ~170 new contract tests overall.
+

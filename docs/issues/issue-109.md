@@ -1,19 +1,19 @@
 ---
 type: issue
-state: open
+state: closed
 created: 2026-05-04T12:34:13Z
-updated: 2026-05-04T12:34:13Z
+updated: 2026-05-07T08:48:52Z
 author: gerchowl
 author_url: https://github.com/gerchowl
 url: https://github.com/MorePET/mat/issues/109
-comments: 0
+comments: 1
 labels: none
 assignees: none
 milestone: none
 projects: none
 parent: none
 children: none
-synced: 2026-05-05T04:54:33.345Z
+synced: 2026-05-08T04:48:06.316Z
 ---
 
 # [Issue 109]: [Material.copy / with_vis to close the parent-singleton hazard](https://github.com/MorePET/mat/issues/109)
@@ -51,3 +51,11 @@ pymat.vis.to_threejs(shiny)
 
 ### Scope
 3.7.0 — bundle with #103 / #104 / #105 / #106 fixes.
+---
+
+# [Comment #1]() by [gerchowl]()
+
+_Posted on May 7, 2026 at 08:48 AM_
+
+Shipped in [py-materials 3.7.0](https://github.com/MorePET/mat/releases/tag/v3.7.0). `Material.copy()` returns a registry-detached deep-copy; `Material.with_vis(vis)` returns a registry-detached `Material` with the supplied (deep-copied) `Vis` attached. Both close the parent-singleton mutation hazard. Pinned by `tests/test_core.py` and exercised via `tests/test_consumer_journey.py` (3.11.0).
+
