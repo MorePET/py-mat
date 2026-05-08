@@ -34,9 +34,7 @@ from pathlib import Path
 # disambiguation). Built-ins extend keywords with the standard set
 # users commonly want to shadow without losing the original (`type_`,
 # `id_`, `list_`, `dict_`).
-_LEGITIMATE_STRIPPED_NAMES: frozenset[str] = frozenset(
-    keyword.kwlist
-) | frozenset(dir(builtins))
+_LEGITIMATE_STRIPPED_NAMES: frozenset[str] = frozenset(keyword.kwlist) | frozenset(dir(builtins))
 
 # Ignore directives recognized on the def line (case-insensitive).
 # Short form `pymat-keep-_` is preferred — keeps the def signature on
