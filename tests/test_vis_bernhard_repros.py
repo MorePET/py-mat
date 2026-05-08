@@ -17,8 +17,6 @@ mat-vis#287/#288 lesson.
 
 from __future__ import annotations
 
-import pytest
-
 from pymat.vis._model import Vis
 
 # ── #220: Vis.scalars accessor ────────────────────────────────
